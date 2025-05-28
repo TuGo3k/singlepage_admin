@@ -1,51 +1,81 @@
 'use client';
-import { useState } from 'react';
-import { DataGrid } from '@mui/x-data-grid';
-import { Box, Typography, Button } from '@mui/material';
-import HeaderModal from '@/components/modals/HeaderModal';
 
-const columns = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'title', headerName: 'Title', width: 200 },
-  { field: 'description', headerName: 'Description', width: 300 },
-  { field: 'status', headerName: 'Status', width: 130 },
-  { field: 'createdAt', headerName: 'Created At', width: 180 },
-];
-
-const rows = [
-  { id: 1, title: 'Main Header', description: 'Welcome to our platform', status: 'Active', createdAt: '2024-01-01' },
-  { id: 2, title: 'About Header', description: 'Learn about us', status: 'Active', createdAt: '2024-01-02' },
-];
+import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Preview from "@/components/Preview";
+import { usePreviewStore } from '@/store/previewStore';
 
 export default function HeaderPage() {
-  const [openModal, setOpenModal] = useState(false);
+  const updateHeader = usePreviewStore((state) => state.updateHeader);
+  const headerData = usePreviewStore((state) => state.siteData.header);
+  const [localData, setLocalData] = useState(headerData);
 
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
+  const handleChange = (field, value) => {
+    const newData = {
+      ...localData,
+      [field]: value
+    };
+    setLocalData(newData);
+    updateHeader(newData);
+  };
+
+  // Sync with store when headerData changes
+  useEffect(() => {
+    setLocalData(headerData);
+  }, [headerData]);
 
   return (
-    <Box sx={{ height: 400, width: '100%', p: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h5" component="h1">
-          Header Management
-        </Typography>
-        <Button 
-          variant="contained" 
-          color="primary"
-          onClick={handleOpenModal}
-        >
-          Add New Header
-        </Button>
-      </Box>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-        disableSelectionOnClick
-      />
-      <HeaderModal open={openModal} handleClose={handleCloseModal} />
-    </Box>
+    <div className="space-y-4">
+      <h1 className="text-2xl font-semibold mb-6">Гарчиг & Текст</h1>
+
+      <div className="grid grid-cols-2 gap-6">
+        {/* Preview Section - Left Side */}
+        <Preview />
+
+        {/* Settings Section - Right Side */}
+        <div className="space-y-6">
+          <div className="rounded-lg border bg-card p-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Үндсэн гарчиг</Label>
+                <Input
+                  id="title"
+                  value={localData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  placeholder="Вэбсайтын нэр..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="subtitle">Дэд гарчиг</Label>
+                <Input
+                  id="subtitle"
+                  value={localData.subtitle}
+                  onChange={(e) => handleChange('subtitle', e.target.value)}
+                  placeholder="Дэд гарчиг..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">Тайлбар</Label>
+                <textarea
+                  id="description"
+                  value={localData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  placeholder="Тайлбар текст..."
+                  className="w-full min-h-[100px] rounded-md border bg-background px-3 py-2 text-sm"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <Button>Хадгалах</Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 } 

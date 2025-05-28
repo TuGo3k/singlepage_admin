@@ -7,32 +7,32 @@ import { PhoneCall } from "lucide-react";
 
 const sidebardata = [
   {
-    title: "Header",
+    title: "Гарчиг",
     icon: <FileText size={16} />,
     link: "/header",
   },
   {
-    title: "Story",
+    title: "Түүх",
     icon: <BookOpen size={16} />,
     link: "/story",
   },
   {
-    title: "Timeline",
+    title: "Цаг Хугацаа",
     icon: <Clock size={16} />,
     link: "/timeline",
   },
   {
-    title: "Products",
+    title: "Бүтээгдэхүүн",
     icon: <ShoppingBag size={16} />,
     link: "/products",
   },
   {
-    title: "Blog",
+    title: "Блог",
     icon: <FileEdit size={16} />,
     link: "/blog",
   },
   {
-    title: "Contact",
+    title: "Холбоо Барих",
     icon: <PhoneCall size={16} />,
     link: "/contact",
   },

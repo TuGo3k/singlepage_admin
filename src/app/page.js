@@ -5,10 +5,10 @@ export default function Home() {
   return (
     <Box sx={{ p: 3 }}>
       <Typography variant="h4" component="h1" gutterBottom>
-        Welcome to Admin Dashboard
+        Удирдлагын самбар руу тавтай морил
       </Typography>
       <Typography variant="body1" color="text.secondary">
-        Select a section from the sidebar to manage your content.
+        Контент удирдахын тулд зүүн талын цэснээс сонголтоо хийнэ үү.
       </Typography>
     </Box>
   );

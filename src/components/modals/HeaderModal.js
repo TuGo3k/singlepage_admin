@@ -38,20 +38,20 @@ export default function HeaderModal({ open, handleClose }) {
         alignItems: 'center',
         gap: 1
       }}>
-        Add New Header
+        Шинэ Гарчиг Нэмэх
       </DialogTitle>
       <form onSubmit={handleSubmit}>
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField
-              label="Title"
+              label="Гарчиг"
               fullWidth
               required
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
             <TextField
-              label="Description"
+              label="Тайлбар"
               fullWidth
               multiline
               rows={4}
@@ -60,15 +60,15 @@ export default function HeaderModal({ open, handleClose }) {
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
             <FormControl fullWidth>
-              <InputLabel>Status</InputLabel>
+              <InputLabel>Төлөв</InputLabel>
               <Select
                 value={formData.status}
-                label="Status"
+                label="Төлөв"
                 onChange={(e) => setFormData({ ...formData, status: e.target.value })}
               >
-                <MenuItem value="active">Active</MenuItem>
-                <MenuItem value="inactive">Inactive</MenuItem>
-                <MenuItem value="draft">Draft</MenuItem>
+                <MenuItem value="active">Идэвхтэй</MenuItem>
+                <MenuItem value="inactive">Идэвхгүй</MenuItem>
+                <MenuItem value="draft">Ноорог</MenuItem>
               </Select>
             </FormControl>
             <Button
@@ -77,7 +77,7 @@ export default function HeaderModal({ open, handleClose }) {
               startIcon={<CloudUpload />}
               sx={{ mt: 1 }}
             >
-              Upload Header Image
+              Гарчгийн зураг оруулах
               <input
                 type="file"
                 hidden
@@ -87,17 +87,17 @@ export default function HeaderModal({ open, handleClose }) {
             </Button>
             {formData.image && (
               <Box sx={{ mt: 2 }}>
-                <p>Selected file: {formData.image.name}</p>
+                <p>Сонгосон файл: {formData.image.name}</p>
               </Box>
             )}
           </Box>
         </DialogContent>
         <DialogActions sx={{ p: 3 }}>
           <Button onClick={handleClose} variant="outlined" color="secondary">
-            Cancel
+            Болих
           </Button>
           <Button type="submit" variant="contained" color="primary">
-            Save Header
+            Хадгалах
           </Button>
         </DialogActions>
       </form>

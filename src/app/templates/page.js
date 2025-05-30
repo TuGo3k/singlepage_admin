@@ -74,6 +74,7 @@ export default function TemplatesPage() {
   const [deletingSectionId, setDeletingSectionId] = useState(null);
   const fileInputRef = useRef(null);
   const [editingSectionId, setEditingSectionId] = useState(null);
+  const [activeSectionId, setActiveSectionId] = useState(null);
 
   // Category management state
   const [heroCategories, setHeroCategories] = useState([]); // Start with empty array
@@ -81,6 +82,9 @@ export default function TemplatesPage() {
   const [selectedCategoryForSub, setSelectedCategoryForSub] = useState(null);
   const [newSubCategoryName, setNewSubCategoryName] = useState('');
   const [showAddCategoryForm, setShowAddCategoryForm] = useState(false);
+
+  // Лого upload state
+  const logoInputRef = useRef();
 
   // Load existing categories from hero section
   useEffect(() => {
@@ -360,6 +364,8 @@ export default function TemplatesPage() {
     }
   }, [templateData.sections, handleUpdateSection]);
 
+  const [cardsLayout, setCardsLayout] = useState('grid-2'); // grid-2, grid-4, carousel
+
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold mb-6">Загварууд</h1>
@@ -387,400 +393,398 @@ export default function TemplatesPage() {
                     ref={provided.innerRef}
                   >
                     {templateData.sections.map((section, index) => (
-                      <Draggable 
-                        key={section.id} 
-                        draggableId={section.id} 
-                        index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`border rounded-lg p-3 ${
-                              snapshot.isDragging ? 'shadow-lg bg-gray-50 dark:bg-gray-800' : ''
-                            }`}
-                          >
-                            <div className="flex justify-between items-center mb-3">
-                              <div className="flex items-center gap-2">
-                                <div {...provided.dragHandleProps} className="cursor-grab">
-                                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-                                  </svg>
-                                </div>
-                                {sectionTypes[section.type].icon}
-                                <span className="text-sm font-medium">{sectionTypes[section.type].name}</span>
-                              </div>
-                              <div className="flex gap-2">
-                                {section.type === 'hero' && (
-                                  <>
-                                    <button
-                                      onClick={() => {
-                                        setEditingSectionId(section.id);
-                                        fileInputRef.current?.click();
-                                      }}
-                                      className="text-blue-500 hover:text-blue-700 text-sm"
-                                    >
-                                      Зураг оруулах
-                                    </button>
-                                    <button
-                                      onClick={() => setShowAddCategoryForm(!showAddCategoryForm)}
-                                      className="text-green-500 hover:text-green-700 text-sm"
-                                    >
-                                      {showAddCategoryForm ? 'Болих' : '+ Ангилал нэмэх'}
-                                    </button>
-                                  </>
-                                )}
-                                {section.type === 'cards' && (
-                                  <button
-                                    onClick={() => handleAddCard(section.id)}
-                                    className="text-blue-500 hover:text-blue-700 text-sm"
-                                  >
-                                    + Карт нэмэх
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => handleDeleteSection(section.id)}
-                                  className="p-1 text-red-500 hover:text-red-700 text-sm"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            </div>
-                            <div className="space-y-4">
-                              <div className="flex gap-2">
-                                {sectionTypes[section.type].layouts.map(layout => (
-                                  <button
-                                    key={layout.id}
-                                    onClick={() => handleUpdateSection(section.id, { layout: layout.id })}
-                                    className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 transition-colors
-                                      ${section.layout === layout.id 
-                                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
-                                      }`}
-                                  >
-                                    <span className="text-base leading-none">{layout.icon}</span>
-                                    <span>{layout.name}</span>
-                                  </button>
-                                ))}
-                              </div>
-
-                              {section.type === 'hero' && (
-                                <div className="mt-4 space-y-3">
-                                  <div className="flex items-center justify-between">
-                                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Ангилалууд</h4>
-                                    <button
-                                      onClick={() => setShowAddCategoryForm(!showAddCategoryForm)}
-                                      className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
-                                        showAddCategoryForm 
-                                          ? 'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400' 
-                                          : 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400'
-                                      }`}
-                                    >
-                                      {showAddCategoryForm ? (
-                                        <>
-                                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                          </svg>
-                                          Болих
-                                        </>
-                                      ) : (
-                                        <>
-                                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                          </svg>
-                                          Нэмэх
-                                        </>
-                                      )}
-                                    </button>
+                      <div key={section.id} className="mb-2">
+                        <div
+                          className={`flex items-center gap-2 cursor-pointer rounded-lg px-3 py-2 transition-all border border-gray-200 dark:border-gray-700 ${activeSectionId === section.id ? 'bg-blue-50 dark:bg-blue-900/10' : 'bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'}`}
+                          onClick={() => setActiveSectionId(activeSectionId === section.id ? null : section.id)}
+                        >
+                          {sectionTypes[section.type].icon}
+                          <span className="font-medium text-gray-900 dark:text-white">{sectionTypes[section.type].name}</span>
+                          <svg className={`w-4 h-4 ml-auto transition-transform ${activeSectionId === section.id ? 'rotate-90' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                        </div>
+                        <div className={`overflow-hidden transition-all duration-300 ${activeSectionId === section.id ? 'max-h-[1000px] py-2' : 'max-h-0 py-0'}`}>
+                          {activeSectionId === section.id && (
+                            <div className="p-3">
+                              <div className="flex justify-between items-center mb-3">
+                                <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <div className="cursor-grab">
+                                      <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+                                      </svg>
+                                    </div>
+                                    {sectionTypes[section.type].icon}
+                                    <span className="text-sm font-medium">{sectionTypes[section.type].name}</span>
                                   </div>
-                                  
-                                  {/* Add Category Form */}
-                                  {showAddCategoryForm && (
-                                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-                                      <div className="flex gap-2">
-                                        <div className="flex-1">
-                                          <input
-                                            type="text"
-                                            value={newCategoryName}
-                                            onChange={(e) => setNewCategoryName(e.target.value)}
-                                            placeholder="Ангиллын нэр..."
-                                            className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                                            onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
-                                          />
-                                        </div>
+                                  <div className="flex gap-2">
+                                    {section.type === 'hero' && (
+                                      <>
                                         <button
                                           onClick={() => {
-                                            handleAddCategory();
-                                            setShowAddCategoryForm(false);
+                                            setEditingSectionId(section.id);
+                                            fileInputRef.current?.click();
                                           }}
-                                          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                          className="text-blue-500 hover:text-blue-700 text-sm"
                                         >
-                                          Хадгалах
+                                          Зураг оруулах
                                         </button>
-                                      </div>
-                                    </div>
-                                  )}
-
-                                  {/* Categories List */}
-                                  <div className="space-y-2">
-                                    {heroCategories.map((category) => (
-                                      <div key={category.id} className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all">
-                                        {/* Main Category */}
-                                        <div className="flex items-center justify-between p-3">
-                                          <div className="flex items-center gap-2">
-                                            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                                            <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                                              {category.name}
-                                            </span>
-                                            {category.subCategories && category.subCategories.length > 0 && (
-                                              <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
-                                                {category.subCategories.length}
-                                              </span>
-                                            )}
-                                          </div>
-                                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button
-                                              onClick={() => setSelectedCategoryForSub(selectedCategoryForSub === category.id ? null : category.id)}
-                                              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 rounded-md transition-colors"
-                                            >
-                                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                              </svg>
-                                              {selectedCategoryForSub === category.id ? 'Болих' : 'Дэд'}
-                                            </button>
-                                            <button
-                                              onClick={() => handleDeleteCategory(category.id)}
-                                              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
-                                            >
-                                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                              </svg>
-                                            </button>
-                                          </div>
-                                        </div>
-
-                                        {/* Add Subcategory Form */}
-                                        {selectedCategoryForSub === category.id && (
-                                          <div className="px-3 pb-3">
-                                            <div className="bg-green-50 dark:bg-green-900/10 rounded-lg p-3 border border-green-200 dark:border-green-800">
-                                              <div className="flex gap-2">
-                                                <input
-                                                  type="text"
-                                                  value={newSubCategoryName}
-                                                  onChange={(e) => setNewSubCategoryName(e.target.value)}
-                                                  placeholder="Дэд ангиллын нэр..."
-                                                  className="flex-1 px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-green-300 dark:border-green-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                                                  onKeyPress={(e) => e.key === 'Enter' && handleAddSubCategory(category.id)}
-                                                />
-                                                <button
-                                                  onClick={() => handleAddSubCategory(category.id)}
-                                                  className="px-3 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
-                                                >
-                                                  Нэмэх
-                                                </button>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        )}
-
-                                        {/* Subcategories List */}
-                                        {category.subCategories && category.subCategories.length > 0 && (
-                                          <div className="px-3 pb-3">
-                                            <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
-                                              <div className="space-y-1">
-                                                {category.subCategories.map((subCategory) => (
-                                                  <div key={subCategory.id} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-md border border-gray-100 dark:border-gray-700 group">
-                                                    <div className="flex items-center gap-2">
-                                                      <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                                      </svg>
-                                                      <span className="text-xs text-gray-600 dark:text-gray-400">
-                                                        {subCategory.name}
-                                                      </span>
-                                                    </div>
-                                                    <button
-                                                      onClick={() => handleDeleteSubCategory(category.id, subCategory.id)}
-                                                      className="opacity-0 group-hover:opacity-100 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all"
-                                                    >
-                                                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                                      </svg>
-                                                    </button>
-                                                  </div>
-                                                ))}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
-                                    
-                                    {heroCategories.length === 0 && !showAddCategoryForm && (
-                                      <div className="text-center py-8 px-4">
-                                        <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
-                                          <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                          </svg>
-                                        </div>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                                          Ангилал байхгүй байна
-                                        </p>
-                                        <p className="text-xs text-gray-400 dark:text-gray-500">
-                                          Дээрх "Нэмэх" товчлуур дарж эхлээрэй
-                                        </p>
-                                      </div>
+                                        <button
+                                          onClick={() => setShowAddCategoryForm(!showAddCategoryForm)}
+                                          className="text-green-500 hover:text-green-700 text-sm"
+                                        >
+                                          {showAddCategoryForm ? 'Болих' : '+ Ангилал нэмэх'}
+                                        </button>
+                                      </>
                                     )}
+                                    {section.type === 'cards' && (
+                                      <button
+                                        onClick={() => handleAddCard(section.id)}
+                                        className="text-blue-500 hover:text-blue-700 text-sm"
+                                      >
+                                        + Карт нэмэх
+                                      </button>
+                                    )}
+                                    <button
+                                      onClick={() => handleDeleteSection(section.id)}
+                                      className="p-1 text-red-500 hover:text-red-700 text-sm"
+                                    >
+                                      ×
+                                    </button>
                                   </div>
                                 </div>
-                              )}
+                              </div>
+                              <div className="space-y-4">
+                                <div className="flex gap-2">
+                                  {sectionTypes[section.type].layouts.map(layout => (
+                                    <button
+                                      key={layout.id}
+                                      onClick={() => handleUpdateSection(section.id, { layout: layout.id })}
+                                      className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 transition-colors
+                                        ${section.layout === layout.id 
+                                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
+                                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
+                                        }`}
+                                    >
+                                      <span className="text-base leading-none">{layout.icon}</span>
+                                      <span>{layout.name}</span>
+                                    </button>
+                                  ))}
+                                </div>
 
-                              {section.type === 'cards' && section.layout === 'carousel' && (
-                                <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3">
-                                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Гүйдэг тохиргоо</h4>
-                                  <div className="space-y-2">
-                                    <div>
-                                      <label className="text-sm text-gray-600 dark:text-gray-400">
-                                        Харагдах картын тоо
-                                      </label>
-                                      <select
-                                        value={(section.settings?.cardsToShow || 3).toString()}
-                                        onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                          cardsToShow: parseInt(e.target.value)
-                                        })}
-                                        className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
-                                      >
-                                        <option value="1">1 карт</option>
-                                        <option value="2">2 карт</option>
-                                        <option value="3">3 карт</option>
-                                        <option value="4">4 карт</option>
-                                      </select>
-                                    </div>
-                                    <div className="flex items-center gap-2">
+                                {section.type === 'hero' && (
+                                  <div className="mt-4 space-y-3">
+                                    {/* Лого upload input */}
+                                    <div className="flex items-center gap-3 mb-3">
                                       <input
-                                        type="checkbox"
-                                        id={`autoplay-${section.id}`}
-                                        checked={section.settings?.autoplay ?? true}
-                                        onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                          autoplay: e.target.checked
-                                        })}
-                                        className="rounded border-gray-300 dark:border-gray-600"
+                                        type="file"
+                                        accept="image/*"
+                                        ref={logoInputRef}
+                                        onChange={(e) => {
+                                          const file = e.target.files[0];
+                                          if (file) {
+                                            const url = URL.createObjectURL(file);
+                                            updateMedia({ ...mediaData, logo: url });
+                                          }
+                                        }}
+                                        className="hidden"
+                                        id="header-logo-upload"
                                       />
-                                      <label 
-                                        htmlFor={`autoplay-${section.id}`}
-                                        className="text-sm text-gray-600 dark:text-gray-400"
-                                      >
-                                        Автоматаар гүйлгэх
+                                      <label htmlFor="header-logo-upload" className="cursor-pointer flex items-center gap-2 group select-none">
+                                        {mediaData.logo ? (
+                                          <img src={mediaData.logo} alt="logo" className="w-10 h-10 object-contain rounded-lg border border-gray-300 dark:border-gray-600 group-hover:border-blue-500 transition" />
+                                        ) : (
+                                          <svg className="w-7 h-7 text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg group-hover:border-blue-500 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                                        )}
+                                        <span className="text-sm text-blue-600 dark:text-blue-400 group-hover:underline">Лого оруулах</span>
                                       </label>
                                     </div>
-                                    {section.settings?.autoplay && (
+                                    <div className="flex items-center justify-between">
+                                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Ангилалууд</h4>
+                                      <button
+                                        onClick={() => setShowAddCategoryForm(!showAddCategoryForm)}
+                                        className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+                                          showAddCategoryForm 
+                                            ? 'bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400' 
+                                            : 'bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400'
+                                        }`}
+                                      >
+                                        {showAddCategoryForm ? (
+                                          <>
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                            Болих
+                                          </>
+                                        ) : (
+                                          <>
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                            </svg>
+                                            Нэмэх
+                                          </>
+                                        )}
+                                      </button>
+                                    </div>
+                                    
+                                    {/* Add Category Form */}
+                                    {showAddCategoryForm && (
+                                      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+                                        <div className="flex gap-2">
+                                          <div className="flex-1">
+                                            <input
+                                              type="text"
+                                              value={newCategoryName}
+                                              onChange={(e) => setNewCategoryName(e.target.value)}
+                                              placeholder="Ангиллын нэр..."
+                                              className="w-full px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                                              onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
+                                            />
+                                          </div>
+                                          <button
+                                            onClick={() => {
+                                              handleAddCategory();
+                                              setShowAddCategoryForm(false);
+                                            }}
+                                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                          >
+                                            Хадгалах
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
+
+                                    {/* Categories List */}
+                                    <div className="space-y-2">
+                                      {heroCategories.map((category) => (
+                                        <div key={category.id} className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+                                          {/* Main Category */}
+                                          <div className="flex items-center justify-between p-3">
+                                            <div className="flex items-center gap-2">
+                                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                                              <span className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                {category.name}
+                                              </span>
+                                              {category.subCategories && category.subCategories.length > 0 && (
+                                                <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-full">
+                                                  {category.subCategories.length}
+                                                </span>
+                                              )}
+                                            </div>
+                                            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                              <button
+                                                onClick={() => setSelectedCategoryForSub(selectedCategoryForSub === category.id ? null : category.id)}
+                                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 rounded-md transition-colors"
+                                              >
+                                                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                                </svg>
+                                                {selectedCategoryForSub === category.id ? 'Болих' : 'Дэд'}
+                                              </button>
+                                              <button
+                                                onClick={() => handleDeleteCategory(category.id)}
+                                                className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
+                                              >
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                              </button>
+                                            </div>
+                                          </div>
+
+                                          {/* Add Subcategory Form */}
+                                          {selectedCategoryForSub === category.id && (
+                                            <div className="px-3 pb-3">
+                                              <div className="bg-green-50 dark:bg-green-900/10 rounded-lg p-3 border border-green-200 dark:border-green-800">
+                                                <div className="flex gap-2">
+                                                  <input
+                                                    type="text"
+                                                    value={newSubCategoryName}
+                                                    onChange={(e) => setNewSubCategoryName(e.target.value)}
+                                                    placeholder="Дэд ангиллын нэр..."
+                                                    className="flex-1 px-3 py-2 text-sm bg-white dark:bg-gray-800 border border-green-300 dark:border-green-600 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                                    onKeyPress={(e) => e.key === 'Enter' && handleAddSubCategory(category.id)}
+                                                  />
+                                                  <button
+                                                    onClick={() => handleAddSubCategory(category.id)}
+                                                    className="px-3 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                                                  >
+                                                    Нэмэх
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+
+                                          {/* Subcategories List */}
+                                          {category.subCategories && category.subCategories.length > 0 && (
+                                            <div className="px-3 pb-3">
+                                              <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-2 border border-gray-200 dark:border-gray-700">
+                                                <div className="space-y-1">
+                                                  {category.subCategories.map((subCategory) => (
+                                                    <div key={subCategory.id} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-md border border-gray-100 dark:border-gray-700 group">
+                                                      <div className="flex items-center gap-2">
+                                                        <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                        </svg>
+                                                        <span className="text-xs text-gray-600 dark:text-gray-400">
+                                                          {subCategory.name}
+                                                        </span>
+                                                      </div>
+                                                      <button
+                                                        onClick={() => handleDeleteSubCategory(category.id, subCategory.id)}
+                                                        className="opacity-0 group-hover:opacity-100 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all"
+                                                      >
+                                                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                        </svg>
+                                                      </button>
+                                                    </div>
+                                                  ))}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )}
+                                        </div>
+                                      ))}
+                                      
+                                      {heroCategories.length === 0 && !showAddCategoryForm && (
+                                        <div className="text-center py-8 px-4">
+                                          <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                            </svg>
+                                          </div>
+                                          <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">
+                                            Ангилал байхгүй байна
+                                          </p>
+                                          <p className="text-xs text-gray-400 dark:text-gray-500">
+                                            Дээрх "Нэмэх" товчлуур дарж эхлээрэй
+                                          </p>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {section.type === 'cards' && section.layout === 'carousel' && (
+                                  <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3">
+                                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Гүйдэг тохиргоо</h4>
+                                    <div className="space-y-2">
                                       <div>
                                         <label className="text-sm text-gray-600 dark:text-gray-400">
-                                          Гүйх хурд (секунд)
+                                          Харагдах картын тоо
                                         </label>
                                         <select
-                                          value={(section.settings?.interval || 5000) / 1000}
+                                          value={(section.settings?.cardsToShow || 3).toString()}
                                           onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                            interval: parseInt(e.target.value) * 1000
+                                            cardsToShow: parseInt(e.target.value)
                                           })}
                                           className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
                                         >
-                                          <option value="3">3 секунд</option>
-                                          <option value="5">5 секунд</option>
-                                          <option value="7">7 секунд</option>
-                                          <option value="10">10 секунд</option>
+                                          <option value="1">1 карт</option>
+                                          <option value="2">2 карт</option>
+                                          <option value="3">3 карт</option>
+                                          <option value="4">4 карт</option>
                                         </select>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <input
+                                          type="checkbox"
+                                          id={`autoplay-${section.id}`}
+                                          checked={section.settings?.autoplay ?? true}
+                                          onChange={(e) => handleUpdateSectionSettings(section.id, {
+                                            autoplay: e.target.checked
+                                          })}
+                                          className="rounded border-gray-300 dark:border-gray-600"
+                                        />
+                                        <label 
+                                          htmlFor={`autoplay-${section.id}`}
+                                          className="text-sm text-gray-600 dark:text-gray-400"
+                                        >
+                                          Автоматаар гүйлгэх
+                                        </label>
+                                      </div>
+                                      {section.settings?.autoplay && (
+                                        <div>
+                                          <label className="text-sm text-gray-600 dark:text-gray-400">
+                                            Гүйх хурд (секунд)
+                                          </label>
+                                          <select
+                                            value={(section.settings?.interval || 5000) / 1000}
+                                            onChange={(e) => handleUpdateSectionSettings(section.id, {
+                                              interval: parseInt(e.target.value) * 1000
+                                            })}
+                                            className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
+                                          >
+                                            <option value="3">3 секунд</option>
+                                            <option value="5">5 секунд</option>
+                                            <option value="7">7 секунд</option>
+                                            <option value="10">10 секунд</option>
+                                          </select>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {section.type === 'cards' && (
+                                  <div className="space-y-4">
+                                    {/* Layout сонголт */}
+                                    <div className="flex gap-2 mb-2">
+                                      <button
+                                        onClick={() => setCardsLayout('grid-2')}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${cardsLayout === 'grid-2' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                      >2 багана</button>
+                                      <button
+                                        onClick={() => setCardsLayout('grid-4')}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${cardsLayout === 'grid-4' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                      >4 багана</button>
+                                      <button
+                                        onClick={() => setCardsLayout('carousel')}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${cardsLayout === 'carousel' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                      >Swipe/Carousel</button>
+                                    </div>
+                                    {/* Картуудыг харуулах хэсэг */}
+                                    {cardsLayout === 'grid-2' && (
+                                      <div className="grid grid-cols-2 gap-4">
+                                        {section.content.cards.map(card => (
+                                          <div key={card.id} className="border rounded-lg p-4 bg-white dark:bg-gray-800">
+                                            <img src={card.image} alt={card.title} className="w-full h-32 object-cover rounded mb-2" />
+                                            <div className="font-bold mb-1">{card.title}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{card.description}</div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {cardsLayout === 'grid-4' && (
+                                      <div className="grid grid-cols-4 gap-4">
+                                        {section.content.cards.map(card => (
+                                          <div key={card.id} className="border rounded-lg p-4 bg-white dark:bg-gray-800">
+                                            <img src={card.image} alt={card.title} className="w-full h-32 object-cover rounded mb-2" />
+                                            <div className="font-bold mb-1">{card.title}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{card.description}</div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    {cardsLayout === 'carousel' && (
+                                      <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
+                                        {section.content.cards.map(card => (
+                                          <div key={card.id} className="min-w-[220px] max-w-xs border rounded-lg p-4 bg-white dark:bg-gray-800">
+                                            <img src={card.image} alt={card.title} className="w-full h-32 object-cover rounded mb-2" />
+                                            <div className="font-bold mb-1">{card.title}</div>
+                                            <div className="text-sm text-gray-500 dark:text-gray-400">{card.description}</div>
+                                          </div>
+                                        ))}
                                       </div>
                                     )}
                                   </div>
-                                </div>
-                              )}
-
-                              {section.type === 'cards' && section.content.cards && (
-                                <Droppable droppableId={section.id} type="card">
-                                  {(provided) => (
-                                    <div 
-                                      {...provided.droppableProps}
-                                      ref={provided.innerRef}
-                                      className="mt-4 space-y-2"
-                                    >
-                                      <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                        Картууд ({section.content.cards.length})
-                                      </div>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        {section.content.cards.map((card, cardIndex) => (
-                                          <Draggable
-                                            key={card.id}
-                                            draggableId={card.id}
-                                            index={cardIndex}
-                                          >
-                                            {(provided, snapshot) => (
-                                              <div 
-                                                ref={provided.innerRef}
-                                                {...provided.draggableProps}
-                                                className={`border rounded-lg overflow-hidden transition-all duration-200 ${
-                                                  editingCardId === card.id ? 'shadow-lg bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'
-                                                } ${snapshot.isDragging ? 'shadow-xl' : ''}`}
-                                              >
-                                                <div className="flex items-center justify-between p-2 border-b">
-                                                  <div className="flex items-center gap-2">
-                                                    <div {...provided.dragHandleProps} className="cursor-grab">
-                                                      <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-                                                      </svg>
-                                                    </div>
-                                                    <span className="text-sm font-medium">Карт {cardIndex + 1}</span>
-                                                  </div>
-                                                  <div className="flex gap-2">
-                                                    <button
-                                                      onClick={() => setEditingCardId(editingCardId === card.id ? null : card.id)}
-                                                      className="text-blue-500 hover:text-blue-700"
-                                                    >
-                                                      {editingCardId === card.id ? '✓' : '✎'}
-                                                    </button>
-                                                    <button
-                                                      onClick={() => handleDeleteCard(section.id, card.id)}
-                                                      className="text-red-500 hover:text-red-700"
-                                                    >
-                                                      ×
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                                {editingCardId === card.id ? (
-                                                  <div className="p-2 space-y-2">
-                                                    <input
-                                                      value={card.title}
-                                                      onChange={(e) => handleUpdateCard(section.id, card.id, { title: e.target.value })}
-                                                      placeholder="Гарчиг"
-                                                      className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:border-blue-500"
-                                                    />
-                                                    <textarea
-                                                      value={card.description}
-                                                      onChange={(e) => handleUpdateCard(section.id, card.id, { description: e.target.value })}
-                                                      placeholder="Тайлбар"
-                                                      rows={3}
-                                                      className="w-full px-2 py-1 text-sm border rounded focus:outline-none focus:border-blue-500"
-                                                    />
-                                                  </div>
-                                                ) : (
-                                                  <div className="p-2">
-                                                    <div className="text-sm font-medium truncate">{card.title}</div>
-                                                    <div className="text-xs text-gray-500 truncate">{card.description}</div>
-                                                  </div>
-                                                )}
-                                              </div>
-                                            )}
-                                          </Draggable>
-                                        ))}
-                                        {provided.placeholder}
-                                      </div>
-                                    </div>
-                                  )}
-                                </Droppable>
-                              )}
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </Draggable>
+                          )}
+                        </div>
+                      </div>
                     ))}
                     {provided.placeholder}
                   </div>

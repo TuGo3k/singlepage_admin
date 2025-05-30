@@ -31,13 +31,39 @@ const ViewportToggle = ({ viewMode, setViewMode }) => (
 const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sections, isMobile }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const logoInputRef = useRef();
+  const { updateMedia } = usePreviewStore();
 
-  const navigationItems = [
-    { id: 'hero', label: 'Нүүр' },
-    { id: 'about', label: 'Бидний тухай' },
-    { id: 'services', label: 'Үйлчилгээ' },
-    { id: 'contact', label: 'Холбоо барих' }
-  ];
+  // Лого upload хийхэд previewStore-д хадгална
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      updateMedia({ ...media, logo: url });
+    }
+  };
+
+  // Hero section-аас ангилал, дэд ангилал авах (хамгийн уян хатан)
+  const heroSection = sections.find(s => s.type === 'hero');
+  let categories = [];
+  if (heroSection) {
+    if (Array.isArray(heroSection.categories) && heroSection.categories.length > 0) {
+      categories = heroSection.categories;
+    } else if (heroSection.content && Array.isArray(heroSection.content.categories) && heroSection.content.categories.length > 0) {
+      categories = heroSection.content.categories;
+    }
+    // subCategories property байхгүй бол хоосон массив болгоно
+    categories = categories.map(cat => ({
+      ...cat,
+      subCategories: Array.isArray(cat.subCategories) ? cat.subCategories : []
+    }));
+  }
+  // Navigation items-д зөвхөн хэрэглэгчийн ангилал, дэд ангилал нэмэх
+  const navigationItems = categories.map(cat => ({
+    id: `cat-${cat.id}`,
+    label: cat.name,
+    subCategories: cat.subCategories
+  }));
 
   return (
     <div 
@@ -51,59 +77,74 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
     >
       <div className={`${isMobile ? 'px-4' : 'px-6'} py-3`}>
         <div className="flex items-center justify-between">
-          {/* Logo */}
+          {/* Logo upload + preview */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer relative group" onClick={() => logoInputRef.current.click()}>
               <img 
                 src={media.logo} 
                 alt="Logo" 
-                className="w-8 h-8 object-contain"
+                className="w-10 h-10 object-contain rounded-lg"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.nextSibling.style.display = 'block';
                 }}
               />
               <svg 
-                className="w-6 h-6 text-white hidden" 
+                className="w-8 h-8 text-white absolute inset-0 m-auto opacity-0 group-hover:opacity-80 transition-opacity pointer-events-none" 
                 fill="none" 
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
+              <input
+                type="file"
+                accept="image/*"
+                ref={logoInputRef}
+                onChange={handleLogoUpload}
+                className="hidden"
+              />
             </div>
-            {!isMobile && (
-              <div>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white">
-                  Компанийн нэр
-                </h1>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Таны бизнесийн түнш
-                </p>
-              </div>
-            )}
           </div>
 
           {/* Desktop Navigation */}
           {!isMobile && (
             <nav className="flex items-center gap-8">
               {navigationItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentSection(item.id)}
-                  className={`relative px-3 py-2 text-sm font-medium transition-all duration-200 ${
-                    currentSection === item.id
-                      ? 'text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
-                  }`}
-                >
-                  {item.label}
-                  {currentSection === item.id && (
-                    <div 
-                      className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
-                    />
+                <div key={item.id} className="relative group">
+                  <button
+                    onClick={() => setCurrentSection(item.id)}
+                    className={`relative px-3 py-2 text-sm font-medium transition-all duration-200 ${
+                      currentSection === item.id
+                        ? 'text-blue-600 dark:text-blue-400'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
+                    }`}
+                  >
+                    {item.label}
+                    {currentSection === item.id && (
+                      <div 
+                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
+                      />
+                    )}
+                  </button>
+                  {/* Дэд ангилал байгаа бол dropdown */}
+                  {item.subCategories && item.subCategories.length > 0 && (
+                    <div className="absolute left-0 top-full mt-2 min-w-[120px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 hidden group-hover:block">
+                      <ul className="py-2">
+                        {item.subCategories.map(sub => (
+                          <li key={sub.id}>
+                            <button
+                              onClick={() => setCurrentSection(`subcat-${sub.id}`)}
+                              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                            >
+                              {sub.name}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
-                </button>
+                </div>
               ))}
             </nav>
           )}
@@ -117,15 +158,6 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
               </svg>
-            </button>
-          )}
-
-          {/* CTA Button */}
-          {!isMobile && (
-            <button 
-              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
-            >
-              Холбогдох
             </button>
           )}
         </div>
@@ -150,9 +182,6 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
                   {item.label}
                 </button>
               ))}
-              <button className="mt-4 px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg font-medium">
-                Холбогдох
-              </button>
             </nav>
           </div>
         )}

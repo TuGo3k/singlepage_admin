@@ -317,12 +317,11 @@ export default function TemplatesPage() {
     }
   }, [templateData.sections, reorderSections, handleUpdateCards]);
 
-  const handleImageUpload = useCallback((sectionId, event) => {
+  const handleImageUpload = useCallback((sectionId, event, usageType = 'section') => {
     const file = event.target.files[0];
     if (file) {
       const fileUrl = URL.createObjectURL(file);
       const section = templateData.sections.find(s => s.id === sectionId);
-      
       if (section) {
         // Add to media library
         const newMediaFile = {
@@ -332,15 +331,12 @@ export default function TemplatesPage() {
           type: file.type,
           uploadDate: new Date().toISOString().split('T')[0],
           url: fileUrl,
-          location: 'sections'
+          usedIn: usageType === 'section' ? sectionId : usageType
         };
-
-        // Update media store
         updateMedia({
           ...mediaData,
-          sections: [...(mediaData.sections || []), newMediaFile]
+          library: [...(mediaData.library || []), newMediaFile]
         });
-
         // Update section content
         handleUpdateSection(sectionId, {
           content: {
@@ -479,11 +475,21 @@ export default function TemplatesPage() {
                                         type="file"
                                         accept="image/*"
                                         ref={logoInputRef}
-                                        onChange={(e) => {
+                                        onChange={e => {
                                           const file = e.target.files[0];
                                           if (file) {
                                             const url = URL.createObjectURL(file);
-                                            updateMedia({ ...mediaData, logo: url });
+                                            updateMedia({
+                                              ...mediaData,
+                                              logo: url,
+                                              library: [...(mediaData.library || []), {
+                                                id: Date.now(),
+                                                url,
+                                                name: file.name,
+                                                usedIn: 'logo',
+                                                uploadDate: new Date().toISOString()
+                                              }]
+                                            });
                                           }
                                         }}
                                         className="hidden"

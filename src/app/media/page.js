@@ -7,12 +7,12 @@ export default function MediaPage() {
   const updateMedia = usePreviewStore((state) => state.updateMedia);
   const mediaData = usePreviewStore((state) => state.siteData.media);
   
-  const [files, setFiles] = useState([
-    { id: 1, name: 'hero-image.jpg', size: '2.3 MB', type: 'image', url: '/placeholder.jpg', uploadDate: '2024-03-15' },
-    { id: 2, name: 'logo.png', size: '125 KB', type: 'image', url: '/logo.png', uploadDate: '2024-03-14' },
-    { id: 3, name: 'banner-bg.jpg', size: '1.8 MB', type: 'image', url: '/banner-bg.jpg', uploadDate: '2024-03-13' },
-    { id: 4, name: 'product-demo.mp4', size: '15.2 MB', type: 'video', url: '/demo.mp4', uploadDate: '2024-03-12' },
-  ]);
+  const files = (mediaData.library || []).map((file, idx) => ({
+    ...file,
+    id: file.id || idx + 1,
+    type: file.type || (file.url?.match(/\.(jpg|jpeg|png|gif|webp)$/) ? 'image' : 'other'),
+    size: file.size || '',
+  }));
   
   const [selectedFile, setSelectedFile] = useState(null);
   const [viewMode, setViewMode] = useState('grid');

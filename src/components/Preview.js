@@ -39,7 +39,17 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
     const file = e.target.files[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      updateMedia({ ...media, logo: url });
+      updateMedia({
+        ...media,
+        logo: url,
+        library: [...(media.library || []), {
+          id: Date.now(),
+          url,
+          name: file.name,
+          usedIn: 'logo',
+          uploadDate: new Date().toISOString()
+        }]
+      });
     }
   };
 
@@ -578,6 +588,12 @@ export default function Preview() {
         return null;
     }
   };
+
+
+
+  
+
+
 
   const containerClasses = isMobile 
     ? "w-[375px] h-[812px] mx-auto rounded-[2.5rem] border-8 border-gray-800 bg-gray-800 overflow-hidden shadow-2xl phone-frame" 

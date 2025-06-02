@@ -537,23 +537,6 @@ export default function TemplatesPage() {
                                 </div>
                               </div>
                               <div className="space-y-4">
-                                <div className="flex gap-2">
-                                  {sectionTypes[section.type].layouts.map(layout => (
-                                    <button
-                                      key={layout.id}
-                                      onClick={() => handleUpdateSection(section.id, { layout: layout.id })}
-                                      className={`px-2 py-1 text-xs rounded-md flex items-center gap-1 transition-colors
-                                        ${section.layout === layout.id 
-                                          ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200' 
-                                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300'
-                                        }`}
-                                    >
-                                      <span className="text-base leading-none">{layout.icon}</span>
-                                      <span>{layout.name}</span>
-                                    </button>
-                                  ))}
-                                </div>
-
                                 {section.type === 'hero' && (
                                   <div className="mt-4 space-y-3">
                                     {/* Лого upload input */}
@@ -912,7 +895,7 @@ export default function TemplatesPage() {
                                         <button
                                           key={subtype}
                                           onClick={() => handleUpdateSection(section.id, { content: { ...section.content, subtype } })}
-                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                          className={`px-3 py-1 rounded-md text-sm font-medium border  transition-colors ${
                                             (section.content.subtype || 'timeline') === subtype
                                               ? 'bg-blue-600 text-white border-blue-600'
                                               : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
@@ -928,13 +911,14 @@ export default function TemplatesPage() {
                                         <button
                                           key={layout.id}
                                           onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
-                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors flex items-center gap-2 ${
                                             section.content.layout === layout.id
                                               ? 'bg-blue-600 text-white border-blue-600'
                                               : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                                           }`}
                                         >
-                                          <span className="mr-1 align-middle">{layout.icon}</span>{layout.name}
+                                          <span className="align-middle flex-shrink-0">{layout.icon}</span>
+                                          <span className="align-middle">{layout.name}</span>
                                         </button>
                                       ))}
                                       {(section.content.subtype || 'timeline') === 'text' && [
@@ -945,14 +929,118 @@ export default function TemplatesPage() {
                                         <button
                                           key={layout.id}
                                           onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
-                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors flex items-center gap-2 ${
                                             section.content.layout === layout.id
                                               ? 'bg-blue-600 text-white border-blue-600'
                                               : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                                           }`}
                                         >
-                                          <span className="mr-1 align-middle">{layout.icon}</span>{layout.name}
+                                          <span className="align-middle flex-shrink-0">{layout.icon}</span>
+                                          <span className="align-middle">{layout.name}</span>
                                         </button>
+                                      ))}
+                                    </div>
+                                    {/* Timeline items: image left, inputs right, controls below */}
+                                    <div className="space-y-6">
+                                      {section.content.items.map((item, idx) => (
+                                        <div key={item.id} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                                          {/* Top row: photo left, inputs right */}
+                                          <div className="flex items-start gap-4">
+                                            {/* Image upload/preview */}
+                                            <div className="flex flex-col items-center gap-2">
+                                              <div className="w-40 aspect-[16/9] bg-gray-100 border rounded flex items-center justify-center overflow-hidden">
+                                                <img src={item.image} alt="item" className="w-full h-full object-cover" />
+                                              </div>
+                                              <input
+                                                type="file"
+                                                accept="image/*"
+                                                style={{ display: 'none' }}
+                                                id={`history-item-image-${section.id}-${item.id}`}
+                                                onChange={e => {
+                                                  const file = e.target.files[0];
+                                                  if (file) {
+                                                    const url = URL.createObjectURL(file);
+                                                    const newItems = section.content.items.map(it => it.id === item.id ? { ...it, image: url } : it);
+                                                    handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                  }
+                                                }}
+                                              />
+                                              <label htmlFor={`history-item-image-${section.id}-${item.id}`} className="px-2 py-1 bg-blue-500 text-white rounded text-xs cursor-pointer hover:bg-blue-600">Зураг оруулах</label>
+                                            </div>
+                                            {/* Inputs: title and year stacked */}
+                                            <div className="flex-1 flex flex-col gap-2">
+                                              <input
+                                                type="text"
+                                                value={item.title}
+                                                onChange={e => {
+                                                  const newItems = section.content.items.map(it => it.id === item.id ? { ...it, title: e.target.value } : it);
+                                                  handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                }}
+                                                placeholder="Гарчиг"
+                                                className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                              />
+                                              <input
+                                                type="text"
+                                                value={item.year}
+                                                onChange={e => {
+                                                  const newItems = section.content.items.map(it => it.id === item.id ? { ...it, year: e.target.value } : it);
+                                                  handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                }}
+                                                placeholder="Он / Жил"
+                                                className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                              />
+                                            </div>
+                                          </div>
+                                          {/* Description textarea below */}
+                                          <div className="mt-4">
+                                            <textarea
+                                              value={item.description || ''}
+                                              onChange={e => {
+                                                const newItems = section.content.items.map(it => it.id === item.id ? { ...it, description: e.target.value } : it);
+                                                handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                              }}
+                                              placeholder="Тайлбар"
+                                              className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-none"
+                                              rows={3}
+                                            />
+                                          </div>
+                                          {/* Controls: up/down/delete */}
+                                          <div className="flex gap-2 mt-2">
+                                            <button
+                                              disabled={idx === 0}
+                                              onClick={() => {
+                                                if (idx === 0) return;
+                                                const items = [...section.content.items];
+                                                [items[idx - 1], items[idx]] = [items[idx], items[idx - 1]];
+                                                handleUpdateSection(section.id, { content: { ...section.content, items } });
+                                              }}
+                                              className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                                            >
+                                              ↑
+                                            </button>
+                                            <button
+                                              disabled={idx === section.content.items.length - 1}
+                                              onClick={() => {
+                                                if (idx === section.content.items.length - 1) return;
+                                                const items = [...section.content.items];
+                                                [items[idx + 1], items[idx]] = [items[idx], items[idx + 1]];
+                                                handleUpdateSection(section.id, { content: { ...section.content, items } });
+                                              }}
+                                              className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === section.content.items.length - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                                            >
+                                              ↓
+                                            </button>
+                                            <button
+                                              onClick={() => {
+                                                const items = section.content.items.filter(it => it.id !== item.id);
+                                                handleUpdateSection(section.id, { content: { ...section.content, items } });
+                                              }}
+                                              className="px-2 py-1 rounded bg-red-500 text-white text-xs hover:bg-red-600"
+                                            >
+                                              Устгах
+                                            </button>
+                                          </div>
+                                        </div>
                                       ))}
                                     </div>
                                   </>

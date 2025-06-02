@@ -304,7 +304,7 @@ const BannerSection = ({ content, layout, style, isMobile }) => {
   return (
     <div 
       className={`relative ${isFull ? 'w-full' : 'container mx-auto'} ${isMobile ? 'h-[200px]' : 'h-[250px]'} bg-cover bg-center`}
-      style={{ backgroundImage: `url(${content.background})` }}
+      style={{ backgroundImage: `url(${content.image || content.background})` }}
     >
       <div className={`absolute inset-0 flex items-center justify-center text-center
         ${hasOverlay ? 'bg-black bg-opacity-50 text-white' : ''}`}
@@ -550,6 +550,161 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   );
 };
 
+const HistorySection = ({ content, style, isMobile }) => {
+  const selectedLayout = content.layout || 'timeline';
+
+  const renderTimeline = () => (
+    <div className="relative">
+      {/* Vertical line */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-blue-600 to-purple-600" />
+      {content.items.map((item, index) => (
+        <div key={item.id} className={`relative mb-12 ${index % 2 === 0 ? 'pr-1/2' : 'pl-1/2'}`}>
+          {/* Year badge */}
+          <div className={`absolute top-0 ${index % 2 === 0 ? 'right-1/2 mr-8' : 'left-1/2 ml-8'} transform -translate-y-1/2`}>
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+              {item.year}
+            </div>
+          </div>
+          {/* Content card */}
+          <div className={`${index % 2 === 0 ? 'mr-8' : 'ml-8'} bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative h-48 md:h-full">
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-6">
+                <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>
+                  {item.title}
+                </h4>
+                <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderCards = () => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {content.items.map(item => (
+        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div className="relative h-48">
+            <img 
+              src={item.image} 
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+              {item.year}
+            </div>
+          </div>
+          <div className="p-6">
+            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>
+              {item.title}
+            </h4>
+            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>
+              {item.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderStory = () => (
+    <div className="space-y-12">
+      {content.items.map((item, index) => (
+        <div key={item.id} className="flex flex-col md:flex-row gap-8 items-center">
+          <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
+            <div className="relative">
+              <img 
+                src={item.image} 
+                alt={item.title}
+                className="w-full h-64 object-cover rounded-lg shadow-lg"
+              />
+              <div className="absolute -top-4 -left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg text-lg font-bold">
+                {item.year}
+              </div>
+            </div>
+          </div>
+          <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
+            <h4 className="text-2xl font-bold mb-4" style={{ fontFamily: style.headerFont }}>
+              {item.title}
+            </h4>
+            <p className="text-gray-600 dark:text-gray-400 text-lg" style={{ fontFamily: style.bodyFont }}>
+              {item.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderGrid = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      {content.items.map(item => (
+        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div className="relative">
+            <img 
+              src={item.image} 
+              alt={item.title}
+              className="w-full h-64 object-cover"
+            />
+            <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+              {item.year}
+            </div>
+          </div>
+          <div className="p-6">
+            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>
+              {item.title}
+            </h4>
+            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>
+              {item.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (selectedLayout) {
+      case 'timeline':
+        return renderTimeline();
+      case 'cards':
+        return renderCards();
+      case 'story':
+        return renderStory();
+      case 'grid':
+        return renderGrid();
+      default:
+        return renderTimeline();
+    }
+  };
+
+  return (
+    <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
+      <div className="text-center mb-6">
+        <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style.headerFont }}>
+          {content.title}
+        </h3>
+        {content.subtitle && (
+          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style.bodyFont }}>
+            {content.subtitle}
+          </p>
+        )}
+      </div>
+      {renderContent()}
+    </div>
+  );
+};
+
 export default function Preview() {
   const siteData = usePreviewStore((state) => state.siteData);
   const { header, style, media, contact, template } = siteData;
@@ -584,16 +739,12 @@ export default function Preview() {
         return <BannerSection content={section.content} layout={section.layout} style={style} isMobile={isMobile} />;
       case 'cards':
         return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} />;
+      case 'history':
+        return <HistorySection content={section.content} style={style} isMobile={isMobile} />;
       default:
         return null;
     }
   };
-
-
-
-  
-
-
 
   const containerClasses = isMobile 
     ? "w-[375px] h-[812px] mx-auto rounded-[2.5rem] border-8 border-gray-800 bg-gray-800 overflow-hidden shadow-2xl phone-frame" 

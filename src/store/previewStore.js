@@ -49,7 +49,7 @@ const initialData = {
         content: {
           title: 'Баннер',
           subtitle: 'Дэд гарчиг',
-          background: '/banner-bg.jpg'
+          image: '/banner-bg.jpg'
         }
       },
       {

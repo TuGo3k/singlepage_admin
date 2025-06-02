@@ -62,6 +62,64 @@ const sectionTypes = {
       { id: 'grid', name: 'Торон', icon: '▦', preview: 'Торон байрлал' },
       { id: 'alternating', name: 'Ээлжилсэн', icon: '⇄', preview: 'Ээлжилсэн байрлал' },
     ]
+  },
+  history: {
+    name: 'Түүх',
+    description: 'Компаний түүх, хөгжлийн замнал',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+    layouts: [
+      {
+        id: 'timeline',
+        name: 'Цагийн хэлхээ',
+        icon: (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <circle cx="12" cy="12" r="10" strokeWidth="2" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2" />
+          </svg>
+        ),
+        preview: 'Цагийн дарааллаар'
+      },
+      {
+        id: 'cards',
+        name: 'Картууд',
+        icon: (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <rect x="3" y="7" width="7" height="10" rx="2" strokeWidth="2" />
+            <rect x="14" y="7" width="7" height="10" rx="2" strokeWidth="2" />
+          </svg>
+        ),
+        preview: 'Карт хэлбэрээр'
+      },
+      {
+        id: 'story',
+        name: 'Түүх',
+        icon: (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4.5A2.5 2.5 0 016.5 7H20" />
+            <rect x="4" y="7" width="16" height="10" rx="2" strokeWidth="2" />
+          </svg>
+        ),
+        preview: 'Түүх хэлбэрээр'
+      },
+      {
+        id: 'grid',
+        name: 'Торон',
+        icon: (
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <rect x="3" y="3" width="7" height="7" rx="1" strokeWidth="2" />
+            <rect x="14" y="3" width="7" height="7" rx="1" strokeWidth="2" />
+            <rect x="3" y="14" width="7" height="7" rx="1" strokeWidth="2" />
+            <rect x="14" y="14" width="7" height="7" rx="1" strokeWidth="2" />
+          </svg>
+        ),
+        preview: 'Торон байрлал'
+      },
+    ]
   }
 };
 
@@ -279,6 +337,24 @@ export default function TemplatesPage() {
     } else if (type === 'hero') {
       defaultContent.buttonText = 'Дэлгэрэнгүй';
       defaultContent.buttonLink = '#';
+    } else if (type === 'history') {
+      defaultContent.layout = 'timeline';
+      defaultContent.items = [
+        {
+          id: 'history1',
+          year: '2020',
+          title: 'Компани байгуулагдсан',
+          description: 'Манай компани анх байгуулагдсан түүх',
+          image: '/history1.jpg'
+        },
+        {
+          id: 'history2',
+          year: '2021',
+          title: 'Шинэ үйлчилгээ нэвтрүүлсэн',
+          description: 'Хэрэглэгчдэд шинэ үйлчилгээг санал болгосон',
+          image: '/history2.jpg'
+        }
+      ];
     }
 
     const newSection = {
@@ -432,6 +508,17 @@ export default function TemplatesPage() {
                                         </button>
                                       </>
                                     )}
+                                    {section.type === 'banner' && (
+                                      <button
+                                        onClick={() => {
+                                          setEditingSectionId(section.id);
+                                          fileInputRef.current?.click();
+                                        }}
+                                        className="text-blue-500 hover:text-blue-700 text-sm"
+                                      >
+                                        Баннер зураг оруулах
+                                      </button>
+                                    )}
                                     {section.type === 'cards' && (
                                       <button
                                         onClick={() => handleAddCard(section.id)}
@@ -495,7 +582,8 @@ export default function TemplatesPage() {
                                         className="hidden"
                                         id="header-logo-upload"
                                       />
-                                      <label htmlFor="header-logo-upload" className="cursor-pointer flex items-center gap-2 group select-none">
+                                      
+                                      <label htmlFor="header-logo-upload" className="flex items-center gap-3 cursor-pointer group">
                                         {mediaData.logo ? (
                                           <img src={mediaData.logo} alt="logo" className="w-10 h-10 object-contain rounded-lg border border-gray-300 dark:border-gray-600 group-hover:border-blue-500 transition" />
                                         ) : (
@@ -672,6 +760,35 @@ export default function TemplatesPage() {
                                   </div>
                                 )}
 
+                                {section.type === 'banner' && (
+                                  <div className="mt-4 space-y-3">
+                                    <div className="relative group">
+                                      {section.content?.image ? (
+                                        <img 
+                                          src={section.content.image} 
+                                          alt="Banner" 
+                                          className="w-full h-32 object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+                                        />
+                                      ) : (
+                                        <div 
+                                          onClick={() => {
+                                            setEditingSectionId(section.id);
+                                            fileInputRef.current?.click();
+                                          }}
+                                          className="w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg flex items-center justify-center cursor-pointer hover:border-blue-500 transition-colors"
+                                        >
+                                          <div className="text-center">
+                                            <svg className="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">Баннер зураг оруулах</p>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
+
                                 {section.type === 'cards' && section.layout === 'carousel' && (
                                   <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3">
                                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Гүйдэг тохиргоо</h4>
@@ -784,6 +901,24 @@ export default function TemplatesPage() {
                                         ))}
                                       </div>
                                     )}
+                                  </div>
+                                )}
+
+                                {section.type === 'history' && (
+                                  <div className="flex gap-2 mb-4 flex-nowrap overflow-x-auto">
+                                    {sectionTypes.history.layouts.map(layout => (
+                                      <button
+                                        key={layout.id}
+                                        onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
+                                        className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                          section.content.layout === layout.id
+                                            ? 'bg-blue-600 text-white border-blue-600'
+                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                        }`}
+                                      >
+                                        <span className="mr-1 align-middle">{layout.icon}</span>{layout.name}
+                                      </button>
+                                    ))}
                                   </div>
                                 )}
                               </div>

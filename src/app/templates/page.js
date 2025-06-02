@@ -905,21 +905,57 @@ export default function TemplatesPage() {
                                 )}
 
                                 {section.type === 'history' && (
-                                  <div className="flex gap-2 mb-4 flex-nowrap overflow-x-auto">
-                                    {sectionTypes.history.layouts.map(layout => (
-                                      <button
-                                        key={layout.id}
-                                        onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
-                                        className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
-                                          section.content.layout === layout.id
-                                            ? 'bg-blue-600 text-white border-blue-600'
-                                            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                        }`}
-                                      >
-                                        <span className="mr-1 align-middle">{layout.icon}</span>{layout.name}
-                                      </button>
-                                    ))}
-                                  </div>
+                                  <>
+                                    {/* Subtype Tabs */}
+                                    <div className="flex gap-2 mb-4">
+                                      {['timeline', 'text'].map(subtype => (
+                                        <button
+                                          key={subtype}
+                                          onClick={() => handleUpdateSection(section.id, { content: { ...section.content, subtype } })}
+                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                            (section.content.subtype || 'timeline') === subtype
+                                              ? 'bg-blue-600 text-white border-blue-600'
+                                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                          }`}
+                                        >
+                                          {subtype === 'timeline' ? 'Тимлайн' : 'Текст'}
+                                        </button>
+                                      ))}
+                                    </div>
+                                    {/* Layouts for selected subtype */}
+                                    <div className="flex gap-2 mb-4 flex-nowrap overflow-x-auto">
+                                      {(section.content.subtype || 'timeline') === 'timeline' && sectionTypes.history.layouts.map(layout => (
+                                        <button
+                                          key={layout.id}
+                                          onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
+                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                            section.content.layout === layout.id
+                                              ? 'bg-blue-600 text-white border-blue-600'
+                                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                          }`}
+                                        >
+                                          <span className="mr-1 align-middle">{layout.icon}</span>{layout.name}
+                                        </button>
+                                      ))}
+                                      {(section.content.subtype || 'timeline') === 'text' && [
+                                        { id: 'text-left', name: 'Зүүнд', icon: <span>⬅️</span> },
+                                        { id: 'text-center', name: 'Төвд', icon: <span>⬆️</span> },
+                                        { id: 'text-right', name: 'Баруунд', icon: <span>➡️</span> },
+                                      ].map(layout => (
+                                        <button
+                                          key={layout.id}
+                                          onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
+                                          className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors ${
+                                            section.content.layout === layout.id
+                                              ? 'bg-blue-600 text-white border-blue-600'
+                                              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                          }`}
+                                        >
+                                          <span className="mr-1 align-middle">{layout.icon}</span>{layout.name}
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </>
                                 )}
                               </div>
                             </div>

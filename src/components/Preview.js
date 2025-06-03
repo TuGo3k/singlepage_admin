@@ -230,9 +230,7 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
         <div className={`absolute inset-0 flex items-center ${isMobile ? 'px-4' : 'px-8'}`}>
-          <div className={`max-w-2xl text-white transform transition-all duration-1000 ${
-            isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
-          }`}>
+          <div className="max-w-2xl text-white text-center mx-auto bg-black/80 backdrop-blur-md rounded-lg p-6 shadow-lg opacity-100 translate-y-0">
             <h1 className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold mb-6 leading-tight`} style={{ fontFamily: style.headerFont }}>
               {content.title}
             </h1>
@@ -753,7 +751,7 @@ export default function Preview() {
   const renderSection = (section) => {
     switch (section.type) {
       case 'hero':
-        return <HeroSection content={section.content} layout={section.layout} style={style} isMobile={isMobile} />;
+        return <HeroSection content={section.content} layout={section.content.layout} style={style} isMobile={isMobile} />;
       case 'banner':
         return <BannerSection content={section.content} layout={section.layout} style={style} isMobile={isMobile} />;
       case 'cards':

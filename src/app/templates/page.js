@@ -740,6 +740,37 @@ export default function TemplatesPage() {
                                         </div>
                                       )}
                                     </div>
+                                    {/* Байршил сонголт */}
+                                    <div className="mb-2">
+                                      <span className="text-sm font-medium mr-3">Байршил:</span>
+                                      <label className="inline-flex items-center mr-4 text-xs">
+                                        <input
+                                          type="radio"
+                                          name={`hero-layout-${section.id}`}
+                                          checked={(section.content.layout || 'image-right') === 'image-right'}
+                                          onChange={() => handleUpdateSection(section.id, { content: { ...section.content, layout: 'image-right' } })}
+                                        />
+                                        <span className="ml-1">Зураг баруун</span>
+                                      </label>
+                                      <label className="inline-flex items-center mr-4 text-xs">
+                                        <input
+                                          type="radio"
+                                          name={`hero-layout-${section.id}`}
+                                          checked={section.content.layout === 'image-left'}
+                                          onChange={() => handleUpdateSection(section.id, { content: { ...section.content, layout: 'image-left' } })}
+                                        />
+                                        <span className="ml-1">Зураг зүүн</span>
+                                      </label>
+                                      <label className="inline-flex items-center text-xs">
+                                        <input
+                                          type="radio"
+                                          name={`hero-layout-${section.id}`}
+                                          checked={section.content.layout === 'image-background'}
+                                          onChange={() => handleUpdateSection(section.id, { content: { ...section.content, layout: 'image-background' } })}
+                                        />
+                                        <span className="ml-1">Зураг ард</span>
+                                      </label>
+                                    </div>
                                   </div>
                                 )}
 

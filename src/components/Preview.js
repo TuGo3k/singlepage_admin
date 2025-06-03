@@ -676,15 +676,12 @@ const HistorySection = ({ content, style, isMobile }) => {
 
   // New: Render for text subtype
   const renderText = () => {
-    let align = 'text-left';
-    if (selectedLayout === 'text-center') align = 'text-center';
-    if (selectedLayout === 'text-right') align = 'text-right';
     return (
-      <div className={`max-w-2xl mx-auto ${align}`}>
-        {content.items.map(item => (
+      <div className="max-w-2xl mx-auto">
+        {content.texts?.map(item => (
           <div key={item.id} className="mb-8">
-            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>{item.title}</h4>
-            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>{item.description}</p>
+            <h4 className={`text-xl font-bold mb-2 text-${item.textAlignment || 'left'}`} style={{ fontFamily: style.headerFont }}>{item.title}</h4>
+            <p className={`text-gray-600 dark:text-gray-400 whitespace-normal break-words text-${item.textAlignment || 'left'}`} style={{ fontFamily: style.bodyFont }}>{item.description}</p>
             {item.year && <div className="text-xs text-gray-400 mt-1">{item.year}</div>}
           </div>
         ))}

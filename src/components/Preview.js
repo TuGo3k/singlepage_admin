@@ -349,10 +349,10 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   // Calculate card width based on cardsToShow
   const getCardWidth = () => {
     const cardsToShow = settings?.cardsToShow || 3;
-    if (!containerWidth) return 280; // Default width
+    if (!containerWidth) return 220;
 
-    const gap = 24; // 1.5rem gap between cards
-    const padding = 48; // 1.5rem padding on each side
+    const gap = 16;
+    const padding = 32;
     const availableWidth = containerWidth - padding - (gap * (cardsToShow - 1));
     return Math.floor(availableWidth / cardsToShow);
   };
@@ -384,36 +384,8 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
 
   const handleCardClick = (cardId, e) => {
     if (isDragging) return;
-    
     setActiveCardId(activeCardId === cardId ? null : cardId);
   };
-
-  const CardContent = ({ card, isActive }) => (
-    <div 
-      className={`p-4 transition-all duration-300 ease-in-out ${
-        isActive ? 'h-auto' : 'h-16 overflow-hidden'
-      }`}
-    >
-      <h4 
-        className={`font-bold mb-2 transition-all duration-300 ${
-          isActive ? 'text-base' : 'text-sm line-clamp-1'
-        }`} 
-        style={{ fontFamily: style.headerFont }}
-      >
-        {card.title}
-      </h4>
-      <p 
-        className={`transition-all duration-300 ${
-          isActive 
-            ? 'text-sm opacity-100' 
-            : 'text-xs opacity-60 line-clamp-1'
-        }`}
-        style={{ color: style.secondaryColor, fontFamily: style.bodyFont }}
-      >
-        {card.description}
-      </p>
-    </div>
-  );
 
   useEffect(() => {
     if (!isCarousel) return;
@@ -436,13 +408,13 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
 
   if (isCarousel) {
     return (
-      <div className={`${isMobile ? 'px-4 py-6' : 'px-6 py-8'}`} ref={containerRef}>
-        <h3 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-6 text-center`} style={{ fontFamily: style.headerFont }}>
+      <div className={`${isMobile ? 'px-3 py-4' : 'px-4 py-6'}`} ref={containerRef}>
+        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style.headerFont }}>
           {content.title}
         </h3>
         <div 
           ref={carouselRef}
-          className="flex gap-4 overflow-x-auto pb-4 cursor-grab select-none scrollbar-hide"
+          className="flex gap-3 overflow-x-auto pb-3 cursor-grab select-none scrollbar-hide"
           style={{ 
             scrollBehavior: 'smooth', 
             WebkitOverflowScrolling: 'touch',
@@ -458,7 +430,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
               }`}
               style={{ 
                 borderColor: style.primaryColor,
-                width: isMobile ? '280px' : `${getCardWidth()}px`,
+                width: isMobile ? '220px' : `${getCardWidth()}px`,
                 scrollSnapAlign: 'start'
               }}
             >
@@ -470,19 +442,19 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                   draggable="false"
                 />
                 <div 
-                  className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
+                  className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
                     activeCardId === card.id ? 'opacity-0' : 'opacity-100'
                   }`}
                 />
               </div>
               <div 
-                className={`p-4 transition-all duration-300 ease-in-out ${
-                  activeCardId === card.id ? 'h-auto' : isMobile ? 'h-[4rem] overflow-hidden' : 'h-[4.5rem] overflow-hidden'
+                className={`p-3 transition-all duration-300 ease-in-out ${
+                  activeCardId === card.id ? 'h-auto' : isMobile ? 'h-[3.5rem] overflow-hidden' : 'h-[4rem] overflow-hidden'
                 }`}
               >
                 <h4 
-                  className={`font-bold mb-2 transition-all duration-300 ${
-                    activeCardId === card.id ? 'text-base' : 'text-sm line-clamp-1'
+                  className={`font-bold mb-1 transition-all duration-300 ${
+                    activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
                   }`} 
                   style={{ fontFamily: style.headerFont }}
                 >
@@ -491,7 +463,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                 <p 
                   className={`transition-all duration-300 ${
                     activeCardId === card.id 
-                      ? 'text-sm opacity-100' 
+                      ? 'text-xs opacity-100' 
                       : 'text-xs opacity-60 line-clamp-2'
                   }`}
                   style={{ color: style.secondaryColor, fontFamily: style.bodyFont }}
@@ -514,11 +486,11 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   };
 
   return (
-    <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
-      <h3 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-6 text-center`} style={{ fontFamily: style.headerFont }}>
+    <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
+      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style.headerFont }}>
         {content.title}
       </h3>
-      <div className={`grid ${getGridClass()} gap-6`}>
+      <div className={`grid ${getGridClass()} gap-4`}>
         {content.cards.map(card => (
           <div 
             key={card.id}
@@ -532,15 +504,38 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
               <img 
                 src={card.image} 
                 alt={card.title}
-                className={`w-full ${isMobile ? 'h-[180px]' : 'h-[200px]'} object-cover`}
+                className={`w-full ${isMobile ? 'h-[140px]' : 'h-[160px]'} object-cover`}
               />
               <div 
-                className={`absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
+                className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
                   activeCardId === card.id ? 'opacity-0' : 'opacity-100'
                 }`}
               />
             </div>
-            <CardContent card={card} isActive={activeCardId === card.id} />
+            <div 
+              className={`p-3 transition-all duration-300 ease-in-out ${
+                activeCardId === card.id ? 'h-auto' : 'h-[3.5rem] overflow-hidden'
+              }`}
+            >
+              <h4 
+                className={`font-bold mb-1 transition-all duration-300 ${
+                  activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
+                }`} 
+                style={{ fontFamily: style.headerFont }}
+              >
+                {card.title}
+              </h4>
+              <p 
+                className={`transition-all duration-300 ${
+                  activeCardId === card.id 
+                    ? 'text-xs opacity-100' 
+                    : 'text-xs opacity-60 line-clamp-2'
+                }`}
+                style={{ color: style.secondaryColor, fontFamily: style.bodyFont }}
+              >
+                {card.description}
+              </p>
+            </div>
           </div>
         ))}
       </div>

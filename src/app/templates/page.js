@@ -255,9 +255,88 @@ export default function TemplatesPage() {
     }
   }, [templateData.sections, handleUpdateSection]);
 
+  const handleUpdateCardLayout = useCallback((sectionId, layout, cardCount) => {
+    const section = templateData.sections.find(s => s.id === sectionId);
+    if (section) {
+      // Determine the number of cards needed based on layout and cardCount
+      let requiredCards = 0;
+      if ((layout === 'grid-3' || layout === 'grid-4') && cardCount) {
+        requiredCards = cardCount;
+      } else {
+        switch (layout) {
+          case 'grid-3':
+            requiredCards = 9;
+            break;
+          case 'grid-4':
+            requiredCards = 12;
+            break;
+          case 'carousel':
+            requiredCards = 10;
+            break;
+          default:
+            requiredCards = 9;
+        }
+      }
+
+      // Get current cards
+      const currentCards = section.content.cards || [];
+      
+      // Add or remove cards as needed
+      let updatedCards = [...currentCards];
+      
+      if (currentCards.length < requiredCards) {
+        // Add new cards
+        for (let i = currentCards.length; i < requiredCards; i++) {
+          updatedCards.push({
+            id: `card${Date.now()}-${i}`,
+            title: `Карт ${i + 1}`,
+            description: 'Тайлбар',
+            image: '/placeholder.jpg'
+          });
+        }
+      } else if (currentCards.length > requiredCards) {
+        // Remove excess cards
+        updatedCards = currentCards.slice(0, requiredCards);
+      }
+
+      // Update section with new layout and cards
+      handleUpdateSection(sectionId, {
+        layout,
+        content: {
+          ...section.content,
+          cards: updatedCards
+        }
+      });
+    }
+  }, [templateData.sections, handleUpdateSection]);
+
   const handleAddCard = useCallback((sectionId) => {
     const section = templateData.sections.find(s => s.id === sectionId);
     if (section && section.content.cards) {
+      const currentCardCount = section.content.cards.length;
+      let maxCards = 0;
+
+      // Set maximum cards based on layout
+      switch (section.layout) {
+        case 'grid-3':
+          maxCards = 9;
+          break;
+        case 'grid-4':
+          maxCards = 12;
+          break;
+        case 'carousel':
+          maxCards = 10;
+          break;
+        default:
+          maxCards = 9; // Default to grid-3 limit
+      }
+
+      // Check if we've reached the limit
+      if (currentCardCount >= maxCards) {
+        alert(`Та хамгийн ихдээ ${maxCards} карт нэмэх боломжтой.`);
+        return;
+      }
+
       const newCard = {
         id: `card${Date.now()}`,
         title: 'Шинэ карт',
@@ -535,6 +614,12 @@ export default function TemplatesPage() {
                                     </button>
                                   </div>
                                 </div>
+                                <button
+                                  onClick={() => handleUpdateSection(section.id, { content: { ...section.content } })}
+                                  className="px-4 py-2 rounded bg-green-600 text-white text-sm hover:bg-green-700 transition-colors"
+                                >
+                                  Хадгалах
+                                </button>
                               </div>
                               <div className="space-y-4">
                                 {section.type === 'hero' && (
@@ -803,118 +888,158 @@ export default function TemplatesPage() {
                                   </div>
                                 )}
 
-                                {section.type === 'cards' && section.layout === 'carousel' && (
-                                  <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3">
-                                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Гүйдэг тохиргоо</h4>
-                                    <div className="space-y-2">
-                                      <div>
-                                        <label className="text-sm text-gray-600 dark:text-gray-400">
-                                          Харагдах картын тоо
-                                        </label>
-                                        <select
-                                          value={(section.settings?.cardsToShow || 3).toString()}
-                                          onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                            cardsToShow: parseInt(e.target.value)
-                                          })}
-                                          className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
-                                        >
-                                          <option value="1">1 карт</option>
-                                          <option value="2">2 карт</option>
-                                          <option value="3">3 карт</option>
-                                          <option value="4">4 карт</option>
-                                        </select>
-                                      </div>
-                                      <div className="flex items-center gap-2">
-                                        <input
-                                          type="checkbox"
-                                          id={`autoplay-${section.id}`}
-                                          checked={section.settings?.autoplay ?? true}
-                                          onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                            autoplay: e.target.checked
-                                          })}
-                                          className="rounded border-gray-300 dark:border-gray-600"
-                                        />
-                                        <label 
-                                          htmlFor={`autoplay-${section.id}`}
-                                          className="text-sm text-gray-600 dark:text-gray-400"
-                                        >
-                                          Автоматаар гүйлгэх
-                                        </label>
-                                      </div>
-                                      {section.settings?.autoplay && (
-                                        <div>
-                                          <label className="text-sm text-gray-600 dark:text-gray-400">
-                                            Гүйх хурд (секунд)
-                                          </label>
-                                          <select
-                                            value={(section.settings?.interval || 5000) / 1000}
-                                            onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                              interval: parseInt(e.target.value) * 1000
-                                            })}
-                                            className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
-                                          >
-                                            <option value="3">3 секунд</option>
-                                            <option value="5">5 секунд</option>
-                                            <option value="7">7 секунд</option>
-                                            <option value="10">10 секунд</option>
-                                          </select>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </div>
-                                )}
-
                                 {section.type === 'cards' && (
                                   <div className="space-y-4">
+                                    {/* Save button */}
+                               
+
+                                    {/* Section title input */}
+                                    <div className="mb-4">
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                        Хэсгийн гарчиг
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={section.content.title || ''}
+                                        onChange={(e) => handleUpdateSection(section.id, {
+                                          content: {
+                                            ...section.content,
+                                            title: e.target.value
+                                          }
+                                        })}
+                                        placeholder="Хэсгийн гарчиг оруулах..."
+                                        className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                      />
+                                    </div>
+
                                     {/* Layout сонголт */}
                                     <div className="flex gap-2 mb-2">
                                       <button
-                                        onClick={() => setCardsLayout('grid-2')}
-                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${cardsLayout === 'grid-2' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                      >2 багана</button>
+                                        onClick={() => handleUpdateCardLayout(section.id, 'grid-3')}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${section.layout === 'grid-3' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                      >3 багана</button>
                                       <button
-                                        onClick={() => setCardsLayout('grid-4')}
-                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${cardsLayout === 'grid-4' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        onClick={() => handleUpdateCardLayout(section.id, 'grid-4')}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${section.layout === 'grid-4' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
                                       >4 багана</button>
                                       <button
-                                        onClick={() => setCardsLayout('carousel')}
-                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${cardsLayout === 'carousel' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                      >Swipe/Carousel</button>
+                                        onClick={() => handleUpdateCardLayout(section.id, 'carousel')}
+                                        className={`px-3 py-1 rounded-md text-xs font-medium border ${section.layout === 'carousel' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                      >Гүйдэг</button>
                                     </div>
-                                    {/* Картуудыг харуулах хэсэг */}
-                                    {cardsLayout === 'grid-2' && (
-                                      <div className="grid grid-cols-2 gap-4">
-                                        {section.content.cards.map(card => (
-                                          <div key={card.id} className="border rounded-lg p-4 bg-white dark:bg-gray-800">
-                                            <img src={card.image} alt={card.title} className="w-full h-32 object-cover rounded mb-2" />
-                                            <div className="font-bold mb-1">{card.title}</div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{card.description}</div>
-                                          </div>
-                                        ))}
+
+                                    {/* Card count selection for 3-column layout */}
+                                    {section.layout === 'grid-3' && (
+                                      <div className="flex gap-2 mb-2">
+                                        <button
+                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 3)}
+                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 3 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        >3 карт</button>
+                                        <button
+                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 6)}
+                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 6 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        >6 карт</button>
+                                        <button
+                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 9)}
+                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 9 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        >9 карт</button>
                                       </div>
                                     )}
-                                    {cardsLayout === 'grid-4' && (
-                                      <div className="grid grid-cols-4 gap-4">
-                                        {section.content.cards.map(card => (
-                                          <div key={card.id} className="border rounded-lg p-4 bg-white dark:bg-gray-800">
-                                            <img src={card.image} alt={card.title} className="w-full h-32 object-cover rounded mb-2" />
-                                            <div className="font-bold mb-1">{card.title}</div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{card.description}</div>
-                                          </div>
-                                        ))}
+
+                                    {/* Card count selection for 4-column layout */}
+                                    {section.layout === 'grid-4' && (
+                                      <div className="flex gap-2 mb-2">
+                                        <button
+                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 4)}
+                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 4 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        >4 карт</button>
+                                        <button
+                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 8)}
+                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 8 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        >8 карт</button>
+                                        <button
+                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 12)}
+                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 12 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                                        >12 карт</button>
                                       </div>
                                     )}
-                                    {cardsLayout === 'carousel' && (
-                                      <div className="flex gap-4 overflow-x-auto scrollbar-hide pb-2">
-                                        {section.content.cards.map(card => (
-                                          <div key={card.id} className="min-w-[220px] max-w-xs border rounded-lg p-4 bg-white dark:bg-gray-800">
-                                            <img src={card.image} alt={card.title} className="w-full h-32 object-cover rounded mb-2" />
-                                            <div className="font-bold mb-1">{card.title}</div>
-                                            <div className="text-sm text-gray-500 dark:text-gray-400">{card.description}</div>
+
+                                    {/* Carousel settings */}
+                                    {section.layout === 'carousel' && (
+                                      <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-md space-y-3">
+                                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Гүйдэг тохиргоо</h4>
+                                        <div className="space-y-2">
+                                          <div>
+                                            <label className="text-sm text-gray-600 dark:text-gray-400">
+                                              Харагдах картын тоо
+                                            </label>
+                                            <select
+                                              value={(section.settings?.cardsToShow || 3).toString()}
+                                              onChange={(e) => handleUpdateSectionSettings(section.id, {
+                                                cardsToShow: parseInt(e.target.value)
+                                              })}
+                                              className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
+                                            >
+                                              <option value="1">1 карт</option>
+                                              <option value="2">2 карт</option>
+                                              <option value="3">3 карт</option>
+                                              <option value="4">4 карт</option>
+                                            </select>
                                           </div>
-                                        ))}
+                                          <div className="flex items-center gap-2">
+                                            <input
+                                              type="checkbox"
+                                              id={`autoplay-${section.id}`}
+                                              checked={section.settings?.autoplay ?? true}
+                                              onChange={(e) => handleUpdateSectionSettings(section.id, {
+                                                autoplay: e.target.checked
+                                              })}
+                                              className="rounded border-gray-300 dark:border-gray-600"
+                                            />
+                                            <label 
+                                              htmlFor={`autoplay-${section.id}`}
+                                              className="text-sm text-gray-600 dark:text-gray-400"
+                                            >
+                                              Автоматаар гүйлгэх
+                                            </label>
+                                          </div>
+                                          {section.settings?.autoplay && (
+                                            <div>
+                                              <label className="text-sm text-gray-600 dark:text-gray-400">
+                                                Гүйх хурд (секунд)
+                                              </label>
+                                              <select
+                                                value={(section.settings?.interval || 5000) / 1000}
+                                                onChange={(e) => handleUpdateSectionSettings(section.id, {
+                                                  interval: parseInt(e.target.value) * 1000
+                                                })}
+                                                className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
+                                              >
+                                                <option value="3">3 секунд</option>
+                                                <option value="5">5 секунд</option>
+                                                <option value="7">7 секунд</option>
+                                                <option value="10">10 секунд</option>
+                                              </select>
+                                            </div>
+                                          )}
+                                        </div>
                                       </div>
                                     )}
+
+                                    {/* Card count indicator */}
+                                    <div className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                      {(() => {
+                                        const currentCount = section.content.cards.length;
+                                        let maxCount = 0;
+                                        switch (section.layout) {
+                                          case 'grid-3': maxCount = 9; break;
+                                          case 'grid-4': maxCount = 12; break;
+                                          case 'carousel': maxCount = 10; break;
+                                          default: maxCount = 9;
+                                        }
+                                        return `Картууд: ${currentCount}/${maxCount}`;
+                                      })()}
+                                    </div>
                                   </div>
                                 )}
 

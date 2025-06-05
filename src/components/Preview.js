@@ -442,6 +442,13 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                   className="w-full h-full object-cover"
                   draggable="false"
                 />
+                {card.price && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="font-semibold text-lg md:text-xl text-blue-600 bg-white/80 rounded-full px-4 py-2 shadow-md">
+                      {card.price}
+                    </span>
+                  </div>
+                )}
                 <div 
                   className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
                     activeCardId === card.id ? 'opacity-0' : 'opacity-100'
@@ -488,9 +495,14 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
 
   return (
     <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
-      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style.headerFont }}>
+      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style.headerFont }}>
         {content.title}
       </h3>
+      {content.description && (
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style.bodyFont }}>
+          {content.description}
+        </p>
+      )}
       <div className={`grid ${getGridClass()} gap-4`}>
         {content.cards.map(card => (
           <div 
@@ -498,29 +510,32 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
             onClick={(e) => handleCardClick(card.id, e)}
             className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg ${
               activeCardId === card.id ? 'shadow-lg' : ''
-            }`}
+            } ${(content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'h-[320px] md:h-[380px] flex flex-col justify-center items-center text-center' : ''}`}
             style={{ borderColor: style.primaryColor }}
           >
-            <div className="relative">
+            <div className="relative w-full">
               <img 
                 src={card.image} 
                 alt={card.title}
-                className={`w-full ${isMobile ? 'h-[140px]' : 'h-[160px]'} object-cover`}
+                className={`w-full ${(content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'h-[140px] md:h-[180px] object-cover' : isMobile ? 'h-[140px]' : 'h-[160px]'} object-cover`}
               />
+              {card.price && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="font-bold text-2xl md:text-3xl text-blue-600 bg-white/80 rounded-full px-6 py-2 shadow-md">
+                    {card.price}
+                  </span>
+                </div>
+              )}
               <div 
                 className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
                   activeCardId === card.id ? 'opacity-0' : 'opacity-100'
                 }`}
               />
             </div>
-            <div 
-              className={`p-3 transition-all duration-300 ease-in-out ${
-                activeCardId === card.id ? 'h-auto' : 'h-[3.5rem] overflow-hidden'
-              }`}
-            >
+            <div className="flex-1 flex flex-col justify-center items-center px-2 py-3">
               <h4 
-                className={`font-bold mb-1 transition-all duration-300 ${
-                  activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
+                className={`font-bold mb-2 transition-all duration-300 ${
+                  (content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'text-xl md:text-2xl' : activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
                 }`} 
                 style={{ fontFamily: style.headerFont }}
               >
@@ -528,7 +543,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
               </h4>
               <p 
                 className={`transition-all duration-300 ${
-                  activeCardId === card.id 
+                  (content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'text-base md:text-lg opacity-90' : activeCardId === card.id 
                     ? 'text-xs opacity-100' 
                     : 'text-xs opacity-60 line-clamp-2'
                 }`}
@@ -674,8 +689,22 @@ const HistorySection = ({ content, style, isMobile }) => {
       <div className="max-w-2xl mx-auto">
         {content.texts?.map(item => (
           <div key={item.id} className="mb-8">
-            <h4 className={`text-xl font-bold mb-2 text-${item.textAlignment || 'left'}`} style={{ fontFamily: style.headerFont }}>{item.title}</h4>
-            <p className={`text-gray-600 dark:text-gray-400 whitespace-normal break-words text-${item.textAlignment || 'left'}`} style={{ fontFamily: style.bodyFont }}>{item.description}</p>
+            <h4 
+              className={`text-xl font-bold mb-2 ${
+                item.textAlignment === 'center' ? 'text-center' : item.textAlignment === 'right' ? 'text-right' : 'text-left'
+              }`} 
+              style={{ fontFamily: style.headerFont }}
+            >
+              {item.title}
+            </h4>
+            <p 
+              className={`text-gray-600 dark:text-gray-400 whitespace-normal break-words ${
+                item.descriptionAlignment === 'center' ? 'text-center' : item.descriptionAlignment === 'right' ? 'text-right' : 'text-left'
+              }`} 
+              style={{ fontFamily: style.bodyFont }}
+            >
+              {item.description}
+            </p>
             {item.year && <div className="text-xs text-gray-400 mt-1">{item.year}</div>}
           </div>
         ))}
@@ -754,6 +783,8 @@ export default function Preview() {
         return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} />;
       case 'history':
         return <HistorySection content={section.content} style={style} isMobile={isMobile} />;
+      case 'features':
+        return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} />;
       case 'footer':
         // Modern contact/footer layout
         const c = section.content;

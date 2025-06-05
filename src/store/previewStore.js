@@ -78,6 +78,38 @@ const initialData = {
             }
           ]
         }
+      },
+      {
+        id: 'section4',
+        type: 'features',
+        layout: 'price-basic',
+        content: {
+          title: 'Үнэ тариф',
+          description: 'Манай үйлчилгээний тарифын сонголтууд',
+          cards: [
+            {
+              id: 'price1',
+              title: 'Basic',
+              description: 'Энгийн багцын үйлчилгээ',
+              price: '29,000₮',
+              image: '/price-basic.jpg'
+            },
+            {
+              id: 'price2',
+              title: 'Standard',
+              description: 'Стандарт багцын үйлчилгээ',
+              price: '49,000₮',
+              image: '/price-standard.jpg'
+            },
+            {
+              id: 'price3',
+              title: 'Premium',
+              description: 'Премиум багцын үйлчилгээ',
+              price: '99,000₮',
+              image: '/price-premium.jpg'
+            }
+          ]
+        }
       }
     ]
   }

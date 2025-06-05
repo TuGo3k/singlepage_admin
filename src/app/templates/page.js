@@ -120,7 +120,28 @@ const sectionTypes = {
         preview: 'Торон байрлал'
       },
     ]
-  }
+  },
+  footer: {
+    name: 'Footer',
+    description: 'Хуудасны доод хэсэг',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <rect x="3" y="17" width="18" height="4" rx="2" strokeWidth="2" />
+        <rect x="3" y="3" width="18" height="4" rx="2" strokeWidth="2" />
+      </svg>
+    ),
+    layouts: [
+      { id: 'simple', name: 'Энгийн', icon: '━', preview: 'Энгийн footer' },
+      { id: 'columns-2', name: '2 багана', icon: '||', preview: '2 баганатай' },
+      { id: 'columns-3', name: '3 багана', icon: '|||', preview: '3 баганатай' },
+      { id: 'newsletter', name: 'Бүртгүүлэх формтой', icon: '✉️', preview: 'Имэйл бүртгүүлэх' },
+      { id: 'social', name: 'Social icon-уудтай', icon: '◎', preview: 'Social icon-уудтай' },
+      { id: 'contact', name: 'Холбоо барих', icon: '☎️', preview: 'Холбоо барих мэдээлэлтэй' },
+      { id: 'logo', name: 'Логотой', icon: '🏢', preview: 'Лого бүхий' },
+      { id: 'centered', name: 'Төвлөрсөн', icon: '⎯', preview: 'Төвлөрсөн текст' },
+      { id: 'app', name: 'App татах холбоостой', icon: '📱', preview: 'App Store, Play badge' }
+    ]
+  },
 };
 
 export default function TemplatesPage() {
@@ -1431,3 +1452,5 @@ export default function TemplatesPage() {
     </div>
   );
 } 
+
+export { sectionTypes };

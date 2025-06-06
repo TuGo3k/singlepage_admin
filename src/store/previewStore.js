@@ -194,4 +194,5 @@ export const usePreviewStore = create((set) => ({
         }
       }
     })),
+  setSiteData: (data) => set({ siteData: data }),
 })); 

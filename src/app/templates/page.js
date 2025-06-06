@@ -145,7 +145,7 @@ const sectionTypes = {
 };
 
 export default function TemplatesPage() {
-  const { updateTemplate, addSection, updateSection, deleteSection, reorderSections, updateMedia } = usePreviewStore();
+  const { updateTemplate, addSection, updateSection, deleteSection, reorderSections, updateMedia, setSiteData } = usePreviewStore();
   const templateData = usePreviewStore((state) => state.siteData.template);
   const mediaData = usePreviewStore((state) => state.siteData.media);
   const [showAddSection, setShowAddSection] = useState(false);
@@ -279,34 +279,19 @@ export default function TemplatesPage() {
   const handleUpdateCardLayout = useCallback((sectionId, layout, cardCount) => {
     const section = templateData.sections.find(s => s.id === sectionId);
     if (section) {
-      // Determine the number of cards needed based on layout and cardCount
-      let requiredCards = 0;
-      if ((layout === 'grid-3' || layout === 'grid-4') && cardCount) {
-        requiredCards = cardCount;
-      } else {
-        switch (layout) {
-          case 'grid-3':
-            requiredCards = 9;
-            break;
-          case 'grid-4':
-            requiredCards = 12;
-            break;
-          case 'carousel':
-            requiredCards = 10;
-            break;
-          default:
-            requiredCards = 9;
-        }
-      }
+      // Layout бүрийн default картын тоо
+      let defaultCardCount = 3;
+      if (layout === 'grid-4') defaultCardCount = 4;
+      if (layout === 'carousel') defaultCardCount = 3;
+
+      // cardCount байхгүй бол default-ыг авна
+      const requiredCards = cardCount || defaultCardCount;
 
       // Get current cards
       const currentCards = section.content.cards || [];
-      
-      // Add or remove cards as needed
       let updatedCards = [...currentCards];
-      
+
       if (currentCards.length < requiredCards) {
-        // Add new cards
         for (let i = currentCards.length; i < requiredCards; i++) {
           updatedCards.push({
             id: `card${Date.now()}-${i}`,
@@ -316,11 +301,9 @@ export default function TemplatesPage() {
           });
         }
       } else if (currentCards.length > requiredCards) {
-        // Remove excess cards
         updatedCards = currentCards.slice(0, requiredCards);
       }
 
-      // Update section with new layout and cards
       handleUpdateSection(sectionId, {
         layout,
         content: {
@@ -538,8 +521,43 @@ export default function TemplatesPage() {
 
   const [cardsLayout, setCardsLayout] = useState('grid-2'); // grid-2, grid-4, carousel
 
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('siteData');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && parsed.template && parsed.media) {
+        setSiteData(parsed);
+      }
+    }
+  }, [setSiteData]);
+
+  // Save to localStorage when templateData or mediaData changes
+  useEffect(() => {
+    localStorage.setItem('siteData', JSON.stringify({ template: templateData, media: mediaData }));
+  }, [templateData, mediaData]);
+
+  const [showSaved, setShowSaved] = useState(false);
+
+  // Notify on save
+  const handleSaveSection = (sectionId, updates) => {
+    handleUpdateSection(sectionId, updates);
+    setShowSaved(true);
+    setTimeout(() => setShowSaved(false), 2000);
+  };
+
   return (
     <div className="space-y-4">
+      {showSaved && (
+        <div
+          className={`fixed top-6 right-6 z-50 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg
+            transition-all duration-500
+            ${showSaved ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}
+          `}
+        >
+          Амжилттай хадгалагдлаа
+        </div>
+      )}
       <h1 className="text-2xl font-semibold mb-6">Загварууд</h1>
 
       <div className="grid grid-cols-2 gap-6">
@@ -664,7 +682,7 @@ export default function TemplatesPage() {
                                   </div>
                                 </div>
                                 <button
-                                  onClick={() => handleUpdateSection(section.id, { content: { ...section.content } })}
+                                  onClick={() => handleSaveSection(section.id, { content: { ...section.content } })}
                                   className="px-4 py-2 rounded bg-green-600 text-white text-sm hover:bg-green-700 transition-colors"
                                 >
                                   Хадгалах
@@ -916,7 +934,7 @@ export default function TemplatesPage() {
                                         <input
                                           type="text"
                                           value={section.content.image}
-                                          onChange={(e) => updateSection(section.id, { content: { ...section.content, image: e.target.value } })}
+                                          onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, image: e.target.value } })}
                                           className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                           placeholder="Зургийн URL"
                                         />
@@ -930,7 +948,7 @@ export default function TemplatesPage() {
                                           Зураг оруулах
                                         </button>
                                         <button
-                                          onClick={() => updateSection(section.id, { content: { ...section.content, image: '' } })}
+                                          onClick={() => handleSaveSection(section.id, { content: { ...section.content, image: '' } })}
                                           className="px-3 py-2 bg-red-100 dark:bg-red-700 text-red-700 dark:text-white rounded-lg hover:bg-red-200 dark:hover:bg-red-600"
                                         >
                                           Устгах
@@ -942,20 +960,117 @@ export default function TemplatesPage() {
                                       <input
                                         type="text"
                                         value={section.content.title}
-                                        onChange={(e) => updateSection(section.id, { content: { ...section.content, title: e.target.value } })}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, title: e.target.value } })}
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Гарчиг"
                                       />
+                                      <div className="mt-2 flex gap-2">
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`title-alignment-${section.id}`}
+                                            checked={(section.content.titleAlignment || 'center') === 'left'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, titleAlignment: 'left' } })}
+                                          />
+                                          <span className="ml-1">Зүүн</span>
+                                        </label>
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`title-alignment-${section.id}`}
+                                            checked={(section.content.titleAlignment || 'center') === 'center'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, titleAlignment: 'center' } })}
+                                          />
+                                          <span className="ml-1">Төв</span>
+                                        </label>
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`title-alignment-${section.id}`}
+                                            checked={(section.content.titleAlignment || 'center') === 'right'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, titleAlignment: 'right' } })}
+                                          />
+                                          <span className="ml-1">Баруун</span>
+                                        </label>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Дэд гарчиг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content.subtitle}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, subtitle: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Дэд гарчиг"
+                                      />
+                                      <div className="mt-2 flex gap-2">
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`subtitle-alignment-${section.id}`}
+                                            checked={(section.content.subtitleAlignment || 'center') === 'left'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, subtitleAlignment: 'left' } })}
+                                          />
+                                          <span className="ml-1">Зүүн</span>
+                                        </label>
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`subtitle-alignment-${section.id}`}
+                                            checked={(section.content.subtitleAlignment || 'center') === 'center'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, subtitleAlignment: 'center' } })}
+                                          />
+                                          <span className="ml-1">Төв</span>
+                                        </label>
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`subtitle-alignment-${section.id}`}
+                                            checked={(section.content.subtitleAlignment || 'center') === 'right'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, subtitleAlignment: 'right' } })}
+                                          />
+                                          <span className="ml-1">Баруун</span>
+                                        </label>
+                                      </div>
                                     </div>
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Тайлбар</label>
                                       <textarea
                                         value={section.content.description}
-                                        onChange={(e) => updateSection(section.id, { content: { ...section.content, description: e.target.value } })}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, description: e.target.value } })}
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         rows={3}
                                         placeholder="Тайлбар"
                                       />
+                                      <div className="mt-2 flex gap-2">
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`description-alignment-${section.id}`}
+                                            checked={(section.content.descriptionAlignment || 'center') === 'left'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, descriptionAlignment: 'left' } })}
+                                          />
+                                          <span className="ml-1">Зүүн</span>
+                                        </label>
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`description-alignment-${section.id}`}
+                                            checked={(section.content.descriptionAlignment || 'center') === 'center'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, descriptionAlignment: 'center' } })}
+                                          />
+                                          <span className="ml-1">Төв</span>
+                                        </label>
+                                        <label className="inline-flex items-center text-xs">
+                                          <input
+                                            type="radio"
+                                            name={`description-alignment-${section.id}`}
+                                            checked={(section.content.descriptionAlignment || 'center') === 'right'}
+                                            onChange={() => updateSection(section.id, { content: { ...section.content, descriptionAlignment: 'right' } })}
+                                          />
+                                          <span className="ml-1">Баруун</span>
+                                        </label>
+                                      </div>
                                     </div>
                                   </div>
                                 )}
@@ -973,7 +1088,7 @@ export default function TemplatesPage() {
                                       <input
                                         type="text"
                                         value={section.content.title || ''}
-                                        onChange={(e) => handleUpdateSection(section.id, {
+                                        onChange={(e) => handleSaveSection(section.id, {
                                           content: {
                                             ...section.content,
                                             title: e.target.value
@@ -1003,36 +1118,18 @@ export default function TemplatesPage() {
                                     {/* Card count selection for 3-column layout */}
                                     {section.layout === 'grid-3' && (
                                       <div className="flex gap-2 mb-2">
-                                        <button
-                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 3)}
-                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 3 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                        >3 карт</button>
-                                        <button
-                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 6)}
-                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 6 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                        >6 карт</button>
-                                        <button
-                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 9)}
-                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 9 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                        >9 карт</button>
+                                        <button onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 3)} className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 3 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>3 карт</button>
+                                        <button onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 6)} className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 6 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>6 карт</button>
+                                        <button onClick={() => handleUpdateCardLayout(section.id, 'grid-3', 9)} className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 9 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>9 карт</button>
                                       </div>
                                     )}
 
                                     {/* Card count selection for 4-column layout */}
                                     {section.layout === 'grid-4' && (
                                       <div className="flex gap-2 mb-2">
-                                        <button
-                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 4)}
-                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 4 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                        >4 карт</button>
-                                        <button
-                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 8)}
-                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 8 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                        >8 карт</button>
-                                        <button
-                                          onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 12)}
-                                          className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 12 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
-                                        >12 карт</button>
+                                        <button onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 4)} className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 4 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>4 карт</button>
+                                        <button onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 8)} className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 8 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>8 карт</button>
+                                        <button onClick={() => handleUpdateCardLayout(section.id, 'grid-4', 12)} className={`px-3 py-1 rounded-md text-xs font-medium border ${section.content.cards.length === 12 ? 'bg-blue-600 text-white border-blue-600' : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>12 карт</button>
                                       </div>
                                     )}
 
@@ -1047,9 +1144,7 @@ export default function TemplatesPage() {
                                             </label>
                                             <select
                                               value={(section.settings?.cardsToShow || 3).toString()}
-                                              onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                                cardsToShow: parseInt(e.target.value)
-                                              })}
+                                              onChange={(e) => handleSaveSection(section.id, { settings: { ...section.settings, cardsToShow: parseInt(e.target.value) } })}
                                               className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
                                             >
                                               <option value="1">1 карт</option>
@@ -1063,9 +1158,7 @@ export default function TemplatesPage() {
                                               type="checkbox"
                                               id={`autoplay-${section.id}`}
                                               checked={section.settings?.autoplay ?? true}
-                                              onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                                autoplay: e.target.checked
-                                              })}
+                                              onChange={(e) => handleSaveSection(section.id, { settings: { ...section.settings, autoplay: e.target.checked } })}
                                               className="rounded border-gray-300 dark:border-gray-600"
                                             />
                                             <label 
@@ -1082,9 +1175,7 @@ export default function TemplatesPage() {
                                               </label>
                                               <select
                                                 value={(section.settings?.interval || 5000) / 1000}
-                                                onChange={(e) => handleUpdateSectionSettings(section.id, {
-                                                  interval: parseInt(e.target.value) * 1000
-                                                })}
+                                                onChange={(e) => handleSaveSection(section.id, { settings: { ...section.settings, interval: parseInt(e.target.value) * 1000 } })}
                                                 className="mt-1 block w-full text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-1"
                                               >
                                                 <option value="3">3 секунд</option>
@@ -1128,7 +1219,7 @@ export default function TemplatesPage() {
                                       {['timeline', 'text'].map(subtype => (
                                         <button
                                           key={subtype}
-                                          onClick={() => handleUpdateSection(section.id, { content: { ...section.content, subtype } })}
+                                          onClick={() => handleSaveSection(section.id, { content: { ...section.content, subtype } })}
                                           className={`px-3 py-1 rounded-md text-sm font-medium border  transition-colors ${
                                             (section.content.subtype || 'timeline') === subtype
                                               ? 'bg-blue-600 text-white border-blue-600'
@@ -1145,7 +1236,7 @@ export default function TemplatesPage() {
                                       {(section.content.subtype || 'timeline') === 'timeline' && sectionTypes.history.layouts.map(layout => (
                                         <button
                                           key={layout.id}
-                                          onClick={() => handleUpdateSection(section.id, { content: { ...section.content, layout: layout.id } })}
+                                          onClick={() => handleSaveSection(section.id, { content: { ...section.content, layout: layout.id } })}
                                           className={`px-3 py-1 rounded-md text-sm font-medium border transition-colors flex items-center gap-2 ${
                                             section.content.layout === layout.id
                                               ? 'bg-blue-600 text-white border-blue-600'
@@ -1170,7 +1261,7 @@ export default function TemplatesPage() {
                                                image: ''
                                              }
                                            ];
-                                           handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                           handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
                                          }}
                                          className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 ml-auto"
                                        >
@@ -1200,7 +1291,7 @@ export default function TemplatesPage() {
                                                     if (file) {
                                                       const url = URL.createObjectURL(file);
                                                       const newItems = section.content.items.map(it => it.id === item.id ? { ...it, image: url } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
                                                     }
                                                   }}
                                                 />
@@ -1213,7 +1304,7 @@ export default function TemplatesPage() {
                                                   value={item.title}
                                                   onChange={e => {
                                                     const newItems = section.content.items.map(it => it.id === item.id ? { ...it, title: e.target.value } : it);
-                                                    handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                    handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
                                                   }}
                                                   placeholder="Гарчиг"
                                                   className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
@@ -1223,7 +1314,7 @@ export default function TemplatesPage() {
                                                   value={item.year}
                                                   onChange={e => {
                                                     const newItems = section.content.items.map(it => it.id === item.id ? { ...it, year: e.target.value } : it);
-                                                    handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                    handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
                                                   }}
                                                   placeholder="Он / Жил"
                                                   className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
@@ -1236,7 +1327,7 @@ export default function TemplatesPage() {
                                                 value={item.description || ''}
                                                 onChange={e => {
                                                   const newItems = section.content.items.map(it => it.id === item.id ? { ...it, description: e.target.value } : it);
-                                                  handleUpdateSection(section.id, { content: { ...section.content, items: newItems } });
+                                                  handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
                                                 }}
                                                 placeholder="Тайлбар"
                                                 className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-none"
@@ -1251,7 +1342,7 @@ export default function TemplatesPage() {
                                                   if (idx === 0) return;
                                                   const items = [...section.content.items];
                                                   [items[idx - 1], items[idx]] = [items[idx], items[idx - 1]];
-                                                  handleUpdateSection(section.id, { content: { ...section.content, items } });
+                                                  handleSaveSection(section.id, { content: { ...section.content, items } });
                                                 }}
                                                 className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
                                               >
@@ -1263,7 +1354,7 @@ export default function TemplatesPage() {
                                                   if (idx === section.content.items.length - 1) return;
                                                   const items = [...section.content.items];
                                                   [items[idx + 1], items[idx]] = [items[idx], items[idx + 1]];
-                                                  handleUpdateSection(section.id, { content: { ...section.content, items } });
+                                                  handleSaveSection(section.id, { content: { ...section.content, items } });
                                                 }}
                                                 className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === section.content.items.length - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
                                               >
@@ -1272,7 +1363,7 @@ export default function TemplatesPage() {
                                               <button
                                                 onClick={() => {
                                                   const items = section.content.items.filter(it => it.id !== item.id);
-                                                  handleUpdateSection(section.id, { content: { ...section.content, items } });
+                                                  handleSaveSection(section.id, { content: { ...section.content, items } });
                                                 }}
                                                 className="px-2 py-1 rounded bg-red-500 text-white text-xs hover:bg-red-600"
                                               >
@@ -1294,7 +1385,7 @@ export default function TemplatesPage() {
                                                 ...(section.content.texts || []),
                                                 { id: `text${Date.now()}`, title: '', description: '', year: '' }
                                               ];
-                                              handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                              handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                             }}
                                             className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 font-semibold shadow"
                                           >
@@ -1313,7 +1404,7 @@ export default function TemplatesPage() {
                                                     checked={(item.textAlignment || 'left') === 'left'}
                                                     onChange={() => {
                                                       const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, textAlignment: 'left' } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                     }}
                                                   />
                                                   Зүүн
@@ -1325,7 +1416,7 @@ export default function TemplatesPage() {
                                                     checked={item.textAlignment === 'center'}
                                                     onChange={() => {
                                                       const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, textAlignment: 'center' } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                     }}
                                                   />
                                                   Төв
@@ -1337,7 +1428,7 @@ export default function TemplatesPage() {
                                                     checked={item.textAlignment === 'right'}
                                                     onChange={() => {
                                                       const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, textAlignment: 'right' } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                     }}
                                                   />
                                                   Баруун
@@ -1352,7 +1443,7 @@ export default function TemplatesPage() {
                                                     checked={(item.descriptionAlignment || 'left') === 'left'}
                                                     onChange={() => {
                                                       const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, descriptionAlignment: 'left' } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                     }}
                                                   />
                                                   Зүүн
@@ -1364,7 +1455,7 @@ export default function TemplatesPage() {
                                                     checked={item.descriptionAlignment === 'center'}
                                                     onChange={() => {
                                                       const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, descriptionAlignment: 'center' } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                     }}
                                                   />
                                                   Төв
@@ -1376,7 +1467,7 @@ export default function TemplatesPage() {
                                                     checked={item.descriptionAlignment === 'right'}
                                                     onChange={() => {
                                                       const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, descriptionAlignment: 'right' } : it);
-                                                      handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                      handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                     }}
                                                   />
                                                   Баруун
@@ -1387,7 +1478,7 @@ export default function TemplatesPage() {
                                                 value={item.title}
                                                 onChange={e => {
                                                   const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, title: e.target.value } : it);
-                                                  handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                  handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                 }}
                                                 placeholder="Гарчиг"
                                                 className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-semibold"
@@ -1398,7 +1489,7 @@ export default function TemplatesPage() {
                                                   checked={!!item.showYear}
                                                   onChange={e => {
                                                     const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, showYear: e.target.checked, year: e.target.checked ? it.year : '' } : it);
-                                                    handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                    handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                   }}
                                                 />
                                                 Он/Жил оруулах
@@ -1409,7 +1500,7 @@ export default function TemplatesPage() {
                                                   value={item.year}
                                                   onChange={e => {
                                                     const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, year: e.target.value } : it);
-                                                    handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                    handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                   }}
                                                   placeholder="Он / Жил"
                                                   className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
@@ -1419,7 +1510,7 @@ export default function TemplatesPage() {
                                                 value={item.description}
                                                 onChange={e => {
                                                   const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, description: e.target.value } : it);
-                                                  handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                  handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                 }}
                                                 placeholder="Тайлбар"
                                                 className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-none"
@@ -1429,7 +1520,7 @@ export default function TemplatesPage() {
                                                 <button
                                                   onClick={() => {
                                                     const newTexts = section.content.texts.filter(it => it.id !== item.id);
-                                                    handleUpdateSection(section.id, { content: { ...section.content, texts: newTexts } });
+                                                    handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                                   }}
                                                   className="px-4 py-2 rounded bg-red-500 text-white text-sm hover:bg-red-600 font-semibold shadow"
                                                 >
@@ -1452,7 +1543,7 @@ export default function TemplatesPage() {
                                       <input
                                         type="text"
                                         value={section.content.title || ''}
-                                        onChange={(e) => handleUpdateSection(section.id, {
+                                        onChange={(e) => handleSaveSection(section.id, {
                                           content: {
                                             ...section.content,
                                             title: e.target.value
@@ -1468,7 +1559,7 @@ export default function TemplatesPage() {
                                       </label>
                                       <textarea
                                         value={section.content.description || ''}
-                                        onChange={(e) => handleUpdateSection(section.id, {
+                                        onChange={(e) => handleSaveSection(section.id, {
                                           content: {
                                             ...section.content,
                                             description: e.target.value
@@ -1487,7 +1578,7 @@ export default function TemplatesPage() {
                                             value={card.title}
                                             onChange={e => {
                                               const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, title: e.target.value } : c);
-                                              handleUpdateSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
                                             }}
                                             placeholder="Тарифын нэр (жишээ: Basic)"
                                             className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
@@ -1497,7 +1588,7 @@ export default function TemplatesPage() {
                                             value={card.price || ''}
                                             onChange={e => {
                                               const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, price: e.target.value } : c);
-                                              handleUpdateSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
                                             }}
                                             placeholder="Үнэ (жишээ: 29,000₮)"
                                             className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
@@ -1507,7 +1598,7 @@ export default function TemplatesPage() {
                                             value={card.description}
                                             onChange={e => {
                                               const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, description: e.target.value } : c);
-                                              handleUpdateSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
                                             }}
                                             placeholder="Тайлбар"
                                             className="flex-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
@@ -1517,7 +1608,7 @@ export default function TemplatesPage() {
                                             value={card.image}
                                             onChange={e => {
                                               const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, image: e.target.value } : c);
-                                              handleUpdateSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
                                             }}
                                             placeholder="Зураг URL"
                                             className="w-48 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"

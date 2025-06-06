@@ -10,7 +10,7 @@ import { usePreviewStore } from '@/store/previewStore';
 export default function ContactPage() {
   const updateContact = usePreviewStore((state) => state.updateContact);
   const contactData = usePreviewStore((state) => state.siteData.contact);
-  const [localData, setLocalData] = useState(contactData);
+  const [localData, setLocalData] = useState(contactData || {});
 
   const handleChange = (field, value) => {
     const newData = {
@@ -43,7 +43,7 @@ export default function ContactPage() {
                 <Input
                   id="email"
                   type="email"
-                  value={localData.email}
+                  value={localData?.email || ''}
                   onChange={(e) => handleChange('email', e.target.value)}
                   placeholder="info@example.com"
                 />
@@ -54,7 +54,7 @@ export default function ContactPage() {
                 <Input
                   id="phone"
                   type="tel"
-                  value={localData.phone}
+                  value={localData?.phone || ''}
                   onChange={(e) => handleChange('phone', e.target.value)}
                   placeholder="+976 99999999"
                 />
@@ -64,7 +64,7 @@ export default function ContactPage() {
                 <Label htmlFor="address">Хаяг</Label>
                 <Input
                   id="address"
-                  value={localData.address}
+                  value={localData?.address || ''}
                   onChange={(e) => handleChange('address', e.target.value)}
                   placeholder="Улаанбаатар хот"
                 />
@@ -75,7 +75,7 @@ export default function ContactPage() {
                 <Input
                   id="facebook"
                   type="url"
-                  value={localData.facebook}
+                  value={localData?.facebook || ''}
                   onChange={(e) => handleChange('facebook', e.target.value)}
                   placeholder="https://facebook.com/"
                 />
@@ -86,7 +86,7 @@ export default function ContactPage() {
                 <Input
                   id="instagram"
                   type="url"
-                  value={localData.instagram}
+                  value={localData?.instagram || ''}
                   onChange={(e) => handleChange('instagram', e.target.value)}
                   placeholder="https://instagram.com/"
                 />

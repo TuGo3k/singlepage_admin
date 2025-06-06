@@ -10,7 +10,7 @@ import { usePreviewStore } from '@/store/previewStore';
 export default function StylePage() {
   const updateStyle = usePreviewStore((state) => state.updateStyle);
   const styleData = usePreviewStore((state) => state.siteData.style);
-  const [localData, setLocalData] = useState(styleData);
+  const [localData, setLocalData] = useState(styleData || {});
 
   const handleChange = (field, value) => {
     const newData = {
@@ -45,12 +45,12 @@ export default function StylePage() {
                     <Input
                       id="primaryColor"
                       type="color"
-                      value={localData.primaryColor}
+                      value={localData?.primaryColor || '#3B82F6'}
                       onChange={(e) => handleChange('primaryColor', e.target.value)}
                       className="w-12 h-9 p-1"
                     />
                     <Input
-                      value={localData.primaryColor}
+                      value={localData?.primaryColor || '#3B82F6'}
                       onChange={(e) => handleChange('primaryColor', e.target.value)}
                       placeholder="#000000"
                     />
@@ -63,12 +63,12 @@ export default function StylePage() {
                     <Input
                       id="secondaryColor"
                       type="color"
-                      value={localData.secondaryColor}
+                      value={localData?.secondaryColor || '#6B7280'}
                       onChange={(e) => handleChange('secondaryColor', e.target.value)}
                       className="w-12 h-9 p-1"
                     />
                     <Input
-                      value={localData.secondaryColor}
+                      value={localData?.secondaryColor || '#6B7280'}
                       onChange={(e) => handleChange('secondaryColor', e.target.value)}
                       placeholder="#000000"
                     />
@@ -82,12 +82,12 @@ export default function StylePage() {
                   <Input
                     id="backgroundColor"
                     type="color"
-                    value={localData.backgroundColor}
+                    value={localData?.backgroundColor || '#FFFFFF'}
                     onChange={(e) => handleChange('backgroundColor', e.target.value)}
                     className="w-12 h-9 p-1"
                   />
                   <Input
-                    value={localData.backgroundColor}
+                    value={localData?.backgroundColor || '#FFFFFF'}
                     onChange={(e) => handleChange('backgroundColor', e.target.value)}
                     placeholder="#000000"
                   />
@@ -99,7 +99,7 @@ export default function StylePage() {
                   <Label htmlFor="headerFont">Гарчгийн фонт</Label>
                   <select
                     id="headerFont"
-                    value={localData.headerFont}
+                    value={localData?.headerFont || 'Inter'}
                     onChange={(e) => handleChange('headerFont', e.target.value)}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   >
@@ -113,7 +113,7 @@ export default function StylePage() {
                   <Label htmlFor="bodyFont">Текстийн фонт</Label>
                   <select
                     id="bodyFont"
-                    value={localData.bodyFont}
+                    value={localData?.bodyFont || 'Arial'}
                     onChange={(e) => handleChange('bodyFont', e.target.value)}
                     className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                   >
@@ -131,7 +131,7 @@ export default function StylePage() {
                   type="number"
                   min="0"
                   max="20"
-                  value={localData.borderRadius}
+                  value={localData?.borderRadius || '8'}
                   onChange={(e) => handleChange('borderRadius', e.target.value)}
                 />
               </div>

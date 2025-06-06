@@ -159,15 +159,15 @@ export default function Home() {
                   <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
                   <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   <div className="ml-4 text-sm text-gray-500 dark:text-gray-400 font-mono">
-                    {siteData.header.title}
+                    {siteData.header?.title || ''}
                   </div>
                 </div>
                 <div className="p-8 text-center">
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                    {siteData.header.title}
+                    {siteData.header?.title || ''}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
-                    {siteData.header.subtitle}
+                    {siteData.header?.subtitle || ''}
                   </p>
                   <div className="inline-flex px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
                     Дэлгэрэнгүй

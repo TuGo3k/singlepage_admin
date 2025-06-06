@@ -82,7 +82,7 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
         isScrolled ? 'bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg' : 'bg-white dark:bg-gray-800'
       }`}
       style={{ 
-        borderBottomColor: isScrolled ? style.primaryColor + '20' : 'transparent',
+        borderBottomColor: isScrolled ? style?.primaryColor + '20' : 'transparent',
         borderBottomWidth: '1px'
       }}
     >
@@ -231,22 +231,46 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
         <div className={`absolute inset-0 flex items-center ${isMobile ? 'px-4' : 'px-8'}`}>
-          <div className="max-w-2xl text-white text-center mx-auto bg-black/80 backdrop-blur-md rounded-lg p-6 shadow-lg opacity-100 translate-y-0">
-            <h1 className={`${isMobile ? 'text-3xl' : 'text-5xl'} font-bold mb-6 leading-tight`} style={{ fontFamily: style.headerFont }}>
+          <div className="max-w-2xl text-center mx-auto bg-black/70 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+            <h1
+              className={`
+                ${isMobile ? 'text-2xl' : 'text-4xl'}
+                font-extrabold uppercase tracking-wider mb-4
+                bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400
+                bg-clip-text text-transparent drop-shadow-lg
+              `}
+              style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif', letterSpacing: '0.08em' }}
+            >
               {content.title}
             </h1>
-            <p className={`${isMobile ? 'text-lg' : 'text-xl'} mb-8 text-gray-100`} style={{ fontFamily: style.bodyFont }}>
+            <p
+              className={`
+                ${isMobile ? 'text-base' : 'text-lg'}
+                mb-8 text-gray-200 italic pl-4
+              `}
+              style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}
+            >
               {content.description}
             </p>
             {content.buttonText && (
-              <div className="flex flex-wrap gap-4">
-                <button 
-                  className={`${isMobile ? 'px-6 py-3' : 'px-8 py-4'} bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1`}
+              <div className="flex flex-wrap gap-4 justify-center">
+                <button
+                  className={`
+                    px-8 py-3 rounded-xl font-semibold
+                    bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
+                    text-white shadow-lg backdrop-blur-md
+                    hover:scale-105 hover:shadow-2xl transition-all duration-200
+                  `}
                 >
                   {content.buttonText}
                 </button>
-                <button 
-                  className={`${isMobile ? 'px-6 py-3' : 'px-8 py-4'} border-2 border-white text-white hover:bg-white hover:text-gray-900 rounded-lg font-medium transition-all duration-200`}
+                <button
+                  className={`
+                    px-8 py-3 rounded-xl font-semibold
+                    border-2 border-white/80 text-white/90 bg-white/10
+                    hover:bg-white/20 hover:text-blue-700
+                    transition-all duration-200
+                  `}
                 >
                   Дэлгэрэнгүй
                 </button>
@@ -270,16 +294,16 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
       isMobile ? 'flex-col text-center' : isImageRight ? 'flex-row' : 'flex-row-reverse'
     }`}>
       <div className={`${isMobile ? 'w-full' : 'flex-1'} space-y-4`}>
-        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`} style={{ fontFamily: style.headerFont }}>
+        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
           {content.title}
         </h2>
-        <p style={{ fontFamily: style.bodyFont, color: style.secondaryColor }}>
+        <p style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}>
           {content.description}
         </p>
         {content.buttonText && (
           <button 
             className={`${isMobile ? 'px-6 py-3' : 'px-6 py-2'} rounded-md text-white btn-enhanced`}
-            style={{ backgroundColor: style.primaryColor }}
+            style={{ backgroundColor: style?.primaryColor || '#3B82F6' }}
           >
             {content.buttonText}
           </button>
@@ -303,19 +327,59 @@ const BannerSection = ({ content, layout, style, isMobile }) => {
   return (
     <div 
       className={`relative ${isFull ? 'w-full' : 'container mx-auto'} ${isMobile ? 'h-[200px]' : 'h-[250px]'} bg-cover bg-center`}
-      style={{ backgroundImage: `url(${content.image || content.background})` }}
+      style={{ 
+        backgroundImage: content.image ? `url(${content.image})` : content.background ? `url(${content.background})` : 'none',
+        backgroundColor: !content.image && !content.background ? '#f3f4f6' : 'transparent'
+      }}
     >
-      <div className={`absolute inset-0 flex items-center justify-center text-center
-        ${hasOverlay ? 'bg-black bg-opacity-50 text-white' : ''}`}
+      <div className={`absolute inset-0 flex items-center justify-center ${hasOverlay ? 'bg-black bg-opacity-50 text-white' : ''}`}
       >
-        <div className={`${isMobile ? 'px-4' : 'px-8'}`}>
-          <h3 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-2`} style={{ fontFamily: style.headerFont }}>
-            {content.title}
-          </h3>
+        <div className={`${isMobile ? 'px-4 w-full' : 'px-8 w-full'} flex flex-col gap-1`}>
+          <div style={{ width: '100%' }}>
+            <h3 
+              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-2`} 
+              style={{ 
+                fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+                textAlign: content.titleAlignment || 'center',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                width: '100%'
+              }}
+            >
+              {content.title}
+            </h3>
+          </div>
           {content.subtitle && (
-            <p className={`${isMobile ? 'text-sm' : 'text-base'}`} style={{ fontFamily: style.bodyFont }}>
-              {content.subtitle}
-            </p>
+            <div style={{ width: '100%' }}>
+              <p 
+                className={`${isMobile ? 'text-sm' : 'text-base'}`} 
+                style={{ 
+                  fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                  textAlign: content.subtitleAlignment || 'center',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  width: '100%'
+                }}
+              >
+                {content.subtitle}
+              </p>
+            </div>
+          )}
+          {content.description && (
+            <div style={{ width: '100%' }}>
+              <p 
+                className={`${isMobile ? 'text-xs' : 'text-sm'} mt-2`} 
+                style={{ 
+                  fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                  textAlign: content.descriptionAlignment || 'center',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  width: '100%'
+                }}
+              >
+                {content.description}
+              </p>
+            </div>
           )}
         </div>
       </div>
@@ -333,6 +397,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [activeCardId, setActiveCardId] = useState(null);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // Update container width on mount and resize
   useEffect(() => {
@@ -346,6 +411,40 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
     window.addEventListener('resize', updateWidth);
     return () => window.removeEventListener('resize', updateWidth);
   }, []);
+
+  // Autoplay for carousel
+  useEffect(() => {
+    if (!isCarousel || !settings?.autoplay) return;
+    if (isDragging) return;
+    const interval = settings?.interval || 5000;
+    const cardsToShow = settings?.cardsToShow || 3;
+    const totalCards = content.cards.length;
+    if (totalCards <= cardsToShow) return;
+    const timer = setInterval(() => {
+      setCurrentIndex(prev => {
+        const next = prev + 1;
+        if (next > totalCards - cardsToShow) return 0;
+        return next;
+      });
+    }, interval);
+    return () => clearInterval(timer);
+  }, [isCarousel, settings?.autoplay, settings?.interval, settings?.cardsToShow, content.cards.length, isDragging]);
+
+  // Scroll carousel on currentIndex change
+  useEffect(() => {
+    if (!isCarousel || !carouselRef.current) return;
+    const cardsToShow = settings?.cardsToShow || 3;
+    const cardWidth = getCardWidth();
+    carouselRef.current.scrollTo({
+      left: currentIndex * (cardWidth + 16), // 16px gap
+      behavior: 'smooth',
+    });
+  }, [currentIndex, isCarousel, settings?.cardsToShow, containerWidth]);
+
+  // Reset currentIndex if cards change
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [content.cards.length, settings?.cardsToShow]);
 
   // Calculate card width based on cardsToShow
   const getCardWidth = () => {
@@ -410,7 +509,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   if (isCarousel) {
     return (
       <div className={`${isMobile ? 'px-3 py-4' : 'px-4 py-6'}`} ref={containerRef}>
-        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style.headerFont }}>
+        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
           {content.title}
         </h3>
         <div 
@@ -430,7 +529,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                 activeCardId === card.id ? 'shadow-lg scale-[1.02]' : ''
               }`}
               style={{ 
-                borderColor: style.primaryColor,
+                borderColor: style?.primaryColor || '#3B82F6',
                 width: isMobile ? '220px' : `${getCardWidth()}px`,
                 scrollSnapAlign: 'start'
               }}
@@ -464,7 +563,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                   className={`font-bold mb-1 transition-all duration-300 ${
                     activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
                   }`} 
-                  style={{ fontFamily: style.headerFont }}
+                  style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
                 >
                   {card.title}
                 </h4>
@@ -474,7 +573,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                       ? 'text-xs opacity-100' 
                       : 'text-xs opacity-60 line-clamp-2'
                   }`}
-                  style={{ color: style.secondaryColor, fontFamily: style.bodyFont }}
+                  style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
                 >
                   {card.description}
                 </p>
@@ -495,11 +594,11 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
 
   return (
     <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
-      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style.headerFont }}>
+      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
         {content.title}
       </h3>
       {content.description && (
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style.bodyFont }}>
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
           {content.description}
         </p>
       )}
@@ -511,7 +610,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
             className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg ${
               activeCardId === card.id ? 'shadow-lg' : ''
             } ${(content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'h-[320px] md:h-[380px] flex flex-col justify-center items-center text-center' : ''}`}
-            style={{ borderColor: style.primaryColor }}
+            style={{ borderColor: style?.primaryColor || '#3B82F6' }}
           >
             <div className="relative w-full">
               <img 
@@ -537,7 +636,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                 className={`font-bold mb-2 transition-all duration-300 ${
                   (content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'text-xl md:text-2xl' : activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
                 }`} 
-                style={{ fontFamily: style.headerFont }}
+                style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
               >
                 {card.title}
               </h4>
@@ -547,7 +646,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                     ? 'text-xs opacity-100' 
                     : 'text-xs opacity-60 line-clamp-2'
                 }`}
-                style={{ color: style.secondaryColor, fontFamily: style.bodyFont }}
+                style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
               >
                 {card.description}
               </p>
@@ -586,10 +685,10 @@ const HistorySection = ({ content, style, isMobile }) => {
                 />
               </div>
               <div className="p-6">
-                <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>
+                <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
                   {item.title}
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>
+                <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
                   {item.description}
                 </p>
               </div>
@@ -615,10 +714,10 @@ const HistorySection = ({ content, style, isMobile }) => {
             </div>
           </div>
           <div className="p-6">
-            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>
+            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
               {item.title}
             </h4>
-            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>
+            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
               {item.description}
             </p>
           </div>
@@ -644,10 +743,10 @@ const HistorySection = ({ content, style, isMobile }) => {
             </div>
           </div>
           <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-            <h4 className="text-2xl font-bold mb-4" style={{ fontFamily: style.headerFont }}>
+            <h4 className="text-2xl font-bold mb-4" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
               {item.title}
             </h4>
-            <p className="text-gray-600 dark:text-gray-400 text-lg" style={{ fontFamily: style.bodyFont }}>
+            <p className="text-gray-600 dark:text-gray-400 text-lg" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
               {item.description}
             </p>
           </div>
@@ -671,10 +770,10 @@ const HistorySection = ({ content, style, isMobile }) => {
             </div>
           </div>
           <div className="p-6">
-            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style.headerFont }}>
+            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
               {item.title}
             </h4>
-            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style.bodyFont }}>
+            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
               {item.description}
             </p>
           </div>
@@ -693,7 +792,7 @@ const HistorySection = ({ content, style, isMobile }) => {
               className={`text-xl font-bold mb-2 ${
                 item.textAlignment === 'center' ? 'text-center' : item.textAlignment === 'right' ? 'text-right' : 'text-left'
               }`} 
-              style={{ fontFamily: style.headerFont }}
+              style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
             >
               {item.title}
             </h4>
@@ -701,7 +800,7 @@ const HistorySection = ({ content, style, isMobile }) => {
               className={`text-gray-600 dark:text-gray-400 whitespace-normal break-words ${
                 item.descriptionAlignment === 'center' ? 'text-center' : item.descriptionAlignment === 'right' ? 'text-right' : 'text-left'
               }`} 
-              style={{ fontFamily: style.bodyFont }}
+              style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
             >
               {item.description}
             </p>
@@ -733,11 +832,11 @@ const HistorySection = ({ content, style, isMobile }) => {
   return (
     <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
       <div className="text-center mb-6">
-        <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style.headerFont }}>
+        <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
           {content.title}
         </h3>
         {content.subtitle && (
-          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style.bodyFont }}>
+          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
             {content.subtitle}
           </p>
         )}
@@ -811,7 +910,7 @@ export default function Preview() {
                   <div className="flex flex-col items-center bg-gray-800 rounded-lg p-6 border border-gray-700">
                     <div className="bg-green-500 p-3 rounded-full mb-3">
                       <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm0 10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2zm10-10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zm0 10a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                     </div>
                     <div className="text-lg font-semibold text-white mb-1">Утас</div>
@@ -833,14 +932,14 @@ export default function Preview() {
                 )}
               </div>
               {/* Social icons (optional) */}
-              {(c.facebook || c.instagram) && (
+              {(c?.facebook || c?.instagram) && (
                 <div className="flex justify-center gap-4 mt-4">
-                  {c.facebook && (
+                  {c?.facebook && (
                     <a href={c.facebook} className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full" target="_blank" rel="noopener noreferrer">
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.632.771-1.632 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/></svg>
                     </a>
                   )}
-                  {c.instagram && (
+                  {c?.instagram && (
                     <a href={c.instagram} className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full" target="_blank" rel="noopener noreferrer">
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg>
                     </a>
@@ -914,7 +1013,7 @@ export default function Preview() {
                   <div className="text-center mb-8">
                     <h3 
                       className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}
-                      style={{ fontFamily: style.headerFont }}
+                      style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
                     >
                       Бидэнтэй холбогдох
                     </h3>
@@ -924,7 +1023,7 @@ export default function Preview() {
                   </div>
                   
                   <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-6 mb-8`}>
-                    {contact.email && (
+                    {contact?.email && (
                       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                         <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
                           <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -936,7 +1035,7 @@ export default function Preview() {
                       </div>
                     )}
                     
-                    {contact.phone && (
+                    {contact?.phone && (
                       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                         <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-4">
                           <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -948,7 +1047,7 @@ export default function Preview() {
                       </div>
                     )}
                     
-                    {contact.address && (
+                    {contact?.address && (
                       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
                         <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
                           <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -963,11 +1062,11 @@ export default function Preview() {
                   </div>
 
                   {/* Social Media Links */}
-                  {(contact.facebook || contact.instagram) && (
+                  {(contact?.facebook || contact?.instagram) && (
                     <div className="text-center">
                       <p className="text-gray-600 dark:text-gray-400 mb-4">Биднийг дагаарай</p>
                       <div className="flex justify-center gap-4">
-                        {contact.facebook && (
+                        {contact?.facebook && (
                           <a 
                             href={contact.facebook}
                             target="_blank"
@@ -979,7 +1078,7 @@ export default function Preview() {
                             </svg>
                           </a>
                         )}
-                        {contact.instagram && (
+                        {contact?.instagram && (
                           <a 
                             href={contact.instagram}
                             target="_blank"

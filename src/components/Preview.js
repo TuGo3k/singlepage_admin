@@ -1,6 +1,10 @@
 import { usePreviewStore } from '@/store/previewStore';
 import { useState, useRef, useEffect } from 'react';
 import { sectionTypes } from '@/app/templates/page';
+import { FaFacebook, FaPhone } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+import { PiMapPinFill } from 'react-icons/pi';
+import { BsInstagram } from 'react-icons/bs';
 
 // Mobile/Desktop view toggle
 const ViewportToggle = ({ viewMode, setViewMode }) => (
@@ -846,6 +850,57 @@ const HistorySection = ({ content, style, isMobile }) => {
   );
 };
 
+const ContactSection = ({ content, isMobile }) => {
+  return (
+    <div className="bg-[#111827] text-white py-12 px-4 text-center">
+      <h2 className="text-3xl font-bold text-indigo-400 mb-2">{content?.title || 'Бидэнтэй холбогдох'}</h2>
+      <p className="text-gray-300 mb-8">
+        {content?.description || 'Танай асуулт, санал хүсэлтийг бидэнд илгээнэ үү. Бид танд хурдан хариулах болно.'}
+      </p>
+
+      <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-10">
+        {/* Email */}
+        <div className="bg-[#1f2937] rounded-xl p-6 w-72 text-left shadow-md border border-gray-700">
+          <div className="flex items-center mb-4 text-blue-400 text-2xl">
+            <MdEmail />
+          </div>
+          <h3 className="font-semibold text-lg mb-1">{content?.emailTitle || 'И-мэйл'}</h3>
+          <p className="text-gray-300">{content?.email || 'info@example.com'}</p>
+        </div>
+
+        {/* Phone */}
+        <div className="bg-[#1f2937] rounded-xl p-6 w-72 text-left shadow-md border border-gray-700">
+          <div className="flex items-center mb-4 text-green-400 text-2xl">
+            <FaPhone />
+          </div>
+          <h3 className="font-semibold text-lg mb-1">{content?.phoneTitle || 'Утас'}</h3>
+          <p className="text-gray-300">{content?.phone || '+976 99999999'}</p>
+        </div>
+
+        {/* Address */}
+        <div className="bg-[#1f2937] rounded-xl p-6 w-72 text-left shadow-md border border-gray-700">
+          <div className="flex items-center mb-4 text-purple-400 text-2xl">
+            <PiMapPinFill />
+          </div>
+          <h3 className="font-semibold text-lg mb-1">{content?.addressTitle || 'Хаяг'}</h3>
+          <p className="text-gray-300">{content?.address || 'Улаанбаатар хот'}</p>
+        </div>
+      </div>
+
+      {/* Social */}
+      <p className="text-gray-300 mb-4">{content?.socialTitle || 'Биднийг дагаарай'}</p>
+      <div className="flex justify-center gap-4 text-2xl">
+        <a href={content?.facebookUrl || '#'} className="bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 transition">
+          <FaFacebook />
+        </a>
+        <a href={content?.instagramUrl || '#'} className="bg-pink-500 p-3 rounded-full text-white hover:bg-pink-600 transition">
+          <BsInstagram />
+        </a>
+      </div>
+    </div>
+  );
+};
+
 export default function Preview() {
   const siteData = usePreviewStore((state) => state.siteData);
   const { header, style, media, contact, template } = siteData;
@@ -887,6 +942,53 @@ export default function Preview() {
       case 'footer':
         // Modern contact/footer layout
         const c = section.content;
+        // Layout-based rendering
+        if (section.layout === 'phone') {
+          return (
+            <footer className="w-full bg-gray-900 py-10 px-4 rounded-xl shadow-lg mt-8">
+              <div className="max-w-2xl mx-auto flex flex-col items-center gap-2">
+                <div className="flex items-center gap-3 text-white text-lg font-semibold">
+                  <span className="inline-block bg-green-600 p-2 rounded-full"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg></span>
+                  {c.phone || '+976 99999999'}
+                </div>
+              </div>
+            </footer>
+          );
+        }
+        if (section.layout === 'social') {
+          return (
+            <footer className="w-full bg-gray-900 py-10 px-4 rounded-xl shadow-lg mt-8">
+              <div className="max-w-2xl mx-auto flex flex-col items-center gap-2">
+                <div className="text-white text-lg font-semibold mb-2">Биднийг дагаарай</div>
+                <div className="flex gap-4">
+                  {c.facebook && (
+                    <a href={c.facebook} className="bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-full" target="_blank" rel="noopener noreferrer">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.632.771-1.632 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/></svg>
+                    </a>
+                  )}
+                  {c.instagram && (
+                    <a href={c.instagram} className="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-full" target="_blank" rel="noopener noreferrer">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </footer>
+          );
+        }
+        if (section.layout === 'location') {
+          return (
+            <footer className="w-full bg-gray-900 py-10 px-4 rounded-xl shadow-lg mt-8">
+              <div className="max-w-2xl mx-auto flex flex-col items-center gap-2">
+                <div className="flex items-center gap-3 text-white text-lg font-semibold">
+                  <span className="inline-block bg-red-600 p-2 rounded-full"><svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 10c-4.418 0-8-4.03-8-9 0-4.418 3.582-8 8-8s8 3.582 8 8c0 4.97-3.582 9-8 9z" /></svg></span>
+                  {c.address || 'Улаанбаатар хот'}
+                </div>
+              </div>
+            </footer>
+          );
+        }
+        // Default/old layouts
         return (
           <footer className="w-full bg-gray-900 py-10 px-4 rounded-xl shadow-lg mt-8">
             <div className="max-w-4xl mx-auto">
@@ -917,21 +1019,19 @@ export default function Preview() {
                     <div className="text-gray-400 text-sm">{c.phone}</div>
                   </div>
                 )}
-                {/* Хаяг */}
+                {/* Байршил */}
                 {c.address && (
                   <div className="flex flex-col items-center bg-gray-800 rounded-lg p-6 border border-gray-700">
-                    <div className="bg-pink-500 p-3 rounded-full mb-3">
+                    <div className="bg-red-500 p-3 rounded-full mb-3">
                       <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243A8 8 0 1117.657 16.657z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 10c-4.418 0-8-4.03-8-9 0-4.418 3.582-8 8-8s8 3.582 8 8c0 4.97-3.582 9-8 9z" />
                       </svg>
                     </div>
-                    <div className="text-lg font-semibold text-white mb-1">Хаяг</div>
+                    <div className="text-lg font-semibold text-white mb-1">Байршил</div>
                     <div className="text-gray-400 text-sm">{c.address}</div>
                   </div>
                 )}
               </div>
-              {/* Social icons (optional) */}
               {(c?.facebook || c?.instagram) && (
                 <div className="flex justify-center gap-4 mt-4">
                   {c?.facebook && (
@@ -949,6 +1049,8 @@ export default function Preview() {
             </div>
           </footer>
         );
+      case 'contact':
+        return <ContactSection content={section.content} isMobile={viewMode === 'mobile'} />;
       default:
         return null;
     }
@@ -1006,95 +1108,6 @@ export default function Preview() {
                   {renderSection(section)}
                 </div>
               ))}
-
-              {/* Enhanced Contact Section */}
-              <div className="border-t bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 animate-fadeInUp">
-                <div className={`${isMobile ? 'p-6' : 'p-12'} max-w-4xl mx-auto`}>
-                  <div className="text-center mb-8">
-                    <h3 
-                      className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent`}
-                      style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
-                    >
-                      Бидэнтэй холбогдох
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                      Танай асуулт, санал хүсэлтийг бидэнд илгээнэ үү. Бид танд хурдан хариулах болно.
-                    </p>
-                  </div>
-                  
-                  <div className={`grid ${isMobile ? 'grid-cols-1' : 'grid-cols-3'} gap-6 mb-8`}>
-                    {contact?.email && (
-                      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-4">
-                          <svg className="w-6 h-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                        </div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">И-мэйл</h4>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">{contact.email}</p>
-                      </div>
-                    )}
-                    
-                    {contact?.phone && (
-                      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mb-4">
-                          <svg className="w-6 h-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                          </svg>
-                        </div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Утас</h4>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">{contact.phone}</p>
-                      </div>
-                    )}
-                    
-                    {contact?.address && (
-                      <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow">
-                        <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mb-4">
-                          <svg className="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414a2 2 0 00-2.828 0l-4.243 4.243A8 8 0 1117.657 16.657z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                        </div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Хаяг</h4>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">{contact.address}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Social Media Links */}
-                  {(contact?.facebook || contact?.instagram) && (
-                    <div className="text-center">
-                      <p className="text-gray-600 dark:text-gray-400 mb-4">Биднийг дагаарай</p>
-                      <div className="flex justify-center gap-4">
-                        {contact?.facebook && (
-                          <a 
-                            href={contact.facebook}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-12 h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center transition-colors btn-enhanced"
-                          >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M24 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.632.771-1.632 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/>
-                            </svg>
-                          </a>
-                        )}
-                        {contact?.instagram && (
-                          <a 
-                            href={contact.instagram}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg flex items-center justify-center transition-colors btn-enhanced"
-                          >
-                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.62 5.367 11.987 11.988 11.987 6.62 0 11.987-5.367 11.987-11.987C24.014 5.367 18.637.001 12.017.001zM18.68 11.987c0 3.678-2.983 6.661-6.661 6.661-3.678 0-6.661-2.983-6.661-6.661 0-3.678 2.983-6.661 6.661-6.661 3.678 0 6.661 2.983 6.661 6.661z"/>
-                            </svg>
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </div>

@@ -139,7 +139,21 @@ const sectionTypes = {
       { id: 'contact', name: 'Холбоо барих', icon: '☎️', preview: 'Холбоо барих мэдээлэлтэй' },
       { id: 'logo', name: 'Логотой', icon: '🏢', preview: 'Лого бүхий' },
       { id: 'centered', name: 'Төвлөрсөн', icon: '⎯', preview: 'Төвлөрсөн текст' },
-      { id: 'app', name: 'App татах холбоостой', icon: '📱', preview: 'App Store, Play badge' }
+      { id: 'app', name: 'App татах холбоостой', icon: '📱', preview: 'App Store, Play badge' },
+      { id: 'phone', name: 'Утас', icon: '📞', preview: 'Утас харагдах' },
+      { id: 'location', name: 'Байршил', icon: '📍', preview: 'Байршил харагдах' }
+    ]
+  },
+  contact: {
+    name: 'Холбоо барих',
+    description: 'Холбоо барих мэдээлэл',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+    ),
+    layouts: [
+      { id: 'default', name: 'Энгийн', icon: '📞', preview: 'Холбоо барих мэдээлэл' }
     ]
   },
 };
@@ -1615,6 +1629,120 @@ export default function TemplatesPage() {
                                           />
                                         </div>
                                       ))}
+                                    </div>
+                                  </div>
+                                )}
+                                {section.type === 'contact' && (
+                                  <div className="space-y-4">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Гарчиг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content?.title || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, title: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Гарчиг"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Тайлбар</label>
+                                      <textarea
+                                        value={section.content?.description || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, description: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        rows={3}
+                                        placeholder="Тайлбар"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">И-мэйл гарчиг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content?.emailTitle || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, emailTitle: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="И-мэйл гарчиг"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">И-мэйл</label>
+                                      <input
+                                        type="email"
+                                        value={section.content?.email || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, email: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="И-мэйл"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утасны гарчиг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content?.phoneTitle || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, phoneTitle: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Утасны гарчиг"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утас</label>
+                                      <input
+                                        type="tel"
+                                        value={section.content?.phone || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, phone: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Утас"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаягны гарчиг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content?.addressTitle || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, addressTitle: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Хаягны гарчиг"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаяг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content?.address || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, address: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Хаяг"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Сошиал медиа гарчиг</label>
+                                      <input
+                                        type="text"
+                                        value={section.content?.socialTitle || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, socialTitle: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Сошиал медиа гарчиг"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Facebook URL</label>
+                                      <input
+                                        type="url"
+                                        value={section.content?.facebookUrl || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, facebookUrl: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Facebook URL"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
+                                      <input
+                                        type="url"
+                                        value={section.content?.instagramUrl || ''}
+                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, instagramUrl: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                        placeholder="Instagram URL"
+                                      />
                                     </div>
                                   </div>
                                 )}

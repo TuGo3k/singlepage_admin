@@ -560,6 +560,9 @@ export default function TemplatesPage() {
     setTimeout(() => setShowSaved(false), 2000);
   };
 
+  // State for preview margin
+  const [previewMarginActive, setPreviewMarginActive] = useState(false);
+
   return (
     <div className="space-y-4">
       {showSaved && (
@@ -574,12 +577,27 @@ export default function TemplatesPage() {
       )}
       <h1 className="text-2xl font-semibold mb-6">Загварууд</h1>
 
-      <div className="grid grid-cols-2 gap-6">
-        <Preview />
-        <div className="space-y-6">
+      <div className="flex  gap-6">
+        <Preview previewMarginActive={previewMarginActive} />
+        <div className="space-y-6 w-1/4">
           <div className="rounded-lg border bg-card">
             <div className="p-4 border-b flex justify-between items-center">
-              <h2 className="font-medium">Хэсгүүд</h2>
+              <div className="flex items-center gap-2">
+                <h2 className="font-medium">Хэсгүүд</h2>
+                <button
+                  type="button"
+                  className="flex items-center gap-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs hover:bg-gray-50 dark:hover:bg-gray-700 ml-2"
+                  title="Padding тохиргоо"
+                  onClick={() => setPreviewMarginActive(v => !v)}
+                >
+                  <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <rect x="4" y="7" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
+                    <rect x="1" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+                    <rect x="21" y="7" width="2" height="10" rx="1" fill="currentColor"/>
+                  </svg>
+                  Ард нь зайтай
+                </button>
+              </div>
               <Button 
                 variant="outline" 
                 onClick={() => setShowAddSection(true)}
@@ -819,7 +837,7 @@ export default function TemplatesPage() {
                                                 className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 rounded-md transition-colors"
                                               >
                                                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                                                 </svg>
                                                 {selectedCategoryForSub === category.id ? 'Болих' : 'Дэд'}
                                               </button>
@@ -828,7 +846,7 @@ export default function TemplatesPage() {
                                                 className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-colors"
                                               >
                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                 </svg>
                                               </button>
                                             </div>
@@ -867,7 +885,7 @@ export default function TemplatesPage() {
                                                     <div key={subCategory.id} className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 rounded-md border border-gray-100 dark:border-gray-700 group">
                                                       <div className="flex items-center gap-2">
                                                         <svg className="w-3 h-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
                                                         </svg>
                                                         <span className="text-xs text-gray-600 dark:text-gray-400">
                                                           {subCategory.name}
@@ -878,7 +896,7 @@ export default function TemplatesPage() {
                                                         className="opacity-0 group-hover:opacity-100 p-1 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-all"
                                                       >
                                                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                                         </svg>
                                                       </button>
                                                     </div>
@@ -1217,6 +1235,59 @@ export default function TemplatesPage() {
                                         return `Картууд: ${currentCount}/${maxCount}`;
                                       })()}
                                     </div>
+
+                                    {/* Card size and text size settings */}
+                                    <div className="flex gap-4 mb-2">
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Картын хэмжээ</label>
+                                        <select
+                                          value={section.settings?.cardSize || 'medium'}
+                                          onChange={e => handleSaveSection(section.id, { settings: { ...section.settings, cardSize: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="small">Жижиг</option>
+                                          <option value="medium">Дунд</option>
+                                          <option value="large">Том</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Зургийн өндөр</label>
+                                        <select
+                                          value={section.settings?.imageHeight || 'medium'}
+                                          onChange={e => handleSaveSection(section.id, { settings: { ...section.settings, imageHeight: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="small">Жижиг</option>
+                                          <option value="medium">Дунд</option>
+                                          <option value="large">Том</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Текстийн хэмжээ</label>
+                                        <select
+                                          value={section.settings?.textSize || 'base'}
+                                          onChange={e => handleSaveSection(section.id, { settings: { ...section.settings, textSize: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="xs">XS</option>
+                                          <option value="sm">Жижиг</option>
+                                          <option value="base">Дунд</option>
+                                          <option value="lg">Том</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Текстийн байршил</label>
+                                        <select
+                                          value={section.settings?.textAlign || 'center'}
+                                          onChange={e => handleSaveSection(section.id, { settings: { ...section.settings, textAlign: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="left">Зүүн</option>
+                                          <option value="center">Төв</option>
+                                          <option value="right">Баруун</option>
+                                        </select>
+                                      </div>
+                                    </div>
                                   </div>
                                 )}
 
@@ -1447,7 +1518,7 @@ export default function TemplatesPage() {
                                                   />
                                                   Баруун
                                                 </label>
-                                              </div>
+                                                                                           </div>
                                               <div className="flex gap-4 mb-2 items-center">
                                                 <span className="text-xs text-gray-500">Тайлбар байрлал:</span>
                                                 <label className="flex items-center gap-1 text-xs">
@@ -1586,47 +1657,82 @@ export default function TemplatesPage() {
                                     </div>
                                     <div className="space-y-2">
                                       {section.content.cards?.map((card, idx) => (
-                                        <div key={card.id} className="flex flex-col md:flex-row gap-2 items-center bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
-                                          <input
-                                            type="text"
-                                            value={card.title}
-                                            onChange={e => {
-                                              const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, title: e.target.value } : c);
-                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                            }}
-                                            placeholder="Тарифын нэр (жишээ: Basic)"
-                                            className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                          />
-                                          <input
-                                            type="text"
-                                            value={card.price || ''}
-                                            onChange={e => {
-                                              const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, price: e.target.value } : c);
-                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                            }}
-                                            placeholder="Үнэ (жишээ: 29,000₮)"
-                                            className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                          />
-                                          <input
-                                            type="text"
-                                            value={card.description}
-                                            onChange={e => {
-                                              const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, description: e.target.value } : c);
-                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                            }}
-                                            placeholder="Тайлбар"
-                                            className="flex-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                          />
-                                          <input
-                                            type="text"
-                                            value={card.image}
-                                            onChange={e => {
-                                              const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, image: e.target.value } : c);
-                                              handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                            }}
-                                            placeholder="Зураг URL"
-                                            className="w-48 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                          />
+                                        <div key={card.id} className="flex flex-col md:flex-row gap-2 items-center bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 relative">
+                                          {/* Image preview & upload */}
+                                          <div className="flex flex-col items-center mr-2">
+                                            <div className="w-20 h-20 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md flex items-center justify-center overflow-hidden mb-1">
+                                              {card.image ? (
+                                                <img src={card.image} alt="card" className="object-cover w-full h-full" />
+                                              ) : (
+                                                <span className="text-gray-300 text-xs">No image</span>
+                                              )}
+                                            </div>
+                                            <input
+                                              type="file"
+                                              accept="image/*"
+                                              id={`card-image-upload-${card.id}`}
+                                              className="hidden"
+                                              onChange={e => {
+                                                const file = e.target.files[0];
+                                                if (file) {
+                                                  const url = URL.createObjectURL(file);
+                                                  const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, image: url } : c);
+                                                  handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
+                                                }
+                                              }}
+                                            />
+                                            <label
+                                              htmlFor={`card-image-upload-${card.id}`}
+                                              className="px-2 py-1 bg-blue-500 text-white rounded text-xs cursor-pointer hover:bg-blue-600 transition"
+                                            >
+                                              Зураг оруулах
+                                            </label>
+                                            <input
+                                              type="text"
+                                              value={card.image}
+                                              onChange={e => {
+                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, image: e.target.value } : c);
+                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              }}
+                                              placeholder="Зураг URL"
+                                              className="w-32 mt-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-xs"
+                                            />
+                                          </div>
+                                          {/* Card info */}
+                                          <div className="flex-1 flex flex-col md:flex-col gap-2 items-start w-full">
+                                            <input
+                                              type="text"
+                                              value={card.title}
+                                              onChange={e => {
+                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, title: e.target.value } : c);
+                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              }}
+                                              placeholder="Тарифын нэр (жишээ: Basic)"
+                                              className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                            />
+                                            <input
+                                              type="text"
+                                              value={card.price || ''}
+                                              onChange={e => {
+                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, price: e.target.value } : c);
+                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              }}
+                                              placeholder="Үнэ (жишээ: 29,000₮)"
+                                              className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                            />
+                                            <input
+                                              type="text"
+                                              value={card.description}
+                                              onChange={e => {
+                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, description: e.target.value } : c);
+                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
+                                              }}
+                                              placeholder="Тайлбар"
+                                              className="flex-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                            />
+                                          </div>
+                                          {/* Delete button (optional) */}
+                                          {/* <button ...>Устгах</button> */}
                                         </div>
                                       ))}
                                     </div>

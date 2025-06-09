@@ -317,7 +317,7 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
         <img 
           src={content.image} 
           alt={content.title}
-          className={`w-full ${isMobile ? 'h-[250px]' : 'h-[300px]'} object-cover rounded-lg shadow-lg`}
+          className={`w-full ${isMobile ? 'h-[250px]' : 'h-[600px]'} object-cover rounded-lg shadow-lg`}
         />
       </div>
     </div>
@@ -402,6 +402,30 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   const [activeCardId, setActiveCardId] = useState(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Card size classes
+  const cardSize = settings?.cardSize || 'medium';
+  const textSize = settings?.textSize || 'base';
+  const imageHeight = settings?.imageHeight || 'medium';
+  let cardSizeClass = '';
+  let imageHeightClass = '';
+  switch (cardSize) {
+    case 'small': cardSizeClass = isMobile ? 'h-[180px]' : 'h-[220px]'; break;
+    case 'large': cardSizeClass = isMobile ? 'h-[320px]' : 'h-[400px]'; break;
+    case 'medium':
+    default: cardSizeClass = isMobile ? 'h-[240px]' : 'h-[300px]'; break;
+  }
+  switch (imageHeight) {
+    case 'small': imageHeightClass = isMobile ? 'h-[80px]' : 'h-[120px]'; break;
+    case 'large': imageHeightClass = isMobile ? 'h-[180px]' : 'h-[240px]'; break;
+    case 'medium':
+    default: imageHeightClass = isMobile ? 'h-[120px]' : 'h-[160px]'; break;
+  }
+  const textSizeClass = settings?.textSize || 'base';
+  const textAlign = settings?.textAlign || 'center';
+  let textAlignClass = 'text-center';
+  if (textAlign === 'left') textAlignClass = 'text-left';
+  if (textAlign === 'right') textAlignClass = 'text-right';
 
   // Update container width on mount and resize
   useEffect(() => {
@@ -564,19 +588,13 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                 }`}
               >
                 <h4 
-                  className={`font-bold mb-1 transition-all duration-300 ${
-                    activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
-                  }`} 
+                  className={`font-bold mb-1 transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? '' : 'line-clamp-1'}`} 
                   style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
                 >
                   {card.title}
                 </h4>
                 <p 
-                  className={`transition-all duration-300 ${
-                    activeCardId === card.id 
-                      ? 'text-xs opacity-100' 
-                      : 'text-xs opacity-60 line-clamp-2'
-                  }`}
+                  className={`transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? 'opacity-100' : 'opacity-60 line-clamp-2'}`}
                   style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
                 >
                   {card.description}
@@ -613,14 +631,14 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
             onClick={(e) => handleCardClick(card.id, e)}
             className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg ${
               activeCardId === card.id ? 'shadow-lg' : ''
-            } ${(content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'h-[320px] md:h-[380px] flex flex-col justify-center items-center text-center' : ''}`}
+            } ${cardSizeClass} flex flex-col justify-center items-center text-center`}
             style={{ borderColor: style?.primaryColor || '#3B82F6' }}
           >
-            <div className="relative w-full">
+            <div className={`relative w-full flex items-center justify-center ${imageHeightClass}`}>
               <img 
                 src={card.image} 
                 alt={card.title}
-                className={`w-full ${(content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'h-[140px] md:h-[180px] object-cover' : isMobile ? 'h-[140px]' : 'h-[160px]'} object-cover`}
+                className="w-full h-full object-cover"
               />
               {card.price && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -635,21 +653,17 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                 }`}
               />
             </div>
-            <div className="flex-1 flex flex-col justify-center items-center px-2 py-3">
+            <div className={`flex-1 flex flex-col justify-center px-2 py-3 w-full ${
+              textAlign === 'left' ? 'items-start' : textAlign === 'right' ? 'items-end' : 'items-center'
+            }`}>
               <h4 
-                className={`font-bold mb-2 transition-all duration-300 ${
-                  (content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'text-xl md:text-2xl' : activeCardId === card.id ? 'text-sm' : 'text-xs line-clamp-1'
-                }`} 
+                className={`font-bold mb-2 transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? '' : 'line-clamp-1'}`}
                 style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
               >
                 {card.title}
               </h4>
               <p 
-                className={`transition-all duration-300 ${
-                  (content.title === 'Үнэ тариф' || content.title === 'Үнийн санал' || content.title?.toLowerCase().includes('тариф')) ? 'text-base md:text-lg opacity-90' : activeCardId === card.id 
-                    ? 'text-xs opacity-100' 
-                    : 'text-xs opacity-60 line-clamp-2'
-                }`}
+                className={`transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? 'opacity-100' : 'opacity-60 line-clamp-2'}`}
                 style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
               >
                 {card.description}
@@ -901,7 +915,25 @@ const ContactSection = ({ content, isMobile }) => {
   );
 };
 
-export default function Preview() {
+// Add horizontal padding configuration
+const getHorizontalPaddingClasses = (section) => {
+  const padding = section.horizontalPadding || 'default';
+  switch (padding) {
+    case 'none':
+      return 'px-0';
+    case 'small':
+      return 'px-4';
+    case 'medium':
+      return 'px-8';
+    case 'large':
+      return 'px-16';
+    case 'default':
+    default:
+      return 'px-8';
+  }
+};
+
+export default function Preview({ previewMarginActive = false }) {
   const siteData = usePreviewStore((state) => state.siteData);
   const { header, style, media, contact, template } = siteData;
   
@@ -1058,7 +1090,7 @@ export default function Preview() {
 
   const containerClasses = isMobile 
     ? "w-[375px] h-[812px] mx-auto rounded-[2.5rem] border-8 border-gray-800 bg-gray-800 overflow-hidden shadow-2xl phone-frame" 
-    : "w-full h-[600px] rounded-lg border bg-card overflow-hidden shadow-lg";
+    : "w-full h-[1000px] rounded-lg border bg-card overflow-y-auto shadow-lg";
 
   if (isLoading) {
     return (
@@ -1082,7 +1114,7 @@ export default function Preview() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-3/4">
       {/* Viewport Toggle */}
       <ViewportToggle viewMode={viewMode} setViewMode={setViewMode} />
       
@@ -1104,9 +1136,19 @@ export default function Preview() {
             {/* Main Content */}
             <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
               {template.sections.map(section => (
-                <div key={section.id} className="border-b last:border-b-0 animate-fadeInUp">
-                  {renderSection(section)}
-                </div>
+                (section.type === 'contact' || (section.type === 'hero' && section.content?.layout === 'image-background')) ? (
+                  <div key={section.id} className="border-b last:border-b-0 animate-fadeInUp">
+                    {renderSection(section)}
+                  </div>
+                ) : (
+                  <div
+                    key={section.id}
+                    className={`border-b last:border-b-0 animate-fadeInUp ${getHorizontalPaddingClasses(section)}`}
+                    style={previewMarginActive ? { marginLeft: '8%', marginRight: '8%' } : undefined}
+                  >
+                    {renderSection(section)}
+                  </div>
+                )
               ))}
             </div>
           </div>

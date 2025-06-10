@@ -227,6 +227,18 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
   const isImageBackground = layout === 'image-background';
 
   if (isImageBackground) {
+    const titleAlign = content.titleAlignment || 'center';
+    const descAlign = content.descriptionAlignment || 'center';
+    const buttonAlign = content.buttonAlignment || 'center';
+    let titleAlignClass = 'text-center';
+    let descAlignClass = 'text-center';
+    let buttonAlignClass = 'justify-center';
+    if (titleAlign === 'left') titleAlignClass = 'text-left';
+    if (titleAlign === 'right') titleAlignClass = 'text-right';
+    if (descAlign === 'left') descAlignClass = 'text-left';
+    if (descAlign === 'right') descAlignClass = 'text-right';
+    if (buttonAlign === 'left') buttonAlignClass = 'justify-start';
+    if (buttonAlign === 'right') buttonAlignClass = 'justify-end';
     return (
       <div 
         ref={sectionRef}
@@ -235,59 +247,34 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
       >
         <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
         <div className={`absolute inset-0 flex items-center ${isMobile ? 'px-4' : 'px-8'}`}>
-          <div className="max-w-2xl text-center mx-auto bg-black/70 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+          <div className="max-w-2xl mx-auto bg-black/70 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
             <h1
-              className={`
-                ${isMobile ? 'text-2xl' : 'text-4xl'}
-                font-extrabold uppercase tracking-wider mb-4
-                bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400
-                bg-clip-text text-transparent drop-shadow-lg
-              `}
+              className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-extrabold uppercase tracking-wider mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent drop-shadow-lg ${titleAlignClass}`}
               style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif', letterSpacing: '0.08em' }}
             >
               {content.title}
             </h1>
             <p
-              className={`
-                ${isMobile ? 'text-base' : 'text-lg'}
-                mb-8 text-gray-200 italic pl-4
-              `}
+              className={`${isMobile ? 'text-base' : 'text-lg'} mb-8 text-gray-200 italic pl-4 ${descAlignClass}`}
               style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}
             >
               {content.description}
             </p>
             {content.buttonText && (
-              <div className="flex flex-wrap gap-4 justify-center">
+              <div className={`flex flex-wrap gap-4 ${buttonAlignClass}`}>
                 <button
-                  className={`
-                    px-8 py-3 rounded-xl font-semibold
-                    bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500
-                    text-white shadow-lg backdrop-blur-md
-                    hover:scale-105 hover:shadow-2xl transition-all duration-200
-                  `}
+                  className="px-8 py-3 rounded-xl font-semibold bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-lg backdrop-blur-md hover:scale-105 hover:shadow-2xl transition-all duration-200"
                 >
                   {content.buttonText}
                 </button>
                 <button
-                  className={`
-                    px-8 py-3 rounded-xl font-semibold
-                    border-2 border-white/80 text-white/90 bg-white/10
-                    hover:bg-white/20 hover:text-blue-700
-                    transition-all duration-200
-                  `}
+                  className="px-8 py-3 rounded-xl font-semibold border-2 border-white/80 text-white/90 bg-white/10 hover:bg-white/20 hover:text-blue-700 transition-all duration-200"
                 >
                   Дэлгэрэнгүй
                 </button>
               </div>
             )}
           </div>
-        </div>
-        
-        {/* Floating elements for visual interest */}
-        <div className="absolute bottom-8 right-8 animate-bounce">
-          <svg className="w-8 h-8 text-white/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
         </div>
       </div>
     );
@@ -298,19 +285,27 @@ const HeroSection = ({ content, layout, style, isMobile }) => {
       isMobile ? 'flex-col text-center' : isImageRight ? 'flex-row' : 'flex-row-reverse'
     }`}>
       <div className={`${isMobile ? 'w-full' : 'flex-1'} space-y-4`}>
-        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+        <h2 
+          className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold ${content.titleAlignment === 'left' ? 'text-left' : content.titleAlignment === 'right' ? 'text-right' : 'text-center'}`} 
+          style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+        >
           {content.title}
         </h2>
-        <p style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}>
+        <p 
+          className={`${content.descriptionAlignment === 'left' ? 'text-left' : content.descriptionAlignment === 'right' ? 'text-right' : 'text-center'}`}
+          style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}
+        >
           {content.description}
         </p>
         {content.buttonText && (
-          <button 
-            className={`${isMobile ? 'px-6 py-3' : 'px-6 py-2'} rounded-md text-white btn-enhanced`}
-            style={{ backgroundColor: style?.primaryColor || '#3B82F6' }}
-          >
-            {content.buttonText}
-          </button>
+          <div className={`flex ${content.buttonAlignment === 'left' ? 'justify-start' : content.buttonAlignment === 'right' ? 'justify-end' : 'justify-center'}`}>
+            <button 
+              className={`${isMobile ? 'px-6 py-3' : 'px-6 py-2'} rounded-md text-white btn-enhanced`}
+              style={{ backgroundColor: style?.primaryColor || '#3B82F6' }}
+            >
+              {content.buttonText}
+            </button>
+          </div>
         )}
       </div>
       <div className={`${isMobile ? 'w-full' : 'flex-1'}`}>
@@ -421,7 +416,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
     case 'medium':
     default: imageHeightClass = isMobile ? 'h-[120px]' : 'h-[160px]'; break;
   }
-  const textSizeClass = settings?.textSize || 'base';
+  const textSizeClass = `text-${textSize}`;
   const textAlign = settings?.textAlign || 'center';
   let textAlignClass = 'text-center';
   if (textAlign === 'left') textAlignClass = 'text-left';

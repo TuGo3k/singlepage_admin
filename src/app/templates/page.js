@@ -678,12 +678,7 @@ export default function TemplatesPage() {
                                         >
                                           Зураг оруулах
                                         </button>
-                                        <button
-                                          onClick={() => setShowAddCategoryForm(!showAddCategoryForm)}
-                                          className="text-green-500 hover:text-green-700 text-sm"
-                                        >
-                                          {showAddCategoryForm ? 'Болих' : '+ Ангилал нэмэх'}
-                                        </button>
+                                   
                                       </>
                                     )}
                                     {/* {section.type === 'banner' && (
@@ -723,42 +718,46 @@ export default function TemplatesPage() {
                               <div className="space-y-4">
                                 {section.type === 'hero' && (
                                   <div className="mt-4 space-y-3">
-                                    {/* Лого upload input */}
-                                    <div className="flex items-center gap-3 mb-3">
-                                      <input
-                                        type="file"
-                                        accept="image/*"
-                                        ref={logoInputRef}
-                                        onChange={e => {
-                                          const file = e.target.files[0];
-                                          if (file) {
-                                            const url = URL.createObjectURL(file);
-                                            updateMedia({
-                                              ...mediaData,
-                                              logo: url,
-                                              library: [...(mediaData.library || []), {
-                                                id: Date.now(),
-                                                url,
-                                                name: file.name,
-                                                usedIn: 'logo',
-                                                uploadDate: new Date().toISOString()
-                                              }]
-                                            });
-                                          }
-                                        }}
-                                        className="hidden"
-                                        id="header-logo-upload"
-                                      />
-                                      
-                                      <label htmlFor="header-logo-upload" className="flex items-center gap-3 cursor-pointer group">
-                                        {mediaData.logo ? (
-                                          <img src={mediaData.logo} alt="logo" className="w-10 h-10 object-contain rounded-lg border border-gray-300 dark:border-gray-600 group-hover:border-blue-500 transition" />
-                                        ) : (
-                                          <svg className="w-7 h-7 text-gray-400 border border-gray-300 dark:border-gray-600 rounded-lg group-hover:border-blue-500 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                                        )}
-                                        <span className="text-sm text-blue-600 dark:text-blue-400 group-hover:underline">Лого оруулах</span>
-                                      </label>
+                                    {/* Text alignment controls */}
+                                    <div className="space-y-3">
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Гарчигийн байршил</label>
+                                        <select
+                                          value={section.content.titleAlignment || 'center'}
+                                          onChange={e => handleSaveSection(section.id, { content: { ...section.content, titleAlignment: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="left">Зүүн</option>
+                                          <option value="center">Төв</option>
+                                          <option value="right">Баруун</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Тайлбарын байршил</label>
+                                        <select
+                                          value={section.content.descriptionAlignment || 'center'}
+                                          onChange={e => handleSaveSection(section.id, { content: { ...section.content, descriptionAlignment: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="left">Зүүн</option>
+                                          <option value="center">Төв</option>
+                                          <option value="right">Баруун</option>
+                                        </select>
+                                      </div>
+                                      <div>
+                                        <label className="block text-xs text-gray-500 mb-1">Товчны байршил</label>
+                                        <select
+                                          value={section.content.buttonAlignment || 'center'}
+                                          onChange={e => handleSaveSection(section.id, { content: { ...section.content, buttonAlignment: e.target.value } })}
+                                          className="block w-full text-xs rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-2 py-1"
+                                        >
+                                          <option value="left">Зүүн</option>
+                                          <option value="center">Төв</option>
+                                          <option value="right">Баруун</option>
+                                        </select>
+                                      </div>
                                     </div>
+
                                     <div className="flex items-center justify-between">
                                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Ангилалууд</h4>
                                       <button
@@ -781,12 +780,11 @@ export default function TemplatesPage() {
                                             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                                             </svg>
-                                            Нэмэх
+                                            Ангилал нэмэх
                                           </>
                                         )}
                                       </button>
                                     </div>
-                                    
                                     {/* Add Category Form */}
                                     {showAddCategoryForm && (
                                       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
@@ -1770,7 +1768,7 @@ export default function TemplatesPage() {
                                         placeholder="И-мэйл гарчиг"
                                       />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">И-мэйл</label>
                                       <input
                                         type="email"
@@ -1779,7 +1777,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="И-мэйл"
                                       />
-                                    </div>
+                                    </div> */}
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утасны гарчиг</label>
                                       <input
@@ -1790,7 +1788,7 @@ export default function TemplatesPage() {
                                         placeholder="Утасны гарчиг"
                                       />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утас</label>
                                       <input
                                         type="tel"
@@ -1799,7 +1797,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Утас"
                                       />
-                                    </div>
+                                    </div> */}
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаягны гарчиг</label>
                                       <input
@@ -1810,7 +1808,7 @@ export default function TemplatesPage() {
                                         placeholder="Хаягны гарчиг"
                                       />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаяг</label>
                                       <input
                                         type="text"
@@ -1819,7 +1817,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Хаяг"
                                       />
-                                    </div>
+                                    </div> */}
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Сошиал медиа гарчиг</label>
                                       <input
@@ -1830,7 +1828,7 @@ export default function TemplatesPage() {
                                         placeholder="Сошиал медиа гарчиг"
                                       />
                                     </div>
-                                    <div>
+                                    {/* <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Facebook URL</label>
                                       <input
                                         type="url"
@@ -1839,8 +1837,8 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Facebook URL"
                                       />
-                                    </div>
-                                    <div>
+                                    </div> */}
+                                    {/* <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
                                       <input
                                         type="url"
@@ -1849,7 +1847,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Instagram URL"
                                       />
-                                    </div>
+                                    </div> */}
                                   </div>
                                 )}
                               </div>

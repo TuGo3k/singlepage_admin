@@ -10,92 +10,98 @@ import { usePreviewStore } from '@/store/previewStore';
 export default function ContactPage() {
   const updateContact = usePreviewStore((state) => state.updateContact);
   const contactData = usePreviewStore((state) => state.siteData.contact);
-  const [localData, setLocalData] = useState(contactData || {});
+  const [formData, setFormData] = useState({
+    email: '',
+    phone: '',
+    address: '',
+    facebookUrl: '',
+    instagramUrl: ''
+  });
 
-  const handleChange = (field, value) => {
-    const newData = {
-      ...localData,
+  useEffect(() => {
+    if (contactData) {
+      setFormData(contactData);
+    }
+  }, [contactData]);
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
       [field]: value
-    };
-    setLocalData(newData);
-    updateContact(newData);
+    }));
   };
 
-  // Sync with store when contactData changes
-  useEffect(() => {
-    setLocalData(contactData);
-  }, [contactData]);
+  const handleSave = () => {
+    updateContact(formData);
+  };
 
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold mb-6">Холбоо Барих</h1>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="flex gap-6">
         {/* Preview Section - Left Side */}
         <Preview />
 
         {/* Settings Section - Right Side */}
-        <div className="space-y-6">
+        <div className="space-y-6 w-1/3">
           <div className="rounded-lg border bg-card p-6">
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Имэйл хаяг</Label>
-                <Input
-                  id="email"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">И-мэйл</label>
+                <input
                   type="email"
-                  value={localData?.email || ''}
-                  onChange={(e) => handleChange('email', e.target.value)}
-                  placeholder="info@example.com"
+                  value={formData.email}
+                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="И-мэйл"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="phone">Утасны дугаар</Label>
-                <Input
-                  id="phone"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утас</label>
+                <input
                   type="tel"
-                  value={localData?.phone || ''}
-                  onChange={(e) => handleChange('phone', e.target.value)}
-                  placeholder="+976 99999999"
+                  value={formData.phone}
+                  onChange={(e) => handleInputChange('phone', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Утас"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="address">Хаяг</Label>
-                <Input
-                  id="address"
-                  value={localData?.address || ''}
-                  onChange={(e) => handleChange('address', e.target.value)}
-                  placeholder="Улаанбаатар хот"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаяг</label>
+                <input
+                  type="text"
+                  value={formData.address}
+                  onChange={(e) => handleInputChange('address', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Хаяг"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="facebook">Facebook хаяг</Label>
-                <Input
-                  id="facebook"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Facebook URL</label>
+                <input
                   type="url"
-                  value={localData?.facebook || ''}
-                  onChange={(e) => handleChange('facebook', e.target.value)}
-                  placeholder="https://facebook.com/"
+                  value={formData.facebookUrl}
+                  onChange={(e) => handleInputChange('facebookUrl', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Facebook URL"
                 />
               </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="instagram">Instagram хаяг</Label>
-                <Input
-                  id="instagram"
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
+                <input
                   type="url"
-                  value={localData?.instagram || ''}
-                  onChange={(e) => handleChange('instagram', e.target.value)}
-                  placeholder="https://instagram.com/"
+                  value={formData.instagramUrl}
+                  onChange={(e) => handleInputChange('instagramUrl', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Instagram URL"
                 />
               </div>
             </div>
           </div>
 
           <div className="flex justify-end">
-            <Button>Хадгалах</Button>
+            <Button onClick={handleSave}>Хадгалах</Button>
           </div>
         </div>
       </div>

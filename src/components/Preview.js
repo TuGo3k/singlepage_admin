@@ -859,7 +859,7 @@ const HistorySection = ({ content, style, isMobile }) => {
   );
 };
 
-const ContactSection = ({ content, isMobile }) => {
+const ContactSection = ({ siteData, content, isMobile }) => {
   return (
     <div className="bg-[#111827] text-white py-12 px-4 text-center">
       <h2 className="text-3xl font-bold text-indigo-400 mb-2">{content?.title || 'Бидэнтэй холбогдох'}</h2>
@@ -873,8 +873,8 @@ const ContactSection = ({ content, isMobile }) => {
           <div className="flex items-center mb-4 text-blue-400 text-2xl">
             <MdEmail />
           </div>
-          <h3 className="font-semibold text-lg mb-1">{content?.emailTitle || 'И-мэйл'}</h3>
-          <p className="text-gray-300">{content?.email || 'info@example.com'}</p>
+          <h3 className="font-semibold text-lg mb-1">{content?.emailTitle || siteData?.contact?.emailTitle || 'И-мэйл'}</h3>
+          <p className="text-gray-300">{content?.email || siteData?.contact?.email || 'info@example.com'}</p>
         </div>
 
         {/* Phone */}
@@ -882,8 +882,8 @@ const ContactSection = ({ content, isMobile }) => {
           <div className="flex items-center mb-4 text-green-400 text-2xl">
             <FaPhone />
           </div>
-          <h3 className="font-semibold text-lg mb-1">{content?.phoneTitle || 'Утас'}</h3>
-          <p className="text-gray-300">{content?.phone || '+976 99999999'}</p>
+          <h3 className="font-semibold text-lg mb-1">{content?.phoneTitle || siteData?.contact?.phoneTitle || 'Утас'}</h3>
+          <p className="text-gray-300">{content?.phone || siteData?.contact?.phone || '+976 99999999'}</p>
         </div>
 
         {/* Address */}
@@ -891,18 +891,18 @@ const ContactSection = ({ content, isMobile }) => {
           <div className="flex items-center mb-4 text-purple-400 text-2xl">
             <PiMapPinFill />
           </div>
-          <h3 className="font-semibold text-lg mb-1">{content?.addressTitle || 'Хаяг'}</h3>
-          <p className="text-gray-300">{content?.address || 'Улаанбаатар хот'}</p>
+          <h3 className="font-semibold text-lg mb-1">{content?.addressTitle || siteData?.contact?.addressTitle || 'Хаяг'}</h3>
+          <p className="text-gray-300">{content?.address || siteData?.contact?.address || 'Улаанбаатар хот'}</p>
         </div>
       </div>
 
       {/* Social */}
-      <p className="text-gray-300 mb-4">{content?.socialTitle || 'Биднийг дагаарай'}</p>
+      <p className="text-gray-300 mb-4">{content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}</p>
       <div className="flex justify-center gap-4 text-2xl">
-        <a href={content?.facebookUrl || '#'} className="bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 transition">
+        <a href={content?.facebook || siteData?.contact?.facebook || '#'} className="bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 transition">
           <FaFacebook />
         </a>
-        <a href={content?.instagramUrl || '#'} className="bg-pink-500 p-3 rounded-full text-white hover:bg-pink-600 transition">
+        <a href={content?.instagram || siteData?.contact?.instagram || '#'} className="bg-pink-500 p-3 rounded-full text-white hover:bg-pink-600 transition">
           <BsInstagram />
         </a>
       </div>
@@ -1077,7 +1077,13 @@ export default function Preview({ previewMarginActive = false }) {
           </footer>
         );
       case 'contact':
-        return <ContactSection content={section.content} isMobile={viewMode === 'mobile'} />;
+        return (
+          <ContactSection
+            siteData={siteData}
+            content={section.content}
+            isMobile={isMobile}
+          />
+        );
       default:
         return null;
     }

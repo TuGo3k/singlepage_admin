@@ -1768,7 +1768,7 @@ export default function TemplatesPage() {
                                         placeholder="И-мэйл гарчиг"
                                       />
                                     </div>
-                                    {/* <div>
+                                    <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">И-мэйл</label>
                                       <input
                                         type="email"
@@ -1777,7 +1777,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="И-мэйл"
                                       />
-                                    </div> */}
+                                    </div>
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утасны гарчиг</label>
                                       <input
@@ -1788,7 +1788,7 @@ export default function TemplatesPage() {
                                         placeholder="Утасны гарчиг"
                                       />
                                     </div>
-                                    {/* <div>
+                                    <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утас</label>
                                       <input
                                         type="tel"
@@ -1797,7 +1797,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Утас"
                                       />
-                                    </div> */}
+                                    </div>
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаягны гарчиг</label>
                                       <input
@@ -1808,7 +1808,7 @@ export default function TemplatesPage() {
                                         placeholder="Хаягны гарчиг"
                                       />
                                     </div>
-                                    {/* <div>
+                                    <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаяг</label>
                                       <input
                                         type="text"
@@ -1817,7 +1817,7 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                                         placeholder="Хаяг"
                                       />
-                                    </div> */}
+                                    </div>
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Сошиал медиа гарчиг</label>
                                       <input

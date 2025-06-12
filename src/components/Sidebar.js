@@ -2,9 +2,21 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { usePreviewStore } from '@/store/previewStore';
+import { toast } from 'react-hot-toast';
 
 export default function Sidebar({ isCollapsed, setIsCollapsed }) {
   const pathname = usePathname();
+  const siteData = usePreviewStore((state) => state.siteData);
+
+  const hasContactSection = siteData.template.sections.some(section => section.type === 'contact');
+
+  const handleContactClick = (e) => {
+    if (!hasContactSection) {
+      e.preventDefault();
+      toast.error('Холбоо барих хэсэг байхгүй байна. Эхлээд "Загварууд" хуудаснаас холбоо барих хэсэг нэмнэ үү.');
+    }
+  };
 
   const navigation = [
     { 
@@ -49,13 +61,14 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
     },
     { 
       name: 'Холбоо барих', 
-      href: '/contact', 
+      href: hasContactSection ? '/contact' : '#', 
       icon: (
         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
       ),
-      description: 'Холбоо барих мэдээлэл'
+      description: 'Холбоо барих мэдээлэл',
+      onClick: handleContactClick
     }
   ];
 
@@ -152,6 +165,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed }) {
                   <Link
                     key={item.name}
                     href={item.href}
+                    onClick={item.onClick}
                     className={`group flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 ${
                       isActive
                         ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'

@@ -33,7 +33,7 @@ const ViewportToggle = ({ viewMode, setViewMode }) => (
 );
 
 // Enhanced navigation header with scroll effects
-const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sections, isMobile }) => {
+const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sections, isMobile, hasMargin, previewMarginActive }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const logoInputRef = useRef();
@@ -87,11 +87,15 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
       }`}
       style={{ 
         borderBottomColor: isScrolled ? style?.primaryColor + '20' : 'transparent',
-        borderBottomWidth: '1px'
+        borderBottomWidth: '1px',
+        marginTop: hasMargin ? '40px' : undefined,
+        marginBottom: hasMargin ? '40px' : undefined
       }}
     >
-      <div className={`${isMobile ? 'px-4' : 'px-6'} py-3`}>
-        <div className="flex items-center justify-between">
+      <div className={`${isMobile ? 'px-4' : 'px-10'} py-3`}>
+        <div className="flex items-center justify-between"
+              style={previewMarginActive ? { marginLeft: '8%', marginRight: '8%' } : undefined}
+        >
           {/* Logo upload + preview */}
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer relative group" onClick={() => logoInputRef.current.click()}>
@@ -144,7 +148,7 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
                   </button>
                   {/* Дэд ангилал байгаа бол dropdown */}
                   {item.subCategories && item.subCategories.length > 0 && (
-                    <div className="absolute left-0 top-full mt-2 min-w-[120px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 hidden group-hover:block">
+                    <div className="absolute left-0 top-full min-w-[120px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 hidden group-hover:block">
                       <ul className="py-2">
                         {item.subCategories.map(sub => (
                           <li key={sub.id}>
@@ -636,17 +640,16 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                 className="w-full h-full object-cover"
               />
               {card.price && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-bold text-2xl md:text-3xl text-blue-600 bg-white/80 rounded-full px-6 py-2 shadow-md">
+                <div 
+                  className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
+                >
+                  <span 
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold text-blue-600 bg-white/80 rounded-full px-6 py-2 shadow-md`}
+                  >
                     {card.price}
                   </span>
                 </div>
               )}
-              <div 
-                className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
-                  activeCardId === card.id ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
             </div>
             <div className={`flex-1 flex flex-col justify-center px-2 py-3 w-full ${
               textAlign === 'left' ? 'items-start' : textAlign === 'right' ? 'items-end' : 'items-center'
@@ -928,6 +931,103 @@ const getHorizontalPaddingClasses = (section) => {
   }
 };
 
+const FeaturesSection = ({ content, settings, style, isMobile }) => {
+  const getPriceSizeClass = (size) => {
+    switch (size) {
+      case 'small': return 'text-lg md:text-xl';
+      case 'large': return 'text-3xl md:text-4xl';
+      default: return 'text-2xl md:text-3xl';
+    }
+  };
+
+  const getPricePositionClass = (position) => {
+    switch (position) {
+      case 'top-left': return 'top-4 left-4';
+      case 'top': return 'top-4 left-1/2 -translate-x-1/2';
+      case 'top-right': return 'top-4 right-4';
+      case 'center-left': return 'top-1/2 left-4 -translate-y-1/2';
+      case 'center': return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+      case 'center-right': return 'top-1/2 right-4 -translate-y-1/2';
+      case 'bottom-left': return 'bottom-4 left-4';
+      case 'bottom': return 'bottom-4 left-1/2 -translate-x-1/2';
+      case 'bottom-right': return 'bottom-4 right-4';
+      default: return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+    }
+  };
+
+  const getPriceAlignmentClass = (alignment) => {
+    switch (alignment) {
+      case 'left': return 'left-4';
+      case 'right': return 'right-4';
+      default: return 'left-1/2 -translate-x-1/2';
+    }
+  };
+
+  const getCardSizeClass = (size) => {
+    switch (size) {
+      case 'small': return isMobile ? 'h-[180px]' : 'h-[220px]';
+      case 'large': return isMobile ? 'h-[320px]' : 'h-[400px]';
+      case 'medium':
+      default: return isMobile ? 'h-[240px]' : 'h-[300px]';
+    }
+  };
+
+  return (
+    <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
+      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+        {content.title}
+      </h3>
+      {content.description && (
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+          {content.description}
+        </p>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {content.cards.map(card => (
+          <div 
+            key={card.id}
+            className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)}`}
+            style={{ borderColor: style?.primaryColor || '#3B82F6' }}
+          >
+            <div className="relative w-full h-48">
+              <img 
+                src={card.image} 
+                alt={card.title}
+                className="w-full h-full object-cover"
+              />
+              {card.price && (
+                <div 
+                  className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
+                >
+                  <span 
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold text-blue-600 bg-white/80 rounded-full px-6 py-2 shadow-md`}
+                  >
+                    {card.price}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="p-4 flex-1">
+              <h4 
+                className="font-bold mb-2"
+                style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+              >
+                {card.title}
+              </h4>
+              <p 
+                className="text-gray-600 dark:text-gray-400"
+                style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+              >
+                {card.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function Preview({ previewMarginActive = false }) {
   const siteData = usePreviewStore((state) => state.siteData);
   const { header, style, media, contact, template } = siteData;
@@ -965,7 +1065,7 @@ export default function Preview({ previewMarginActive = false }) {
       case 'history':
         return <HistorySection content={section.content} style={style} isMobile={isMobile} />;
       case 'features':
-        return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} />;
+        return <FeaturesSection content={section.content} settings={section.settings} style={style} isMobile={isMobile} />;
       case 'footer':
         // Modern contact/footer layout
         const c = section.content;
@@ -1132,6 +1232,8 @@ export default function Preview({ previewMarginActive = false }) {
               setCurrentSection={setCurrentSection}
               sections={template.sections}
               isMobile={isMobile}
+              hasMargin={template.sections.find(s => s.type === 'hero')?.settings?.hasMargin}
+              previewMarginActive={previewMarginActive}
             />
 
             {/* Main Content */}

@@ -61,7 +61,12 @@ const sectionTypes = {
       { id: 'price-basic', name: 'Basic', icon: '₮', preview: 'Basic тариф' },
       { id: 'price-standard', name: 'Standard', icon: '₮₮', preview: 'Standard тариф' },
       { id: 'price-premium', name: 'Premium', icon: '₮₮₮', preview: 'Premium тариф' },
-    ]
+    ],
+    settings: {
+      pricePosition: 'center', // 'top', 'center', 'bottom'
+      priceSize: 'medium', // 'small', 'medium', 'large'
+      priceAlignment: 'center', // 'left', 'center', 'right'
+    }
   },
   history: {
     name: 'Түүх',
@@ -1619,10 +1624,8 @@ export default function TemplatesPage() {
                                 )}
                                 {section.type === 'features' && (
                                   <div className="space-y-4">
-                                    <div className="mb-4">
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Хэсгийн гарчиг
-                                      </label>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хэсгийн гарчиг</label>
                                       <input
                                         type="text"
                                         value={section.content.title || ''}
@@ -1636,10 +1639,8 @@ export default function TemplatesPage() {
                                         className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                       />
                                     </div>
-                                    <div className="mb-4">
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                        Хэсгийн тайлбар
-                                      </label>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хэсгийн тайлбар</label>
                                       <textarea
                                         value={section.content.description || ''}
                                         onChange={(e) => handleSaveSection(section.id, {
@@ -1653,86 +1654,63 @@ export default function TemplatesPage() {
                                         rows={2}
                                       />
                                     </div>
-                                    <div className="space-y-2">
-                                      {section.content.cards?.map((card, idx) => (
-                                        <div key={card.id} className="flex flex-col md:flex-row gap-2 items-center bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 relative">
-                                          {/* Image preview & upload */}
-                                          <div className="flex flex-col items-center mr-2">
-                                            <div className="w-20 h-20 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md flex items-center justify-center overflow-hidden mb-1">
-                                              {card.image ? (
-                                                <img src={card.image} alt="card" className="object-cover w-full h-full" />
-                                              ) : (
-                                                <span className="text-gray-300 text-xs">No image</span>
-                                              )}
-                                            </div>
-                                            <input
-                                              type="file"
-                                              accept="image/*"
-                                              id={`card-image-upload-${card.id}`}
-                                              className="hidden"
-                                              onChange={e => {
-                                                const file = e.target.files[0];
-                                                if (file) {
-                                                  const url = URL.createObjectURL(file);
-                                                  const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, image: url } : c);
-                                                  handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                                }
-                                              }}
-                                            />
-                                            <label
-                                              htmlFor={`card-image-upload-${card.id}`}
-                                              className="px-2 py-1 bg-blue-500 text-white rounded text-xs cursor-pointer hover:bg-blue-600 transition"
+                                  
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Үнийн байршил</label>
+                                      <div className="inline-grid grid-cols-3 gap-1">
+                                        {[
+                                          ['top-left', 'top', 'top-right'],
+                                          ['center-left', 'center', 'center-right'],
+                                          ['bottom-left', 'bottom', 'bottom-right'],
+                                        ].map((row, rowIdx) => (
+                                          row.map((pos, colIdx) => (
+                                            <button
+                                              key={pos}
+                                              type="button"
+                                              onClick={() => handleSaveSection(section.id, { settings: { ...section.settings, pricePosition: pos } })}
+                                              className={`w-10 h-10 flex items-center justify-center rounded-full border text-lg
+                                                ${section.settings?.pricePosition === pos ? 'bg-blue-500 text-white border-blue-600' : 'bg-gray-100 text-gray-700 border-gray-300'}
+                                              `}
+                                              title={pos}
                                             >
-                                              Зураг оруулах
-                                            </label>
-                                            <input
-                                              type="text"
-                                              value={card.image}
-                                              onChange={e => {
-                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, image: e.target.value } : c);
-                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                              }}
-                                              placeholder="Зураг URL"
-                                              className="w-32 mt-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-xs"
-                                            />
-                                          </div>
-                                          {/* Card info */}
-                                          <div className="flex-1 flex flex-col md:flex-col gap-2 items-start w-full">
-                                            <input
-                                              type="text"
-                                              value={card.title}
-                                              onChange={e => {
-                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, title: e.target.value } : c);
-                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                              }}
-                                              placeholder="Тарифын нэр (жишээ: Basic)"
-                                              className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                            />
-                                            <input
-                                              type="text"
-                                              value={card.price || ''}
-                                              onChange={e => {
-                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, price: e.target.value } : c);
-                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                              }}
-                                              placeholder="Үнэ (жишээ: 29,000₮)"
-                                              className="w-32 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                            />
-                                            <input
-                                              type="text"
-                                              value={card.description}
-                                              onChange={e => {
-                                                const newCards = section.content.cards.map((c, i) => i === idx ? { ...c, description: e.target.value } : c);
-                                                handleSaveSection(section.id, { content: { ...section.content, cards: newCards } });
-                                              }}
-                                              placeholder="Тайлбар"
-                                              className="flex-1 px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                            />
-                                          </div>
-                                          {/* Delete button (optional) */}
-                                          {/* <button ...>Устгах</button> */}
-                                        </div>
-                                      ))}
+                                              {pos === 'top-left' && '↖️'}
+                                              {pos === 'top' && '⬆️'}
+                                              {pos === 'top-right' && '↗️'}
+                                              {pos === 'center-left' && '⬅️'}
+                                              {pos === 'center' && '⏺️'}
+                                              {pos === 'center-right' && '➡️'}
+                                              {pos === 'bottom-left' && '↙️'}
+                                              {pos === 'bottom' && '⬇️'}
+                                              {pos === 'bottom-right' && '↘️'}
+                                            </button>
+                                          ))
+                                        ))}
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Үнийн хэмжээ</label>
+                                      <select
+                                        value={section.settings?.priceSize || 'medium'}
+                                        onChange={(e) => handleSaveSection(section.id, { settings: { ...section.settings, priceSize: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                      >
+                                        <option value="small">Жижиг</option>
+                                        <option value="medium">Дунд</option>
+                                        <option value="large">Том</option>
+                                      </select>
+                                    </div>
+                                 
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Картын хэмжээ</label>
+                                      <select
+                                        value={section.settings?.cardSize || 'medium'}
+                                        onChange={(e) => handleSaveSection(section.id, { settings: { ...section.settings, cardSize: e.target.value } })}
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                                      >
+                                        <option value="small">Жижиг</option>
+                                        <option value="medium">Дунд</option>
+                                        <option value="large">Том</option>
+                                      </select>
                                     </div>
                                   </div>
                                 )}

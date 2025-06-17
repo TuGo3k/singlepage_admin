@@ -8,21 +8,30 @@ import Preview from "@/components/Preview";
 import { usePreviewStore } from '@/store/previewStore';
 
 export default function ContactPage() {
-  const updateContact = usePreviewStore((state) => state.updateContact);
+  const updateSection = usePreviewStore((state) => state.updateSection);
+  const templateSections = usePreviewStore((state) => state.siteData.template.sections);
   const contactData = usePreviewStore((state) => state.siteData.contact);
+  // Find the contact section
+  const contactSection = templateSections.find(section => section.type === 'contact');
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
     address: '',
-    facebookUrl: '',
-    instagramUrl: ''
+    facebook: '',
+    instagram: ''
   });
 
   useEffect(() => {
-    if (contactData) {
-      setFormData(contactData);
+    if (contactSection && contactSection.content) {
+      setFormData({
+        email: contactSection.content.email || '',
+        phone: contactSection.content.phone || '',
+        address: contactSection.content.address || '',
+        facebook: contactSection.content.facebook || '',
+        instagram: contactSection.content.instagram || ''
+      });
     }
-  }, [contactData]);
+  }, [contactSection]);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -32,7 +41,18 @@ export default function ContactPage() {
   };
 
   const handleSave = () => {
-    updateContact(formData);
+    if (contactSection) {
+      updateSection(contactSection.id, {
+        content: {
+          ...contactSection.content,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          facebook: formData.facebook,
+          instagram: formData.instagram
+        }
+      });
+    }
   };
 
   return (

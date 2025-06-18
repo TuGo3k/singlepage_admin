@@ -644,7 +644,13 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
                   className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
                 >
                   <span 
-                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold text-blue-600 bg-white/80 rounded-full px-6 py-2 shadow-md`}
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-6 py-2 shadow-md`}
+                    style={{
+                      color: style?.priceBadgeTextColor || '#2563EB',
+                      background: style?.priceBadgeBgColor || '#E5E7EB',
+                      backdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                      WebkitBackdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                    }}
                   >
                     {card.price}
                   </span>
@@ -1000,7 +1006,13 @@ const FeaturesSection = ({ content, settings, style, isMobile }) => {
                   className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
                 >
                   <span 
-                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold text-blue-600 bg-white/80 rounded-full px-6 py-2 shadow-md`}
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-6 py-2 shadow-md`}
+                    style={{
+                      color: style?.priceBadgeTextColor || '#2563EB',
+                      background: style?.priceBadgeBgColor || '#E5E7EB',
+                      backdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                      WebkitBackdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                    }}
                   >
                     {card.price}
                   </span>

@@ -244,6 +244,30 @@ export default function StylePage() {
                 {/* Text Sizes Section */}
              
               </div>
+
+          <div className="flex justify-end mt-4">
+            <Button
+              className="bg-green-600 hover:bg-green-700 text-white"
+              onClick={() => {
+                if (perSectionData.features) {
+                  updateStyle({
+                    ...styleData,
+                    ...perSectionData.features,
+                  });
+                }
+              }}
+            >
+              Хадгалах
+            </Button>
+          </div>
+
+
+
+
+
+
+
+
             </div>
           )}
 
@@ -409,8 +433,65 @@ export default function StylePage() {
                             </div>
                           </div>
                         </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`priceBadgeTextColor-${section.key}`}>Үнийн badge-ийн текстийн өнгө</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id={`priceBadgeTextColor-${section.key}`}
+                              type="color"
+                              value={perSectionData[section.key]?.priceBadgeTextColor || '#2563EB'}
+                              onChange={(e) => handlePerSectionChange(section.key, 'priceBadgeTextColor', e.target.value)}
+                              className="w-12 h-9 p-1"
+                            />
+                            <Input
+                              value={perSectionData[section.key]?.priceBadgeTextColor || '#2563EB'}
+                              onChange={(e) => handlePerSectionChange(section.key, 'priceBadgeTextColor', e.target.value)}
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`priceBadgeBgColor-${section.key}`}>Үнийн badge-ийн background өнгө</Label>
+                          <div className="flex gap-2">
+                            <Input
+                              id={`priceBadgeBgColor-${section.key}`}
+                              type="color"
+                              value={perSectionData[section.key]?.priceBadgeBgColor || '#E5E7EB'}
+                              onChange={(e) => handlePerSectionChange(section.key, 'priceBadgeBgColor', e.target.value)}
+                              className="w-12 h-9 p-1"
+                            />
+                            <Input
+                              value={perSectionData[section.key]?.priceBadgeBgColor || '#E5E7EB'}
+                              onChange={(e) => handlePerSectionChange(section.key, 'priceBadgeBgColor', e.target.value)}
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor={`priceBadgeBlur-${section.key}`}>Үнийн badge blur (px)</Label>
+                          <Input
+                            id={`priceBadgeBlur-${section.key}`}
+                            type="number"
+                            min="0"
+                            max="10"
+                            value={perSectionData[section.key]?.priceBadgeBlur || 0}
+                            onChange={(e) => handlePerSectionChange(section.key, 'priceBadgeBlur', e.target.value)}
+                          />
+                        </div>
                         <div className="flex justify-end mt-4">
-                          <Button className="bg-green-600 hover:bg-green-700 text-white">Хадгалах</Button>
+                          <Button
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => {
+                              if (perSectionData.features) {
+                                updateStyle({
+                                  ...styleData,
+                                  ...perSectionData.features,
+                                });
+                              }
+                            }}
+                          >
+                            Хадгалах
+                          </Button>
                         </div>
                       </div>
                     )}
@@ -420,9 +501,6 @@ export default function StylePage() {
             </div>
           )}
 
-          <div className="flex justify-end mt-4">
-            <Button>Хадгалах</Button>
-          </div>
         </div>
       </div>
     </div>

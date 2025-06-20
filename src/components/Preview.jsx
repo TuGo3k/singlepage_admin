@@ -94,7 +94,7 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
     >
       <div className={`${isMobile ? 'px-4' : 'px-10'} py-3`}>
         <div className="flex items-center justify-between"
-              style={previewMarginActive ? { marginLeft: '8%', marginRight: '8%' } : undefined}
+              style={previewMarginActive && !isMobile ? { marginLeft: '8%', marginRight: '8%' } : undefined}
         >
           {/* Logo upload + preview */}
           <div className="flex items-center gap-3">
@@ -390,7 +390,7 @@ const BannerSection = ({ content, layout, style, isMobile }) => {
   );
 };
 
-const CardsSection = ({ content, layout, style, settings, isMobile }) => {
+const CardsSection = ({ content, layout, style, settings, isMobile, viewMode }) => {
   const isCarousel = layout === 'carousel';
   const gridClass = layout === 'grid-4' ? 'grid-cols-4' : 'grid-cols-3';
   const carouselRef = useRef(null);
@@ -623,7 +623,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
           {content.description}
         </p>
       )}
-      <div className={`grid ${getGridClass()} gap-4`}>
+      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-6'}`}>
         {content.cards.map(card => (
           <div 
             key={card.id}
@@ -680,7 +680,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile }) => {
   );
 };
 
-const HistorySection = ({ content, style, isMobile }) => {
+const HistorySection = ({ content, style, isMobile, viewMode }) => {
   const selectedSubtype = content.subtype || 'timeline';
   const selectedLayout = content.layout || (selectedSubtype === 'timeline' ? 'timeline' : 'text-left');
 
@@ -692,7 +692,7 @@ const HistorySection = ({ content, style, isMobile }) => {
         <div key={item.id} className={`relative mb-12 ${index % 2 === 0 ? 'pr-1/2' : 'pl-1/2'}`}>
           {/* Year badge */}
           <div className={`absolute top-0 ${index % 2 === 0 ? 'right-1/2 mr-8' : 'left-1/2 ml-8'} transform -translate-y-1/2`}>
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+            <div className={`bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
               {item.year}
             </div>
           </div>
@@ -707,10 +707,10 @@ const HistorySection = ({ content, style, isMobile }) => {
                 />
               </div>
               <div className="p-6">
-                <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+                <h4 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
                   {item.title}
                 </h4>
-                <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+                <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
                   {item.description}
                 </p>
               </div>
@@ -722,7 +722,7 @@ const HistorySection = ({ content, style, isMobile }) => {
   );
 
   const renderCards = () => (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className={`grid w-full ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-6'}`}>
       {content.items.map(item => (
         <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <div className="relative h-48">
@@ -731,15 +731,15 @@ const HistorySection = ({ content, style, isMobile }) => {
               alt={item.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+            <div className={`absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
               {item.year}
             </div>
           </div>
           <div className="p-6">
-            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+            <h4 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
               {item.title}
             </h4>
-            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
               {item.description}
             </p>
           </div>
@@ -759,16 +759,16 @@ const HistorySection = ({ content, style, isMobile }) => {
                 alt={item.title}
                 className="w-full h-64 object-cover rounded-lg shadow-lg"
               />
-              <div className="absolute -top-4 -left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg text-lg font-bold">
+              <div className={`absolute -top-4 -left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-bold ${isMobile ? 'text-base' : 'text-lg'}`}>
                 {item.year}
               </div>
             </div>
           </div>
           <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
-            <h4 className="text-2xl font-bold mb-4" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+            <h4 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
               {item.title}
             </h4>
-            <p className="text-gray-600 dark:text-gray-400 text-lg" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+            <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
               {item.description}
             </p>
           </div>
@@ -778,7 +778,7 @@ const HistorySection = ({ content, style, isMobile }) => {
   );
 
   const renderGrid = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-4' : 'md:grid-cols-2 gap-8'}`}>
       {content.items.map(item => (
         <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <div className="relative">
@@ -787,15 +787,15 @@ const HistorySection = ({ content, style, isMobile }) => {
               alt={item.title}
               className="w-full h-64 object-cover"
             />
-            <div className="absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full text-sm font-medium">
+            <div className={`absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
               {item.year}
             </div>
           </div>
           <div className="p-6">
-            <h4 className="text-xl font-bold mb-2" style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+            <h4 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
               {item.title}
             </h4>
-            <p className="text-gray-600 dark:text-gray-400" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
               {item.description}
             </p>
           </div>
@@ -855,7 +855,7 @@ const HistorySection = ({ content, style, isMobile }) => {
     <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
       {content.title && content.title.trim() !== '' && (
         <div className="text-center mb-6">
-          <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+          <h3 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
             {content.title}
           </h3>
           {content.subtitle && (
@@ -872,44 +872,60 @@ const HistorySection = ({ content, style, isMobile }) => {
 
 const ContactSection = ({ siteData, content, isMobile }) => {
   return (
-    <div className="bg-[#111827] text-white py-12 px-4 text-center">
-      <h2 className="text-3xl font-bold text-indigo-400 mb-2">{content?.title || 'Бидэнтэй холбогдох'}</h2>
-      <p className="text-gray-300 mb-8">
+    <div className={`bg-[#111827] text-white ${isMobile ? 'py-8 px-4' : 'py-12 px-4'} text-center`}>
+      <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-indigo-400 mb-2`}>
+        {content?.title || 'Бидэнтэй холбогдох'}
+      </h2>
+      <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300 mb-8`}>
         {content?.description || 'Танай асуулт, санал хүсэлтийг бидэнд илгээнэ үү. Бид танд хурдан хариулах болно.'}
       </p>
 
-      <div className="flex flex-col md:flex-row justify-center items-center gap-6 mb-10">
+      <div className={`flex flex-col ${isMobile ? 'gap-4' : 'md:flex-row gap-6'} justify-center items-center mb-10`}>
         {/* Email */}
-        <div className="bg-[#1f2937] rounded-xl p-6 w-72 text-left shadow-md border border-gray-700">
-          <div className="flex items-center mb-4 text-blue-400 text-2xl">
+        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
+          <div className={`flex items-center mb-4 text-blue-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
             <MdEmail />
           </div>
-          <h3 className="font-semibold text-lg mb-1">{content?.emailTitle || siteData?.contact?.emailTitle || 'И-мэйл'}</h3>
-          <p className="text-gray-300">{content?.email || siteData?.contact?.email || 'info@example.com'}</p>
+          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+            {content?.emailTitle || siteData?.contact?.emailTitle || 'И-мэйл'}
+          </h3>
+          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+            {content?.email || siteData?.contact?.email || 'info@example.com'}
+          </p>
         </div>
 
         {/* Phone */}
-        <div className="bg-[#1f2937] rounded-xl p-6 w-72 text-left shadow-md border border-gray-700">
-          <div className="flex items-center mb-4 text-green-400 text-2xl">
+        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
+          <div className={`flex items-center mb-4 text-green-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
             <FaPhone />
           </div>
-          <h3 className="font-semibold text-lg mb-1">{content?.phoneTitle || siteData?.contact?.phoneTitle || 'Утас'}</h3>
-          <p className="text-gray-300">{content?.phone || siteData?.contact?.phone || '+976 99999999'}</p>
+          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+            {content?.phoneTitle || siteData?.contact?.phoneTitle || 'Утас'}
+          </h3>
+          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+            {content?.phone || siteData?.contact?.phone || '+976 99999999'}
+          </p>
         </div>
 
         {/* Address */}
-        <div className="bg-[#1f2937] rounded-xl p-6 w-72 text-left shadow-md border border-gray-700">
-          <div className="flex items-center mb-4 text-purple-400 text-2xl">
+        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
+          <div className={`flex items-center mb-4 text-purple-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
             <PiMapPinFill />
           </div>
-          <h3 className="font-semibold text-lg mb-1">{content?.addressTitle || siteData?.contact?.addressTitle || 'Хаяг'}</h3>
-          <p className="text-gray-300">{content?.address || siteData?.contact?.address || 'Улаанбаатар хот'}</p>
+          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+            {content?.addressTitle || siteData?.contact?.addressTitle || 'Хаяг'}
+          </h3>
+          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+            {content?.address || siteData?.contact?.address || 'Улаанбаатар хот'}
+          </p>
         </div>
       </div>
 
       {/* Social */}
-      <p className="text-gray-300 mb-4">{content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}</p>
-      <div className="flex justify-center gap-4 text-2xl">
+      <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300 mb-4`}>
+        {content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}
+      </p>
+      <div className={`flex justify-center gap-4 ${isMobile ? 'text-xl' : 'text-2xl'}`}>
         <a href={content?.facebook || siteData?.contact?.facebook || '#'} className="bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 transition">
           <FaFacebook />
         </a>
@@ -939,12 +955,12 @@ const getHorizontalPaddingClasses = (section) => {
   }
 };
 
-const FeaturesSection = ({ content, settings, style, isMobile }) => {
+const FeaturesSection = ({ content, settings, style, isMobile, viewMode }) => {
   const getPriceSizeClass = (size) => {
     switch (size) {
-      case 'small': return 'text-lg md:text-xl';
-      case 'large': return 'text-3xl md:text-4xl';
-      default: return 'text-2xl md:text-3xl';
+      case 'small': return isMobile ? 'text-base' : 'text-lg md:text-xl';
+      case 'large': return isMobile ? 'text-2xl' : 'text-3xl md:text-4xl';
+      default: return isMobile ? 'text-lg' : 'text-2xl md:text-3xl';
     }
   };
 
@@ -963,41 +979,33 @@ const FeaturesSection = ({ content, settings, style, isMobile }) => {
     }
   };
 
-  const getPriceAlignmentClass = (alignment) => {
-    switch (alignment) {
-      case 'left': return 'left-4';
-      case 'right': return 'right-4';
-      default: return 'left-1/2 -translate-x-1/2';
-    }
-  };
-
   const getCardSizeClass = (size) => {
     switch (size) {
-      case 'small': return isMobile ? 'h-[180px]' : 'h-[220px]';
-      case 'large': return isMobile ? 'h-[320px]' : 'h-[400px]';
+      case 'small': return isMobile ? 'h-[140px]' : 'h-[220px]';
+      case 'large': return isMobile ? 'h-[220px]' : 'h-[400px]';
       case 'medium':
-      default: return isMobile ? 'h-[240px]' : 'h-[300px]';
+      default: return isMobile ? 'h-[180px]' : 'h-[300px]';
     }
   };
 
   return (
-    <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
-      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+    <div className={`${isMobile ? 'p-2' : 'p-6'}`}>
+      <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
         {content.title}
       </h3>
       {content.description && (
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+        <p className={`${isMobile ? 'text-xs' : 'text-center text-gray-500 dark:text-gray-400 mb-4'} text-center text-gray-500 dark:text-gray-400 mb-4`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
           {content.description}
         </p>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-2 gap-8'}`}>
         {content.cards.map(card => (
           <div 
             key={card.id}
-            className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)}`}
+            className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''}`}
             style={{ borderColor: style?.primaryColor || '#3B82F6' }}
           >
-            <div className="relative w-full h-48">
+            <div className="relative w-full h-32 md:h-48">
               <img 
                 src={card.image} 
                 alt={card.title}
@@ -1008,7 +1016,7 @@ const FeaturesSection = ({ content, settings, style, isMobile }) => {
                   className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
                 >
                   <span 
-                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-6 py-2 shadow-md`}
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-4 md:px-6 py-1 md:py-2 shadow-md`}
                     style={{
                       color: style?.priceBadgeTextColor || '#2563EB',
                       background: style?.priceBadgeBgColor || '#E5E7EB',
@@ -1021,15 +1029,15 @@ const FeaturesSection = ({ content, settings, style, isMobile }) => {
                 </div>
               )}
             </div>
-            <div className="p-4 flex-1">
+            <div className="p-2 md:p-4 flex-1">
               <h4 
-                className="font-bold mb-2"
+                className={`${isMobile ? 'text-sm' : 'text-base'} font-bold mb-2`}
                 style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
               >
                 {card.title}
               </h4>
               <p 
-                className="text-gray-600 dark:text-gray-400"
+                className={`${isMobile ? 'text-xs' : 'text-gray-600 dark:text-gray-400'}`}
                 style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
               >
                 {card.description}
@@ -1075,11 +1083,11 @@ export default function Preview({ previewMarginActive = false }) {
       case 'banner':
         return <BannerSection content={section.content} layout={section.layout} style={style} isMobile={isMobile} />;
       case 'cards':
-        return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} />;
+        return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} viewMode={viewMode} />;
       case 'history':
-        return <HistorySection content={section.content} style={style} isMobile={isMobile} />;
+        return <HistorySection content={section.content} style={style} isMobile={isMobile} viewMode={viewMode} />;
       case 'features':
-        return <FeaturesSection content={section.content} settings={section.settings} style={style} isMobile={isMobile} />;
+        return <FeaturesSection content={section.content} settings={section.settings} style={style} isMobile={isMobile} viewMode={viewMode} />;
       case 'footer':
         // Modern contact/footer layout
         const c = section.content;
@@ -1261,7 +1269,7 @@ export default function Preview({ previewMarginActive = false }) {
                   <div
                     key={section.id}
                     className={`border-b last:border-b-0 animate-fadeInUp ${getHorizontalPaddingClasses(section)}`}
-                    style={previewMarginActive ? { marginLeft: '8%', marginRight: '8%' } : undefined}
+                    style={previewMarginActive && !isMobile ? { marginLeft: '8%', marginRight: '8%' } : undefined}
                   >
                     {renderSection(section)}
                   </div>

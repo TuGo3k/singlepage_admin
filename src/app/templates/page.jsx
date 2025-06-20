@@ -1515,7 +1515,7 @@ export default function TemplatesPage() {
                                               ];
                                               handleSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                                             }}
-                                            className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 font-semibold shadow"
+                                            className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 font-semibold shadow md:ml-4"
                                           >
                                             + Текст нэмэх
                                           </button>

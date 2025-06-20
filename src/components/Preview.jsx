@@ -853,16 +853,18 @@ const HistorySection = ({ content, style, isMobile }) => {
 
   return (
     <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
-      <div className="text-center mb-6">
-        <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
-          {content.title}
-        </h3>
-        {content.subtitle && (
-          <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
-            {content.subtitle}
-          </p>
-        )}
-      </div>
+      {content.title && content.title.trim() !== '' && (
+        <div className="text-center mb-6">
+          <h3 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+            {content.title}
+          </h3>
+          {content.subtitle && (
+            <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+              {content.subtitle}
+            </p>
+          )}
+        </div>
+      )}
       {renderContent()}
     </div>
   );

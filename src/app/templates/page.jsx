@@ -1359,112 +1359,152 @@ export default function TemplatesPage() {
                                     </div>
                                     {/* Timeline items: зөвхөн subtype нь timeline үед */}
                                     {(section.content.subtype || 'timeline') === 'timeline' && (
-                                      <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
-                                        {section.content.items.map((item, idx) => (
-                                          <div key={item.id} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 relative">
-                                            {/* Top row: photo left, inputs right */}
-                                            <div className="flex items-start gap-4">
-                                              {/* Image upload/preview */}
-                                              <div className="flex flex-col items-center gap-2">
-                                                <div className="w-40 aspect-[16/9] bg-gray-100 border rounded flex items-center justify-center overflow-hidden">
-                                                  <img src={item.image} alt="item" className="w-full h-full object-cover" />
+                                      <div className="mt-4">
+                                        {/* Хэсгийн гарчиг */}
+                                        <div className="mb-4">
+                                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Хэсгийн гарчиг
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={section.content.title || ''}
+                                            onChange={(e) => handleSaveSection(section.id, {
+                                              content: {
+                                                ...section.content,
+                                                title: e.target.value
+                                              }
+                                            })}
+                                            placeholder="Түүх хэсгийн гарчиг оруулах..."
+                                            className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                          />
+                                        </div>
+                                        
+                                        <div className="space-y-6 max-h-96 overflow-y-auto pr-2">
+                                          {section.content.items.map((item, idx) => (
+                                            <div key={item.id} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 relative">
+                                              {/* Top row: photo left, inputs right */}
+                                              <div className="flex items-start gap-4">
+                                                {/* Image upload/preview */}
+                                                <div className="flex flex-col items-center gap-2">
+                                                  <div className="w-40 aspect-[16/9] bg-gray-100 border rounded flex items-center justify-center overflow-hidden">
+                                                    <img src={item.image} alt="item" className="w-full h-full object-cover" />
+                                                  </div>
+                                                  <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    style={{ display: 'none' }}
+                                                    id={`history-item-image-${section.id}-${item.id}`}
+                                                    onChange={e => {
+                                                      const file = e.target.files[0];
+                                                      if (file) {
+                                                        const url = URL.createObjectURL(file);
+                                                        const newItems = section.content.items.map(it => it.id === item.id ? { ...it, image: url } : it);
+                                                        handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
+                                                      }
+                                                    }}
+                                                  />
+                                                  <label htmlFor={`history-item-image-${section.id}-${item.id}`} className="px-2 py-1 bg-blue-500 text-white rounded text-xs cursor-pointer hover:bg-blue-600">Зураг оруулах</label>
                                                 </div>
-                                                <input
-                                                  type="file"
-                                                  accept="image/*"
-                                                  style={{ display: 'none' }}
-                                                  id={`history-item-image-${section.id}-${item.id}`}
-                                                  onChange={e => {
-                                                    const file = e.target.files[0];
-                                                    if (file) {
-                                                      const url = URL.createObjectURL(file);
-                                                      const newItems = section.content.items.map(it => it.id === item.id ? { ...it, image: url } : it);
+                                                {/* Inputs: title and year stacked */}
+                                                <div className="flex-1 flex flex-col gap-2">
+                                                  <input
+                                                    type="text"
+                                                    value={item.title}
+                                                    onChange={e => {
+                                                      const newItems = section.content.items.map(it => it.id === item.id ? { ...it, title: e.target.value } : it);
                                                       handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
-                                                    }
-                                                  }}
-                                                />
-                                                <label htmlFor={`history-item-image-${section.id}-${item.id}`} className="px-2 py-1 bg-blue-500 text-white rounded text-xs cursor-pointer hover:bg-blue-600">Зураг оруулах</label>
+                                                    }}
+                                                    placeholder="Гарчиг"
+                                                    className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                                  />
+                                                  <input
+                                                    type="text"
+                                                    value={item.year}
+                                                    onChange={e => {
+                                                      const newItems = section.content.items.map(it => it.id === item.id ? { ...it, year: e.target.value } : it);
+                                                      handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
+                                                    }}
+                                                    placeholder="Он / Жил"
+                                                    className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                                  />
+                                                </div>
                                               </div>
-                                              {/* Inputs: title and year stacked */}
-                                              <div className="flex-1 flex flex-col gap-2">
-                                                <input
-                                                  type="text"
-                                                  value={item.title}
+                                              {/* Description textarea below */}
+                                              <div className="mt-4">
+                                                <textarea
+                                                  value={item.description || ''}
                                                   onChange={e => {
-                                                    const newItems = section.content.items.map(it => it.id === item.id ? { ...it, title: e.target.value } : it);
+                                                    const newItems = section.content.items.map(it => it.id === item.id ? { ...it, description: e.target.value } : it);
                                                     handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
                                                   }}
-                                                  placeholder="Гарчиг"
-                                                  className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
-                                                />
-                                                <input
-                                                  type="text"
-                                                  value={item.year}
-                                                  onChange={e => {
-                                                    const newItems = section.content.items.map(it => it.id === item.id ? { ...it, year: e.target.value } : it);
-                                                    handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
-                                                  }}
-                                                  placeholder="Он / Жил"
-                                                  className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                                                  placeholder="Тайлбар"
+                                                  className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-none"
+                                                  rows={3}
                                                 />
                                               </div>
+                                              {/* Controls: up/down/delete */}
+                                              <div className="flex gap-2 mt-2">
+                                                <button
+                                                  disabled={idx === 0}
+                                                  onClick={() => {
+                                                    if (idx === 0) return;
+                                                    const items = [...section.content.items];
+                                                    [items[idx - 1], items[idx]] = [items[idx], items[idx - 1]];
+                                                    handleSaveSection(section.id, { content: { ...section.content, items } });
+                                                  }}
+                                                  className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                                                >
+                                                  ↑
+                                                </button>
+                                                <button
+                                                  disabled={idx === section.content.items.length - 1}
+                                                  onClick={() => {
+                                                    if (idx === section.content.items.length - 1) return;
+                                                    const items = [...section.content.items];
+                                                    [items[idx + 1], items[idx]] = [items[idx], items[idx + 1]];
+                                                    handleSaveSection(section.id, { content: { ...section.content, items } });
+                                                  }}
+                                                  className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === section.content.items.length - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                                                >
+                                                  ↓
+                                                </button>
+                                                <button
+                                                  onClick={() => {
+                                                    const items = section.content.items.filter(it => it.id !== item.id);
+                                                    handleSaveSection(section.id, { content: { ...section.content, items } });
+                                                  }}
+                                                  className="px-2 py-1 rounded bg-red-500 text-white text-xs hover:bg-red-600"
+                                                >
+                                                  Устгах
+                                                </button>
+                                              </div>
                                             </div>
-                                            {/* Description textarea below */}
-                                            <div className="mt-4">
-                                              <textarea
-                                                value={item.description || ''}
-                                                onChange={e => {
-                                                  const newItems = section.content.items.map(it => it.id === item.id ? { ...it, description: e.target.value } : it);
-                                                  handleSaveSection(section.id, { content: { ...section.content, items: newItems } });
-                                                }}
-                                                placeholder="Тайлбар"
-                                                className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-none"
-                                                rows={3}
-                                              />
-                                            </div>
-                                            {/* Controls: up/down/delete */}
-                                            <div className="flex gap-2 mt-2">
-                                              <button
-                                                disabled={idx === 0}
-                                                onClick={() => {
-                                                  if (idx === 0) return;
-                                                  const items = [...section.content.items];
-                                                  [items[idx - 1], items[idx]] = [items[idx], items[idx - 1]];
-                                                  handleSaveSection(section.id, { content: { ...section.content, items } });
-                                                }}
-                                                className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
-                                              >
-                                                ↑
-                                              </button>
-                                              <button
-                                                disabled={idx === section.content.items.length - 1}
-                                                onClick={() => {
-                                                  if (idx === section.content.items.length - 1) return;
-                                                  const items = [...section.content.items];
-                                                  [items[idx + 1], items[idx]] = [items[idx], items[idx + 1]];
-                                                  handleSaveSection(section.id, { content: { ...section.content, items } });
-                                                }}
-                                                className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === section.content.items.length - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
-                                              >
-                                                ↓
-                                              </button>
-                                              <button
-                                                onClick={() => {
-                                                  const items = section.content.items.filter(it => it.id !== item.id);
-                                                  handleSaveSection(section.id, { content: { ...section.content, items } });
-                                                }}
-                                                className="px-2 py-1 rounded bg-red-500 text-white text-xs hover:bg-red-600"
-                                              >
-                                                Устгах
-                                              </button>
-                                            </div>
-                                          </div>
-                                        ))}
+                                          ))}
+                                        </div>
                                       </div>
                                     )}
                                     {/* Текст талбар: зөвхөн subtype нь text үед */}
                                     {(section.content.subtype || 'timeline') === 'text' && (
                                       <div className="mt-4">
+                                        {/* Хэсгийн гарчиг */}
+                                        <div className="mb-4">
+                                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                                            Хэсгийн гарчиг
+                                          </label>
+                                          <input
+                                            type="text"
+                                            value={section.content.title || ''}
+                                            onChange={(e) => handleSaveSection(section.id, {
+                                              content: {
+                                                ...section.content,
+                                                title: e.target.value
+                                              }
+                                            })}
+                                            placeholder="Түүх хэсгийн гарчиг оруулах..."
+                                            className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                          />
+                                        </div>
+                                        
                                         <div className="flex items-center mb-4">
                                           <h4 className="text-lg font-semibold text-blue-600 mr-4">Текстүүд</h4>
                                           <button
@@ -1521,7 +1561,7 @@ export default function TemplatesPage() {
                                                   />
                                                   Баруун
                                                 </label>
-                                                                                           </div>
+                                              </div>
                                               <div className="flex gap-4 mb-2 items-center">
                                                 <span className="text-xs text-gray-500">Тайлбар байрлал:</span>
                                                 <label className="flex items-center gap-1 text-xs">

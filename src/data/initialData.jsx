@@ -108,6 +108,53 @@ const initialData = {
             }
           ]
         }
+      },
+      {
+        id: 'section5',
+        type: 'history',
+        layout: 'timeline',
+        content: {
+          title: 'Бидний түүх',
+          subtitle: 'Амжилтын замнал',
+          subtype: 'timeline',
+          items: [
+            {
+              id: 'timeline1',
+              title: 'Компани үүсэл',
+              year: '2020',
+              description: 'Манай компани анх үүсэж эхэлсэн он',
+              image: '/placeholder.jpg'
+            },
+            {
+              id: 'timeline2',
+              title: 'Эхний бүтээгдэхүүн',
+              year: '2021',
+              description: 'Анхны бүтээгдэхүүн амжилттай гарч ирсэн',
+              image: '/placeholder.jpg'
+            },
+            {
+              id: 'timeline3',
+              title: 'Хөгжлийн он',
+              year: '2022',
+              description: 'Компани хурдацтай хөгжиж эхэлсэн',
+              image: '/placeholder.jpg'
+            }
+          ]
+        }
+      },
+      {
+        id: 'section6',
+        type: 'contact',
+        layout: 'default',
+        content: {
+          title: 'Бидэнтэй холбогдох',
+          description: 'Танай асуулт, санал хүсэлтийг бидэнд илгээнэ үү',
+          email: 'info@example.com',
+          phone: '+976 99999999',
+          address: 'Улаанбаатар хот',
+          facebook: 'https://facebook.com/',
+          instagram: 'https://instagram.com/'
+        }
       }
     ]
   }

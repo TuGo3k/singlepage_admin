@@ -548,7 +548,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile, viewMode }) 
             scrollSnapType: 'x mandatory'
           }}
         >
-          {content.cards.map(card => (
+          {(content.cards || []).map(card => (
             <div 
               key={card.id}
               onClick={(e) => handleCardClick(card.id, e)}
@@ -624,7 +624,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile, viewMode }) 
         </p>
       )}
       <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-6'}`}>
-        {content.cards.map(card => (
+        {(content.cards || []).map(card => (
           <div 
             key={card.id}
             onClick={(e) => handleCardClick(card.id, e)}
@@ -999,7 +999,7 @@ const FeaturesSection = ({ content, settings, style, isMobile, viewMode }) => {
         </p>
       )}
       <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-8'}`}>
-        {content.cards.map(card => (
+        {(content.cards || []).map(card => (
           <div 
             key={card.id}
             className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''}`}

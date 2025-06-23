@@ -7,6 +7,9 @@ import { usePreviewStore } from '@/store/previewStore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { FaPhoneAlt, FaHome, FaEnvelope } from "react-icons/fa";
 import sectionTypes from '@/data/sectionTypes';
+import AddSectionButton from "@/components/ui/AddSectionButton";
+import AddFeaturesButton from "@/components/ui/AddFeaturesButton";
+import PreviewMarginToggleButton from "@/components/ui/PreviewMarginToggleButton";
 
 export default function TemplatesPage() {
   const { updateTemplate, addSection, updateSection, deleteSection, reorderSections, updateMedia, setSiteData } = usePreviewStore();
@@ -278,6 +281,30 @@ export default function TemplatesPage() {
           image: '/service3.jpg'
         }
       ];
+    } else if (type === 'features') {
+      defaultContent.cards = [
+        {
+          id: 'price1',
+          title: 'Basic',
+          description: 'Энгийн багцын үйлчилгээ',
+          price: '29,000₮',
+          image: '/price-basic.jpg'
+        },
+        {
+          id: 'price2',
+          title: 'Standard',
+          description: 'Стандарт багцын үйлчилгээ',
+          price: '49,000₮',
+          image: '/price-standard.jpg'
+        },
+        {
+          id: 'price3',
+          title: 'Premium',
+          description: 'Премиум багцын үйлчилгээ',
+          price: '99,000₮',
+          image: '/price-premium.jpg'
+        }
+      ];
     } else if (type === 'banner') {
       defaultContent.background = '/banner-bg.jpg';
       defaultContent.subtitle = 'Дэд гарчиг';
@@ -447,27 +474,12 @@ export default function TemplatesPage() {
             <div className="p-4 border-b flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <h2 className="font-medium">Хэсгүүд</h2>
-                <button
-                  type="button"
-                  className="flex items-center gap-1 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-xs hover:bg-gray-50 dark:hover:bg-gray-700 ml-2"
-                  title="Padding тохиргоо"
-                  onClick={() => setPreviewMarginActive(v => !v)}
-                >
-                  <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <rect x="4" y="7" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="2"/>
-                    <rect x="1" y="7" width="2" height="10" rx="1" fill="currentColor"/>
-                    <rect x="21" y="7" width="2" height="10" rx="1" fill="currentColor"/>
-                  </svg>
-                  Ард нь зайтай
-                </button>
+                <PreviewMarginToggleButton onClick={() => setPreviewMarginActive(v => !v)} previewMarginActive={previewMarginActive} />
               </div>
-              <Button 
-                variant="outline" 
+              <AddSectionButton 
                 onClick={() => setShowAddSection(true)}
                 className="text-sm"
-              >
-                + Хэсэг нэмэх
-              </Button>
+              />
             </div>
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="sections" type="section">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,9 @@ export default function ContactPage() {
     facebook: '',
     instagram: ''
   });
+  const [selectedDesign, setSelectedDesign] = useState('Дизайн 1');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     if (contactSection && contactSection.content) {
@@ -32,6 +35,16 @@ export default function ContactPage() {
       });
     }
   }, [contactSection]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -57,8 +70,32 @@ export default function ContactPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold mb-6">Холбоо Барих</h1>
-
+      <h1 className="text-2xl font-semibold mb-2">Холбоо Барих</h1>
+      {/* Dropdown button for design selection */}
+      <div className="mb-4 relative w-48" ref={dropdownRef}>
+        <button
+          type="button"
+          className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm flex justify-between items-center text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={() => setDropdownOpen((open) => !open)}
+        >
+          {selectedDesign}
+          <svg className={`w-4 h-4 ml-2 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        {dropdownOpen && (
+          <div className="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+            {['Дизайн 1', 'Дизайн 2', 'Дизайн 3'].map(option => (
+              <button
+                key={option}
+                className={`w-full text-left px-4 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 ${selectedDesign === option ? 'bg-blue-100 dark:bg-blue-900/40 font-semibold' : ''}`}
+                onClick={() => { setSelectedDesign(option); setDropdownOpen(false); }}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {/* End dropdown */}
       <div className="flex gap-6">
         {/* Preview Section - Left Side */}
         <Preview />

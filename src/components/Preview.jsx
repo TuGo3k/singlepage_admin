@@ -998,7 +998,7 @@ const FeaturesSection = ({ content, settings, style, isMobile, viewMode }) => {
           {content.description}
         </p>
       )}
-      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-2 gap-8'}`}>
+      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-8'}`}>
         {content.cards.map(card => (
           <div 
             key={card.id}

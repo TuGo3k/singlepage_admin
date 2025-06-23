@@ -5,163 +5,8 @@ import { Button } from "@/components/ui/button";
 import Preview from "@/components/Preview";
 import { usePreviewStore } from '@/store/previewStore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-const sectionTypes = {
-  hero: {
-    name: 'Үндсэн хэсэг',
-    description: 'Баннер болон гол мессеж',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    ),
-    layouts: [
-      { id: 'image-right', name: 'Зураг баруун', icon: '⭢', preview: 'Текст зүүн, зураг баруун' },
-      { id: 'image-left', name: 'Зураг зүүн', icon: '⭠', preview: 'Зураг зүүн, текст баруун' },
-      { id: 'image-background', name: 'Зураг арын', icon: '▣', preview: 'Зураг дээр текст' },
-    ]
-  },
-  banner: {
-    name: 'Баннер',
-    description: 'Өндөр анхаарал татах хэсэг',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5z" />
-      </svg>
-    ),
-    layouts: [
-      { id: 'full-width', name: 'Бүтэн', icon: '━', preview: 'Дэлгэцийн бүтэн өргөн' },
-      { id: 'contained', name: 'Хязгаартай', icon: '│', preview: 'Контейнер дотор' },
-      { id: 'with-overlay', name: 'Давхарласан', icon: '▦', preview: 'Зураг дээр давхарга' },
-    ]
-  },
-  cards: {
-    name: 'Картууд',
-    description: 'Үйлчилгээ, бүтээгдэхүүн',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-      </svg>
-    ),
-    layouts: [
-      { id: 'grid-3', name: '3 багана', icon: '⋮⋮⋮', preview: '3 багананд хуваасан' },
-      { id: 'grid-4', name: '4 багана', icon: '::::', preview: '4 багананд хуваасан' },
-      { id: 'carousel', name: 'Гүйдэг', icon: '⇄', preview: 'Гүйдэг харуулалт' },
-    ]
-  },
-  features: {
-    name: 'Үнэ тариф',
-    description: '3 төрлийн үнийн сонголт',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-      </svg>
-    ),
-    layouts: [
-      { id: 'price-basic', name: 'Basic', icon: '₮', preview: 'Basic тариф' },
-      { id: 'price-standard', name: 'Standard', icon: '₮₮', preview: 'Standard тариф' },
-      { id: 'price-premium', name: 'Premium', icon: '₮₮₮', preview: 'Premium тариф' },
-    ],
-    settings: {
-      pricePosition: 'center', // 'top', 'center', 'bottom'
-      priceSize: 'medium', // 'small', 'medium', 'large'
-      priceAlignment: 'center', // 'left', 'center', 'right'
-    }
-  },
-  history: {
-    name: 'Түүх',
-    description: 'Компаний түүх, хөгжлийн замнал',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    ),
-    layouts: [
-      {
-        id: 'timeline',
-        name: 'Цагийн хэлхээ',
-        icon: (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <circle cx="12" cy="12" r="10" strokeWidth="2" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2" />
-          </svg>
-        ),
-        preview: 'Цагийн дарааллаар'
-      },
-      {
-        id: 'cards',
-        name: 'Картууд',
-        icon: (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <rect x="3" y="7" width="7" height="10" rx="2" strokeWidth="2" />
-            <rect x="14" y="7" width="7" height="10" rx="2" strokeWidth="2" />
-          </svg>
-        ),
-        preview: 'Карт хэлбэрээр'
-      },
-      {
-        id: 'story',
-        name: 'Түүх',
-        icon: (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 19.5A2.5 2.5 0 016.5 17H20" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4.5A2.5 2.5 0 016.5 7H20" />
-            <rect x="4" y="7" width="16" height="10" rx="2" strokeWidth="2" />
-          </svg>
-        ),
-        preview: 'Түүх хэлбэрээр'
-      },
-      {
-        id: 'grid',
-        name: 'Торон',
-        icon: (
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <rect x="3" y="3" width="7" height="7" rx="1" strokeWidth="2" />
-            <rect x="14" y="3" width="7" height="7" rx="1" strokeWidth="2" />
-            <rect x="3" y="14" width="7" height="7" rx="1" strokeWidth="2" />
-            <rect x="14" y="14" width="7" height="7" rx="1" strokeWidth="2" />
-          </svg>
-        ),
-        preview: 'Торон байрлал'
-      },
-    ]
-  },
-  footer: {
-    name: 'Footer',
-    description: 'Хуудасны доод хэсэг',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <rect x="3" y="17" width="18" height="4" rx="2" strokeWidth="2" />
-        <rect x="3" y="3" width="18" height="4" rx="2" strokeWidth="2" />
-      </svg>
-    ),
-    layouts: [
-      { id: 'simple', name: 'Энгийн', icon: '━', preview: 'Энгийн footer' },
-      { id: 'columns-2', name: '2 багана', icon: '||', preview: '2 баганатай' },
-      { id: 'columns-3', name: '3 багана', icon: '|||', preview: '3 баганатай' },
-      { id: 'newsletter', name: 'Бүртгүүлэх формтой', icon: '✉️', preview: 'Имэйл бүртгүүлэх' },
-      { id: 'social', name: 'Social icon-уудтай', icon: '◎', preview: 'Social icon-уудтай' },
-      { id: 'contact', name: 'Холбоо барих', icon: '☎️', preview: 'Холбоо барих мэдээлэлтэй' },
-      { id: 'logo', name: 'Логотой', icon: '🏢', preview: 'Лого бүхий' },
-      { id: 'centered', name: 'Төвлөрсөн', icon: '⎯', preview: 'Төвлөрсөн текст' },
-      { id: 'app', name: 'App татах холбоостой', icon: '📱', preview: 'App Store, Play badge' },
-      { id: 'phone', name: 'Утас', icon: '📞', preview: 'Утас харагдах' },
-      { id: 'location', name: 'Байршил', icon: '📍', preview: 'Байршил харагдах' }
-    ]
-  },
-  contact: {
-    name: 'Холбоо барих',
-    description: 'Холбоо барих мэдээлэл',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-    ),
-    layouts: [
-      { id: 'default', name: 'Энгийн', icon: '📞', preview: 'Холбоо барих мэдээлэл' }
-    ]
-  },
-};
+import { FaPhoneAlt, FaHome, FaEnvelope } from "react-icons/fa";
+import sectionTypes from '@/data/sectionTypes';
 
 export default function TemplatesPage() {
   const { updateTemplate, addSection, updateSection, deleteSection, reorderSections, updateMedia, setSiteData } = usePreviewStore();
@@ -567,6 +412,19 @@ export default function TemplatesPage() {
 
   // State for preview margin
   const [previewMarginActive, setPreviewMarginActive] = useState(false);
+
+  const [selectedDesign, setSelectedDesign] = useState('Дизайн 1');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -1756,6 +1614,35 @@ export default function TemplatesPage() {
                                 )}
                                 {section.type === 'contact' && (
                                   <div className="space-y-4">
+                                    {/* Dropdown button for design selection */}
+                                    <div className="mb-2 relative w-48" ref={dropdownRef}>
+                                      <button
+                                        type="button"
+                                        className="w-full px-4 py-2 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm flex justify-between items-center text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        onClick={() => setDropdownOpen((open) => !open)}
+                                      >
+                                        {selectedDesign}
+                                        <svg className={`w-4 h-4 ml-2 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                      </button>
+                                      {dropdownOpen && (
+                                        <div className="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
+                                          {['Дизайн 1', 'Дизайн 2', 'Дизайн 3'].map(option => (
+                                            <button
+                                              key={option}
+                                              className={`w-full text-left px-4 py-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 ${selectedDesign === option ? 'bg-blue-100 dark:bg-blue-900/40 font-semibold' : ''}`}
+                                              onClick={() => {
+                                                setSelectedDesign(option);
+                                                setDropdownOpen(false);
+                                                handleSaveSection(section.id, { content: { ...section.content, footerDesign: option } });
+                                              }}
+                                            >
+                                              {option}
+                                            </button>
+                                          ))}
+                                        </div>
+                                      )}
+                                    </div>
+                                    {/* End dropdown */}
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Гарчиг</label>
                                       <input
@@ -1786,16 +1673,7 @@ export default function TemplatesPage() {
                                         placeholder="И-мэйл гарчиг"
                                       />
                                     </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">И-мэйл</label>
-                                      <input
-                                        type="email"
-                                        value={section.content?.email || ''}
-                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, email: e.target.value } })}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                        placeholder="И-мэйл"
-                                      />
-                                    </div>
+                                  
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утасны гарчиг</label>
                                       <input
@@ -1806,16 +1684,7 @@ export default function TemplatesPage() {
                                         placeholder="Утасны гарчиг"
                                       />
                                     </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Утас</label>
-                                      <input
-                                        type="tel"
-                                        value={section.content?.phone || ''}
-                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, phone: e.target.value } })}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                        placeholder="Утас"
-                                      />
-                                    </div>
+                                 
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаягны гарчиг</label>
                                       <input
@@ -1826,16 +1695,7 @@ export default function TemplatesPage() {
                                         placeholder="Хаягны гарчиг"
                                       />
                                     </div>
-                                    <div>
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Хаяг</label>
-                                      <input
-                                        type="text"
-                                        value={section.content?.address || ''}
-                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, address: e.target.value } })}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                        placeholder="Хаяг"
-                                      />
-                                    </div>
+                                
                                     <div>
                                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Сошиал медиа гарчиг</label>
                                       <input
@@ -1846,26 +1706,97 @@ export default function TemplatesPage() {
                                         placeholder="Сошиал медиа гарчиг"
                                       />
                                     </div>
-                                    {/* <div>
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Facebook URL</label>
-                                      <input
-                                        type="url"
-                                        value={section.content?.facebookUrl || ''}
-                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, facebookUrl: e.target.value } })}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                        placeholder="Facebook URL"
-                                      />
-                                    </div> */}
-                                    {/* <div>
-                                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Instagram URL</label>
-                                      <input
-                                        type="url"
-                                        value={section.content?.instagramUrl || ''}
-                                        onChange={(e) => handleSaveSection(section.id, { content: { ...section.content, instagramUrl: e.target.value } })}
-                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                                        placeholder="Instagram URL"
-                                      />
-                                    </div> */}
+                              
+                                  </div>
+                                )}
+                                {section.type === 'footer' && (
+                                  <div className="space-y-4">
+                                    {section.content?.footerDesign === "Дизайн 2" ? (
+                                      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-100 to-blue-100 p-6">
+                                        <div className="flex flex-col md:flex-row gap-6">
+                                          <div className="relative bg-white rounded-2xl shadow-lg p-8 w-72 text-center transition transform hover:-translate-y-1 hover:shadow-2xl">
+                                            <div className="mb-4 flex justify-center">
+                                              <FaPhoneAlt className="text-4xl text-pink-400" />
+                                            </div>
+                                            <h3 className="text-xl font-semibold text-neutral-800 mb-2">Phone</h3>
+                                            <p className="text-neutral-600 whitespace-pre-line">{section.content?.phone || ""}</p>
+                                          </div>
+                                          <div className="relative bg-white rounded-2xl shadow-lg p-8 w-72 text-center transition transform hover:-translate-y-1 hover:shadow-2xl">
+                                            <div className="mb-4 flex justify-center">
+                                              <FaHome className="text-4xl text-red-400" />
+                                            </div>
+                                            <h3 className="text-xl font-semibold text-neutral-800 mb-2">Address</h3>
+                                            <p className="text-neutral-600 whitespace-pre-line">{section.content?.address || ""}</p>
+                                          </div>
+                                          <div className="relative bg-white rounded-2xl shadow-lg p-8 w-72 text-center transition transform hover:-translate-y-1 hover:shadow-2xl">
+                                            <div className="mb-4 flex justify-center">
+                                              <FaEnvelope className="text-4xl text-yellow-400" />
+                                            </div>
+                                            <h3 className="text-xl font-semibold text-neutral-800 mb-2">Email</h3>
+                                            <p className="text-neutral-600 whitespace-pre-line">{section.content?.email || ""}</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <footer className="w-full bg-gray-900 py-10 px-4 rounded-xl shadow-lg mt-8">
+                                        <div className="max-w-4xl mx-auto">
+                                          <h2 className="text-2xl md:text-3xl font-bold text-center text-indigo-400 mb-2">{section.content?.title || 'Холбоо барих'}</h2>
+                                          {section.content?.description && <p className="text-center text-gray-300 mb-8">{section.content.description}</p>}
+                                          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                            {/* И-мэйл */}
+                                            {section.content?.email && (
+                                              <div className="flex flex-col items-center bg-gray-800 rounded-lg p-6 border border-gray-700">
+                                                <div className="bg-indigo-500 p-3 rounded-full mb-3">
+                                                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12l-4-4-4 4m8 0v6a2 2 0 01-2 2H6a2 2 0 01-2-2v-6" />
+                                                  </svg>
+                                                </div>
+                                                <div className="text-lg font-semibold text-white mb-1">И-мэйл</div>
+                                                <div className="text-gray-400 text-sm">{section.content.email}</div>
+                                              </div>
+                                            )}
+                                            {/* Утас */}
+                                            {section.content?.phone && (
+                                              <div className="flex flex-col items-center bg-gray-800 rounded-lg p-6 border border-gray-700">
+                                                <div className="bg-green-500 p-3 rounded-full mb-3">
+                                                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                  </svg>
+                                                </div>
+                                                <div className="text-lg font-semibold text-white mb-1">Утас</div>
+                                                <div className="text-gray-400 text-sm">{section.content.phone}</div>
+                                              </div>
+                                            )}
+                                            {/* Байршил */}
+                                            {section.content?.address && (
+                                              <div className="flex flex-col items-center bg-gray-800 rounded-lg p-6 border border-gray-700">
+                                                <div className="bg-red-500 p-3 rounded-full mb-3">
+                                                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 10c-4.418 0-8-4.03-8-9 0-4.418 3.582-8 8-8s8 3.582 8 8c0 4.97-3.582 9-8 9z" />
+                                                  </svg>
+                                                </div>
+                                                <div className="text-lg font-semibold text-white mb-1">Байршил</div>
+                                                <div className="text-gray-400 text-sm">{section.content.address}</div>
+                                              </div>
+                                            )}
+                                          </div>
+                                          {(section.content?.facebook || section.content?.instagram) && (
+                                            <div className="flex justify-center gap-4 mt-4">
+                                              {section.content?.facebook && (
+                                                <a href={section.content.facebook} className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full" target="_blank" rel="noopener noreferrer">
+                                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.877v-6.987h-2.54v-2.89h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.242 0-1.632.771-1.632 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"/></svg>
+                                                </a>
+                                              )}
+                                              {section.content?.instagram && (
+                                                <a href={section.content.instagram} className="bg-pink-500 hover:bg-pink-600 text-white p-2 rounded-full" target="_blank" rel="noopener noreferrer">
+                                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg>
+                                                </a>
+                                              )}
+                                            </div>
+                                          )}
+                                        </div>
+                                      </footer>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -1957,5 +1888,3 @@ export default function TemplatesPage() {
     </div>
   );
 } 
-
-export { sectionTypes };

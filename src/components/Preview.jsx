@@ -5,32 +5,7 @@ import { FaFacebook, FaPhone } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { PiMapPinFill } from 'react-icons/pi';
 import { BsInstagram } from 'react-icons/bs';
-
-// Mobile/Desktop view toggle
-const ViewportToggle = ({ viewMode, setViewMode }) => (
-  <div className="flex items-center bg-gray-100 dark:bg-gray-700 rounded-lg p-1 mb-4">
-    <button
-      onClick={() => setViewMode('desktop')}
-      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-        viewMode === 'desktop' 
-          ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' 
-          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-      }`}
-    >
-      Desktop
-    </button>
-    <button
-      onClick={() => setViewMode('mobile')}
-      className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-        viewMode === 'mobile' 
-          ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm' 
-          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
-      }`}
-    >
-      Mobile
-    </button>
-  </div>
-);
+import ViewportToggle from './ViewportToggle';
 
 // Enhanced navigation header with scroll effects
 const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sections, isMobile, hasMargin, previewMarginActive }) => {

@@ -552,7 +552,7 @@ const CardsSection = ({ content, layout, style, settings, isMobile, viewMode }) 
             <div 
               key={card.id}
               onClick={(e) => handleCardClick(card.id, e)}
-              className={`flex-none border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg ${
+              className={`flex-none border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 ${
                 activeCardId === card.id ? 'shadow-lg scale-[1.02]' : ''
               }`}
               style={{ 
@@ -623,12 +623,12 @@ const CardsSection = ({ content, layout, style, settings, isMobile, viewMode }) 
           {content.description}
         </p>
       )}
-      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-6'}`}>
+      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : `${getGridClass()} gap-6`}`}>
         {(content.cards || []).map(card => (
           <div 
             key={card.id}
             onClick={(e) => handleCardClick(card.id, e)}
-            className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg ${
+            className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 ${
               activeCardId === card.id ? 'shadow-lg' : ''
             } ${cardSizeClass} flex flex-col justify-center items-center text-center`}
             style={{ borderColor: style?.primaryColor || '#3B82F6' }}
@@ -697,7 +697,7 @@ const HistorySection = ({ content, style, isMobile, viewMode }) => {
             </div>
           </div>
           {/* Content card */}
-          <div className={`${index % 2 === 0 ? 'mr-8' : 'ml-8'} bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden`}>
+          <div className={`${index % 2 === 0 ? 'mr-8' : 'ml-8'} bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="relative h-48 md:h-full">
                 <img 
@@ -724,7 +724,7 @@ const HistorySection = ({ content, style, isMobile, viewMode }) => {
   const renderCards = () => (
     <div className={`grid w-full ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-6'}`}>
       {content.items.map(item => (
-        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300">
           <div className="relative h-48">
             <img 
               src={item.image} 
@@ -757,7 +757,7 @@ const HistorySection = ({ content, style, isMobile, viewMode }) => {
               <img 
                 src={item.image} 
                 alt={item.title}
-                className="w-full h-64 object-cover rounded-lg shadow-lg"
+                className="w-full h-64 object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
               />
               <div className={`absolute -top-4 -left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-bold ${isMobile ? 'text-base' : 'text-lg'}`}>
                 {item.year}
@@ -780,7 +780,7 @@ const HistorySection = ({ content, style, isMobile, viewMode }) => {
   const renderGrid = () => (
     <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-4' : 'md:grid-cols-2 gap-8'}`}>
       {content.items.map(item => (
-        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300">
           <div className="relative">
             <img 
               src={item.image} 
@@ -926,10 +926,10 @@ const ContactSection = ({ siteData, content, isMobile }) => {
         {content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}
       </p>
       <div className={`flex justify-center gap-4 ${isMobile ? 'text-xl' : 'text-2xl'}`}>
-        <a href={content?.facebook || siteData?.contact?.facebook || '#'} className="bg-blue-600 p-3 rounded-full text-white hover:bg-blue-700 transition">
+        <a href={content?.facebook || siteData?.contact?.facebook || '#'} className="bg-blue-600 p-3 rounded-full text-white transition-colors">
           <FaFacebook />
         </a>
-        <a href={content?.instagram || siteData?.contact?.instagram || '#'} className="bg-pink-500 p-3 rounded-full text-white hover:bg-pink-600 transition">
+        <a href={content?.instagram || siteData?.contact?.instagram || '#'} className="bg-pink-500 p-3 rounded-full text-white transition-colors">
           <BsInstagram />
         </a>
       </div>
@@ -1002,7 +1002,7 @@ const FeaturesSection = ({ content, settings, style, isMobile, viewMode }) => {
         {(content.cards || []).map(card => (
           <div 
             key={card.id}
-            className={`border rounded-lg overflow-hidden transition-shadow duration-300 hover:shadow-lg flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''}`}
+            className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''}`}
             style={{ borderColor: style?.primaryColor || '#3B82F6' }}
           >
             <div className="relative w-full h-32 md:h-48">

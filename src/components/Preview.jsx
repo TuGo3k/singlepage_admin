@@ -6,6 +6,7 @@ import { MdEmail } from 'react-icons/md';
 import { PiMapPinFill } from 'react-icons/pi';
 import { BsInstagram } from 'react-icons/bs';
 import ViewportToggle from './ViewportToggle';
+import ThemeSelector from './ThemeSelector';
 
 // Import section components
 import { HeroSectionPreview as HeroSection } from './sections/HeroSection';
@@ -219,6 +220,7 @@ export default function Preview({ previewMarginActive = false }) {
   const [currentSection, setCurrentSection] = useState('hero');
   const [scrollY, setScrollY] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentTheme, setCurrentTheme] = useState('theme-1');
   
   const isMobile = viewMode === 'mobile';
   
@@ -237,22 +239,28 @@ export default function Preview({ previewMarginActive = false }) {
     return () => {};
   }, []);
 
+  // Handle theme change
+  const handleThemeChange = (themeId) => {
+    setCurrentTheme(themeId);
+    // Here you can also update the store if needed
+  };
+
   const renderSection = (section) => {
     switch (section.type) {
       case 'hero':
-        return <HeroSection content={section.content} layout={section.content.layout} style={style} isMobile={isMobile} />;
+        return <HeroSection content={section.content} layout={section.content.layout} style={style} isMobile={isMobile} theme={currentTheme} />;
       case 'banner':
-        return <BannerSection content={section.content} layout={section.layout} style={style} isMobile={isMobile} />;
+        return <BannerSection content={section.content} layout={section.layout} style={style} isMobile={isMobile} theme={currentTheme} />;
       case 'cards':
-        return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} viewMode={viewMode} />;
+        return <CardsSection content={section.content} layout={section.layout} style={style} settings={section.settings} isMobile={isMobile} viewMode={viewMode} theme={currentTheme} />;
       case 'history':
-        return <HistorySection content={section.content} style={style} isMobile={isMobile} viewMode={viewMode} />;
+        return <HistorySection content={section.content} style={style} isMobile={isMobile} viewMode={viewMode} theme={currentTheme} />;
       case 'features':
-        return <FeaturesSection content={section.content} settings={section.settings} style={style} isMobile={isMobile} viewMode={viewMode} />;
+        return <FeaturesSection content={section.content} settings={section.settings} style={style} isMobile={isMobile} viewMode={viewMode} theme={currentTheme} />;
       case 'footer':
-        return <FooterSection section={section} />;
+        return <FooterSection section={section} theme={currentTheme} />;
       case 'contact':
-        return <ContactSection siteData={siteData} content={section.content} isMobile={isMobile} />;
+        return <ContactSection siteData={siteData} content={section.content} isMobile={isMobile} settings={section.settings} theme={currentTheme} />;
       default:
         return null;
     }
@@ -285,8 +293,14 @@ export default function Preview({ previewMarginActive = false }) {
 
   return (
     <div className="space-y-4 w-3/4">
-      {/* Viewport Toggle */}
-      <ViewportToggle viewMode={viewMode} setViewMode={setViewMode} />
+      {/* Theme Selector */}
+      <div className="flex justify-between items-center">
+        <ViewportToggle viewMode={viewMode} setViewMode={setViewMode} />
+        <ThemeSelector
+          currentTheme={currentTheme}
+          onThemeChange={handleThemeChange}
+        />
+      </div>
       
       {/* Main Layout */}
       <div className="flex justify-center">

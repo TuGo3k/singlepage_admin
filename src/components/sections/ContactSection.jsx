@@ -3,11 +3,16 @@ import { FaFacebook, FaPhone } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { PiMapPinFill } from 'react-icons/pi';
 import { BsInstagram } from 'react-icons/bs';
+import ModelSelector from '../ModelSelector';
+import { getThemeById } from '@/data/themePresets';
 
 // Preview version of ContactSection
-export const ContactSectionPreview = ({ siteData, content, isMobile }) => {
+export const ContactSectionPreview = ({ siteData, content, isMobile, settings, theme = 'theme-1' }) => {
+  // Get theme styles
+  const themeData = getThemeById(theme);
+
   return (
-    <div className={`bg-[#111827] text-white ${isMobile ? 'py-8 px-4' : 'py-12 px-4'} text-center`}>
+    <div className={themeData.contact.className}>
       <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-indigo-400 mb-2`}>
         {content?.title || 'Бидэнтэй холбогдох'}
       </h2>
@@ -17,40 +22,40 @@ export const ContactSectionPreview = ({ siteData, content, isMobile }) => {
 
       <div className={`flex flex-col ${isMobile ? 'gap-4' : 'md:flex-row gap-6'} justify-center items-center mb-10`}>
         {/* Email */}
-        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
-          <div className={`flex items-center mb-4 text-blue-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
+        <div className={`${themeData.contact.cardClass} ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'}`}>
+          <div className={`${themeData.contact.iconClass} text-blue-400 ${isMobile ? 'justify-center' : ''}`}>
             <MdEmail />
           </div>
-          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+          <h3 className={`${themeData.contact.titleClass}`}>
             {content?.emailTitle || siteData?.contact?.emailTitle || 'И-мэйл'}
           </h3>
-          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+          <p className={`${themeData.contact.detailClass}`}>
             {content?.email || siteData?.contact?.email || 'info@example.com'}
           </p>
         </div>
 
         {/* Phone */}
-        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
-          <div className={`flex items-center mb-4 text-green-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
+        <div className={`${themeData.contact.cardClass} ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'}`}>
+          <div className={`${themeData.contact.iconClass} text-green-400 ${isMobile ? 'justify-center' : ''}`}>
             <FaPhone />
           </div>
-          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+          <h3 className={`${themeData.contact.titleClass}`}>
             {content?.phoneTitle || siteData?.contact?.phoneTitle || 'Утас'}
           </h3>
-          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+          <p className={`${themeData.contact.detailClass}`}>
             {content?.phone || siteData?.contact?.phone || '+976 99999999'}
           </p>
         </div>
 
         {/* Address */}
-        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
-          <div className={`flex items-center mb-4 text-purple-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
+        <div className={`${themeData.contact.cardClass} ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'}`}>
+          <div className={`${themeData.contact.iconClass} text-purple-400 ${isMobile ? 'justify-center' : ''}`}>
             <PiMapPinFill />
           </div>
-          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+          <h3 className={`${themeData.contact.titleClass}`}>
             {content?.addressTitle || siteData?.contact?.addressTitle || 'Хаяг'}
           </h3>
-          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+          <p className={`${themeData.contact.detailClass}`}>
             {content?.address || siteData?.contact?.address || 'Улаанбаатар хот'}
           </p>
         </div>
@@ -61,10 +66,10 @@ export const ContactSectionPreview = ({ siteData, content, isMobile }) => {
         {content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}
       </p>
       <div className={`flex justify-center gap-4 ${isMobile ? 'text-xl' : 'text-2xl'}`}>
-        <a href={content?.facebook || siteData?.contact?.facebook || '#'} className="bg-blue-600 p-3 rounded-full text-white transition-colors">
+        <a href={content?.facebook || siteData?.contact?.facebook || '#'} className={themeData.contact.socialClass}>
           <FaFacebook />
         </a>
-        <a href={content?.instagram || siteData?.contact?.instagram || '#'} className="bg-pink-500 p-3 rounded-full text-white transition-colors">
+        <a href={content?.instagram || siteData?.contact?.instagram || '#'} className={themeData.contact.socialClass}>
           <BsInstagram />
         </a>
       </div>
@@ -90,6 +95,16 @@ export default function ContactSection({ section, onSaveSection }) {
 
   return (
     <div className="space-y-4">
+      {/* Model Selector */}
+      <ModelSelector
+        sectionType="contact"
+        currentModel={section.settings?.model || "model-1"}
+        onModelChange={(modelId) => onSaveSection(section.id, { 
+          settings: { ...section.settings, model: modelId } 
+        })}
+        className="mb-6"
+      />
+
       {/* Dropdown button for design selection */}
       <div className="mb-2 relative w-48" ref={dropdownRef}>
         <button

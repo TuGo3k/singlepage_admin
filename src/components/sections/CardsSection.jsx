@@ -1,7 +1,9 @@
 import { useCallback, useState, useRef, useEffect } from 'react';
+import ModelSelector from '../ModelSelector';
+import { getThemeById } from '@/data/themePresets';
 
 // Preview version of CardsSection
-export const CardsSectionPreview = ({ content, layout, style, settings, isMobile, viewMode }) => {
+export const CardsSectionPreview = ({ content, layout, style, settings, isMobile, viewMode, theme = 'theme-1' }) => {
   const isCarousel = layout === 'carousel';
   const gridClass = layout === 'grid-4' ? 'grid-cols-4' : 'grid-cols-3';
   const carouselRef = useRef(null);
@@ -12,6 +14,9 @@ export const CardsSectionPreview = ({ content, layout, style, settings, isMobile
   const [activeCardId, setActiveCardId] = useState(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Get theme styles
+  const themeData = getThemeById(theme);
 
   // Card size classes
   const cardSize = settings?.cardSize || 'medium';
@@ -263,12 +268,12 @@ export const CardsSectionPreview = ({ content, layout, style, settings, isMobile
           <div 
             key={card.id}
             onClick={(e) => handleCardClick(card.id, e)}
-            className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 ${
+            className={`${themeData.cards.className} ${themeData.cards.hoverEffect} ${
               activeCardId === card.id ? 'shadow-lg' : ''
             } ${cardSizeClass} flex flex-col justify-center items-center text-center`}
             style={{ borderColor: style?.primaryColor || '#3B82F6' }}
           >
-            <div className={`relative w-full flex items-center justify-center ${imageHeightClass}`}>
+            <div className={`relative w-full flex items-center justify-center ${themeData.cards.imageClass || imageHeightClass}`}>
               <img 
                 src={card.image} 
                 alt={card.title}
@@ -279,7 +284,7 @@ export const CardsSectionPreview = ({ content, layout, style, settings, isMobile
                   className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
                 >
                   <span 
-                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-6 py-2 shadow-md`}
+                    className={`${themeData.cards.priceClass || getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-6 py-2 shadow-md`}
                     style={{
                       color: style?.priceBadgeTextColor || '#2563EB',
                       background: style?.priceBadgeBgColor || '#E5E7EB',
@@ -296,13 +301,13 @@ export const CardsSectionPreview = ({ content, layout, style, settings, isMobile
               textAlign === 'left' ? 'items-start' : textAlign === 'right' ? 'items-end' : 'items-center'
             }`}>
               <h4 
-                className={`font-bold mb-2 transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? '' : 'line-clamp-1'}`}
+                className={`${themeData.cards.titleClass || `font-bold mb-2 transition-all duration-300 ${textSizeClass} ${textAlignClass}`} ${activeCardId === card.id ? '' : 'line-clamp-1'}`}
                 style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
               >
                 {card.title}
               </h4>
               <p 
-                className={`transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? 'opacity-100' : 'opacity-60 line-clamp-2'}`}
+                className={`${themeData.cards.descriptionClass || `transition-all duration-300 ${textSizeClass} ${textAlignClass}`} ${activeCardId === card.id ? 'opacity-100' : 'opacity-60 line-clamp-2'}`}
                 style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
               >
                 {card.description}
@@ -323,6 +328,16 @@ export default function CardsSection({ section, onSaveSection, onUpdateCardLayou
 
   return (
     <div className="space-y-4">
+      {/* Model Selector */}
+      <ModelSelector
+        sectionType="cards"
+        currentModel={section.settings?.model || "model-1"}
+        onModelChange={(modelId) => onSaveSection(section.id, { 
+          settings: { ...section.settings, model: modelId } 
+        })}
+        className="mb-6"
+      />
+
       {/* Section title input */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">

@@ -118,7 +118,7 @@ export default function Home() {
               >
                 <div className={`absolute inset-0 bg-gradient-to-r ${action.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
                 <div className="relative">
-                  <div className="text-3xl mb-4">{action.icon}</div>
+                  <div className="text-3xl ">{action.icon}</div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {action.title}
                   </h3>

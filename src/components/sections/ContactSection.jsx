@@ -1,5 +1,78 @@
 import { useState, useRef, useEffect } from 'react';
+import { FaFacebook, FaPhone } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+import { PiMapPinFill } from 'react-icons/pi';
+import { BsInstagram } from 'react-icons/bs';
 
+// Preview version of ContactSection
+export const ContactSectionPreview = ({ siteData, content, isMobile }) => {
+  return (
+    <div className={`bg-[#111827] text-white ${isMobile ? 'py-8 px-4' : 'py-12 px-4'} text-center`}>
+      <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-indigo-400 mb-2`}>
+        {content?.title || 'Бидэнтэй холбогдох'}
+      </h2>
+      <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300 mb-8`}>
+        {content?.description || 'Танай асуулт, санал хүсэлтийг бидэнд илгээнэ үү. Бид танд хурдан хариулах болно.'}
+      </p>
+
+      <div className={`flex flex-col ${isMobile ? 'gap-4' : 'md:flex-row gap-6'} justify-center items-center mb-10`}>
+        {/* Email */}
+        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
+          <div className={`flex items-center mb-4 text-blue-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
+            <MdEmail />
+          </div>
+          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+            {content?.emailTitle || siteData?.contact?.emailTitle || 'И-мэйл'}
+          </h3>
+          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+            {content?.email || siteData?.contact?.email || 'info@example.com'}
+          </p>
+        </div>
+
+        {/* Phone */}
+        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
+          <div className={`flex items-center mb-4 text-green-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
+            <FaPhone />
+          </div>
+          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+            {content?.phoneTitle || siteData?.contact?.phoneTitle || 'Утас'}
+          </h3>
+          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+            {content?.phone || siteData?.contact?.phone || '+976 99999999'}
+          </p>
+        </div>
+
+        {/* Address */}
+        <div className={`bg-[#1f2937] rounded-xl p-6 ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'} shadow-md border border-gray-700`}>
+          <div className={`flex items-center mb-4 text-purple-400 ${isMobile ? 'text-xl justify-center' : 'text-2xl'}`}>
+            <PiMapPinFill />
+          </div>
+          <h3 className={`font-semibold ${isMobile ? 'text-base' : 'text-lg'} mb-1`}>
+            {content?.addressTitle || siteData?.contact?.addressTitle || 'Хаяг'}
+          </h3>
+          <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300`}>
+            {content?.address || siteData?.contact?.address || 'Улаанбаатар хот'}
+          </p>
+        </div>
+      </div>
+
+      {/* Social */}
+      <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300 mb-4`}>
+        {content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}
+      </p>
+      <div className={`flex justify-center gap-4 ${isMobile ? 'text-xl' : 'text-2xl'}`}>
+        <a href={content?.facebook || siteData?.contact?.facebook || '#'} className="bg-blue-600 p-3 rounded-full text-white transition-colors">
+          <FaFacebook />
+        </a>
+        <a href={content?.instagram || siteData?.contact?.instagram || '#'} className="bg-pink-500 p-3 rounded-full text-white transition-colors">
+          <BsInstagram />
+        </a>
+      </div>
+    </div>
+  );
+};
+
+// Default export for admin panel (existing functionality)
 export default function ContactSection({ section, onSaveSection }) {
   const [selectedDesign, setSelectedDesign] = useState('Дизайн 1');
   const [dropdownOpen, setDropdownOpen] = useState(false);

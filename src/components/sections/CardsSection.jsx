@@ -1,5 +1,321 @@
-import { useCallback } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 
+// Preview version of CardsSection
+export const CardsSectionPreview = ({ content, layout, style, settings, isMobile, viewMode }) => {
+  const isCarousel = layout === 'carousel';
+  const gridClass = layout === 'grid-4' ? 'grid-cols-4' : 'grid-cols-3';
+  const carouselRef = useRef(null);
+  const containerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+  const [activeCardId, setActiveCardId] = useState(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Card size classes
+  const cardSize = settings?.cardSize || 'medium';
+  const textSize = settings?.textSize || 'base';
+  const imageHeight = settings?.imageHeight || 'medium';
+  let cardSizeClass = '';
+  let imageHeightClass = '';
+  switch (cardSize) {
+    case 'small': cardSizeClass = isMobile ? 'h-[180px]' : 'h-[220px]'; break;
+    case 'large': cardSizeClass = isMobile ? 'h-[320px]' : 'h-[400px]'; break;
+    case 'medium':
+    default: cardSizeClass = isMobile ? 'h-[240px]' : 'h-[300px]'; break;
+  }
+  switch (imageHeight) {
+    case 'small': imageHeightClass = isMobile ? 'h-[80px]' : 'h-[120px]'; break;
+    case 'large': imageHeightClass = isMobile ? 'h-[180px]' : 'h-[240px]'; break;
+    case 'medium':
+    default: imageHeightClass = isMobile ? 'h-[120px]' : 'h-[160px]'; break;
+  }
+  const textSizeClass = `text-${textSize}`;
+  const textAlign = settings?.textAlign || 'center';
+  let textAlignClass = 'text-center';
+  if (textAlign === 'left') textAlignClass = 'text-left';
+  if (textAlign === 'right') textAlignClass = 'text-right';
+
+  // Helper functions for price positioning and sizing
+  const getPriceSizeClass = (size) => {
+    switch (size) {
+      case 'small': return isMobile ? 'text-base' : 'text-lg md:text-xl';
+      case 'large': return isMobile ? 'text-2xl' : 'text-3xl md:text-4xl';
+      default: return isMobile ? 'text-lg' : 'text-2xl md:text-3xl';
+    }
+  };
+
+  const getPricePositionClass = (position) => {
+    switch (position) {
+      case 'top-left': return 'top-4 left-4';
+      case 'top': return 'top-4 left-1/2 -translate-x-1/2';
+      case 'top-right': return 'top-4 right-4';
+      case 'center-left': return 'top-1/2 left-4 -translate-y-1/2';
+      case 'center': return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+      case 'center-right': return 'top-1/2 right-4 -translate-y-1/2';
+      case 'bottom-left': return 'bottom-4 left-4';
+      case 'bottom': return 'bottom-4 left-1/2 -translate-x-1/2';
+      case 'bottom-right': return 'bottom-4 right-4';
+      default: return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+    }
+  };
+
+  // Update container width on mount and resize
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    };
+
+    updateWidth();
+    window.addEventListener('resize', updateWidth);
+    return () => window.removeEventListener('resize', updateWidth);
+  }, []);
+
+  // Autoplay for carousel
+  useEffect(() => {
+    if (!isCarousel || !settings?.autoplay) return;
+    if (isDragging) return;
+    const interval = settings?.interval || 5000;
+    const cardsToShow = settings?.cardsToShow || 3;
+    const totalCards = content.cards.length;
+    if (totalCards <= cardsToShow) return;
+    const timer = setInterval(() => {
+      setCurrentIndex(prev => {
+        const next = prev + 1;
+        if (next > totalCards - cardsToShow) return 0;
+        return next;
+      });
+    }, interval);
+    return () => clearInterval(timer);
+  }, [isCarousel, settings?.autoplay, settings?.interval, settings?.cardsToShow, content.cards.length, isDragging]);
+
+  // Scroll carousel on currentIndex change
+  useEffect(() => {
+    if (!isCarousel || !carouselRef.current) return;
+    const cardsToShow = settings?.cardsToShow || 3;
+    const cardWidth = getCardWidth();
+    carouselRef.current.scrollTo({
+      left: currentIndex * (cardWidth + 16), // 16px gap
+      behavior: 'smooth',
+    });
+  }, [currentIndex, isCarousel, settings?.cardsToShow, containerWidth]);
+
+  // Reset currentIndex if cards change
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [content.cards.length, settings?.cardsToShow]);
+
+  // Calculate card width based on cardsToShow
+  const getCardWidth = () => {
+    const cardsToShow = settings?.cardsToShow || 3;
+    if (!containerWidth) return 220;
+
+    const gap = 16;
+    const padding = 32;
+    const availableWidth = containerWidth - padding - (gap * (cardsToShow - 1));
+    return Math.floor(availableWidth / cardsToShow);
+  };
+
+  const handleMouseDown = (e) => {
+    if (!isCarousel) return;
+    setIsDragging(true);
+    setStartX(e.pageX - carouselRef.current.offsetLeft);
+    setScrollLeft(carouselRef.current.scrollLeft);
+  };
+
+  const handleMouseUp = () => {
+    if (!isCarousel) return;
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    if (!isCarousel) return;
+    setIsDragging(false);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isCarousel || !isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - carouselRef.current.offsetLeft;
+    const walk = (x - startX) * 2;
+    carouselRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleCardClick = (cardId, e) => {
+    if (isDragging) return;
+    setActiveCardId(activeCardId === cardId ? null : cardId);
+  };
+
+  useEffect(() => {
+    if (!isCarousel) return;
+    
+    const carousel = carouselRef.current;
+    if (carousel) {
+      carousel.addEventListener('mousedown', handleMouseDown);
+      carousel.addEventListener('mouseleave', handleMouseLeave);
+      carousel.addEventListener('mouseup', handleMouseUp);
+      carousel.addEventListener('mousemove', handleMouseMove);
+
+      return () => {
+        carousel.removeEventListener('mousedown', handleMouseDown);
+        carousel.removeEventListener('mouseleave', handleMouseLeave);
+        carousel.removeEventListener('mouseup', handleMouseUp);
+        carousel.removeEventListener('mousemove', handleMouseMove);
+      };
+    }
+  }, [isCarousel, isDragging, startX, scrollLeft]);
+
+  if (isCarousel) {
+    return (
+      <div className={`${isMobile ? 'px-3 py-4' : 'px-4 py-6'}`} ref={containerRef}>
+        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+          {content.title}
+        </h3>
+        <div 
+          ref={carouselRef}
+          className="flex gap-3 overflow-x-auto pb-3 cursor-grab select-none scrollbar-hide"
+          style={{ 
+            scrollBehavior: 'smooth', 
+            WebkitOverflowScrolling: 'touch',
+            scrollSnapType: 'x mandatory'
+          }}
+        >
+          {(content.cards || []).map(card => (
+            <div 
+              key={card.id}
+              onClick={(e) => handleCardClick(card.id, e)}
+              className={`flex-none border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 ${
+                activeCardId === card.id ? 'shadow-lg scale-[1.02]' : ''
+              }`}
+              style={{ 
+                borderColor: style?.primaryColor || '#3B82F6',
+                width: isMobile ? '220px' : `${getCardWidth()}px`,
+                scrollSnapAlign: 'start'
+              }}
+            >
+              <div className={`relative ${isMobile ? 'aspect-[3/2]' : 'aspect-[4/3]'}`}>
+                <img 
+                  src={card.image} 
+                  alt={card.title}
+                  className="w-full h-full object-cover"
+                  draggable="false"
+                />
+                {card.price && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="font-semibold text-lg md:text-xl text-blue-600 bg-white/80 rounded-full px-4 py-2 shadow-md">
+                      {card.price}
+                    </span>
+                  </div>
+                )}
+                <div 
+                  className={`absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-black/50 to-transparent transition-opacity duration-300 ${
+                    activeCardId === card.id ? 'opacity-0' : 'opacity-100'
+                  }`}
+                />
+              </div>
+              <div 
+                className={`p-3 transition-all duration-300 ease-in-out ${
+                  activeCardId === card.id ? 'h-auto' : isMobile ? 'h-[3.5rem] overflow-hidden' : 'h-[4rem] overflow-hidden'
+                }`}
+              >
+                <h4 
+                  className={`font-bold mb-1 transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? '' : 'line-clamp-1'}`} 
+                  style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+                >
+                  {card.title}
+                </h4>
+                <p 
+                  className={`transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? 'opacity-100' : 'opacity-60 line-clamp-2'}`}
+                  style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+                >
+                  {card.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Responsive grid classes
+  const getGridClass = () => {
+    if (isMobile) return 'grid-cols-1';
+    if (layout === 'grid-4') return 'grid-cols-2 lg:grid-cols-4';
+    return 'grid-cols-2 lg:grid-cols-3';
+  };
+
+  return (
+    <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
+      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+        {content.title}
+      </h3>
+      {content.description && (
+        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+          {content.description}
+        </p>
+      )}
+      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : `${getGridClass()} gap-6`}`}>
+        {(content.cards || []).map(card => (
+          <div 
+            key={card.id}
+            onClick={(e) => handleCardClick(card.id, e)}
+            className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 ${
+              activeCardId === card.id ? 'shadow-lg' : ''
+            } ${cardSizeClass} flex flex-col justify-center items-center text-center`}
+            style={{ borderColor: style?.primaryColor || '#3B82F6' }}
+          >
+            <div className={`relative w-full flex items-center justify-center ${imageHeightClass}`}>
+              <img 
+                src={card.image} 
+                alt={card.title}
+                className="w-full h-full object-cover"
+              />
+              {card.price && (
+                <div 
+                  className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
+                >
+                  <span 
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-6 py-2 shadow-md`}
+                    style={{
+                      color: style?.priceBadgeTextColor || '#2563EB',
+                      background: style?.priceBadgeBgColor || '#E5E7EB',
+                      backdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                      WebkitBackdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                    }}
+                  >
+                    {card.price}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className={`flex-1 flex flex-col justify-center px-2 py-3 w-full ${
+              textAlign === 'left' ? 'items-start' : textAlign === 'right' ? 'items-end' : 'items-center'
+            }`}>
+              <h4 
+                className={`font-bold mb-2 transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? '' : 'line-clamp-1'}`}
+                style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+              >
+                {card.title}
+              </h4>
+              <p 
+                className={`transition-all duration-300 ${textSizeClass} ${textAlignClass} ${activeCardId === card.id ? 'opacity-100' : 'opacity-60 line-clamp-2'}`}
+                style={{ color: style?.secondaryColor || '#6B7280', fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+              >
+                {card.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Default export for admin panel (existing functionality)
 export default function CardsSection({ section, onSaveSection, onUpdateCardLayout, onAddCard }) {
   const handleUpdateCardLayout = useCallback((sectionId, layout, cardCount) => {
     onUpdateCardLayout(sectionId, layout, cardCount);

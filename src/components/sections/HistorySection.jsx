@@ -1,5 +1,197 @@
 import sectionTypes from '@/data/sectionTypes';
 
+// Preview version of HistorySection
+export const HistorySectionPreview = ({ content, style, isMobile, viewMode }) => {
+  const selectedSubtype = content.subtype || 'timeline';
+  const selectedLayout = content.layout || (selectedSubtype === 'timeline' ? 'timeline' : 'text-left');
+
+  const renderTimeline = () => (
+    <div className="relative">
+      {/* Vertical line */}
+      <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-blue-600 to-purple-600" />
+      {content.items.map((item, index) => (
+        <div key={item.id} className={`relative mb-12 ${index % 2 === 0 ? 'pr-1/2' : 'pl-1/2'}`}>
+          {/* Year badge */}
+          <div className={`absolute top-0 ${index % 2 === 0 ? 'right-1/2 mr-8' : 'left-1/2 ml-8'} transform -translate-y-1/2`}>
+            <div className={`bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
+              {item.year}
+            </div>
+          </div>
+          {/* Content card */}
+          <div className={`${index % 2 === 0 ? 'mr-8' : 'ml-8'} bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative h-48 md:h-full">
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="p-6">
+                <h4 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+                  {item.title}
+                </h4>
+                <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderCards = () => (
+    <div className={`grid w-full ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-6'}`}>
+      {content.items.map(item => (
+        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300">
+          <div className="relative h-48">
+            <img 
+              src={item.image} 
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+            <div className={`absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
+              {item.year}
+            </div>
+          </div>
+          <div className="p-6">
+            <h4 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+              {item.title}
+            </h4>
+            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+              {item.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderStory = () => (
+    <div className="space-y-12">
+      {content.items.map((item, index) => (
+        <div key={item.id} className="flex flex-col md:flex-row gap-8 items-center">
+          <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:order-1' : 'md:order-2'}`}>
+            <div className="relative">
+              <img 
+                src={item.image} 
+                alt={item.title}
+                className="w-full h-64 object-cover rounded-lg shadow-lg hover:scale-105 transition-transform duration-300"
+              />
+              <div className={`absolute -top-4 -left-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-bold ${isMobile ? 'text-base' : 'text-lg'}`}>
+                {item.year}
+              </div>
+            </div>
+          </div>
+          <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'md:order-2' : 'md:order-1'}`}>
+            <h4 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-4`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+              {item.title}
+            </h4>
+            <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+              {item.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderGrid = () => (
+    <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-4' : 'md:grid-cols-2 gap-8'}`}>
+      {content.items.map(item => (
+        <div key={item.id} className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-300">
+          <div className="relative">
+            <img 
+              src={item.image} 
+              alt={item.title}
+              className="w-full h-64 object-cover"
+            />
+            <div className={`absolute top-4 right-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-1 rounded-full font-medium ${isMobile ? 'text-xs' : 'text-sm'}`}>
+              {item.year}
+            </div>
+          </div>
+          <div className="p-6">
+            <h4 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+              {item.title}
+            </h4>
+            <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+              {item.description}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // New: Render for text subtype
+  const renderText = () => {
+    return (
+      <div className="max-w-2xl mx-auto">
+        {content.texts?.map(item => (
+          <div key={item.id} className="mb-8">
+            <h4 
+              className={`text-xl font-bold mb-2 ${
+                item.textAlignment === 'center' ? 'text-center' : item.textAlignment === 'right' ? 'text-right' : 'text-left'
+              }`} 
+              style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+            >
+              {item.title}
+            </h4>
+            <p 
+              className={`text-gray-600 dark:text-gray-400 whitespace-normal break-words ${
+                item.descriptionAlignment === 'center' ? 'text-center' : item.descriptionAlignment === 'right' ? 'text-right' : 'text-left'
+              }`} 
+              style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+            >
+              {item.description}
+            </p>
+            {item.year && <div className="text-xs text-gray-400 mt-1">{item.year}</div>}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderContent = () => {
+    if (selectedSubtype === 'text') {
+      return renderText();
+    }
+    switch (selectedLayout) {
+      case 'timeline':
+        return renderTimeline();
+      case 'cards':
+        return renderCards();
+      case 'story':
+        return renderStory();
+      case 'grid':
+        return renderGrid();
+      default:
+        return renderTimeline();
+    }
+  };
+
+  return (
+    <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
+      {content.title && content.title.trim() !== '' && (
+        <div className="text-center mb-6">
+          <h3 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+            {content.title}
+          </h3>
+          {content.subtitle && (
+            <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+              {content.subtitle}
+            </p>
+          )}
+        </div>
+      )}
+      {renderContent()}
+    </div>
+  );
+};
+
+// Default export for admin panel (existing functionality)
 export default function HistorySection({ section, onSaveSection }) {
   return (
     <div className="relative">
@@ -204,163 +396,102 @@ export default function HistorySection({ section, onSaveSection }) {
                   title: e.target.value
                 }
               })}
-              placeholder="Түүх хэсгийн гарчиг оруулах..."
+              placeholder="Текст хэсгийн гарчиг оруулах..."
               className="w-full px-3 py-2 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           
-          <div className="flex items-center mb-4">
-            <h4 className="text-lg font-semibold text-blue-600 mr-4">Текстүүд</h4>
-            <button
-              onClick={() => {
-                const newTexts = [
-                  ...(section.content.texts || []),
-                  { id: `text${Date.now()}`, title: '', description: '', year: '' }
-                ];
-                onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-              }}
-              className="px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700 font-semibold shadow md:ml-4"
-            >
-              + Текст нэмэх
-            </button>
-          </div>
-          <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-            {section.content.texts?.map((item, idx) => (
-              <div key={item.id} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 flex flex-col gap-2 border border-blue-200 dark:border-blue-700">
-                <div className="flex gap-4 mb-2 items-center">
-                  <span className="text-xs text-gray-500">Гарчиг байрлал:</span>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="radio"
-                      name={`textAlignment-${section.id}-${item.id}`}
-                      checked={(item.textAlignment || 'left') === 'left'}
-                      onChange={() => {
-                        const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, textAlignment: 'left' } : it);
-                        onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                      }}
-                    />
-                    Зүүн
-                  </label>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="radio"
-                      name={`textAlignment-${section.id}-${item.id}`}
-                      checked={item.textAlignment === 'center'}
-                      onChange={() => {
-                        const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, textAlignment: 'center' } : it);
-                        onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                      }}
-                    />
-                    Төв
-                  </label>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="radio"
-                      name={`textAlignment-${section.id}-${item.id}`}
-                      checked={item.textAlignment === 'right'}
-                      onChange={() => {
-                        const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, textAlignment: 'right' } : it);
-                        onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                      }}
-                    />
-                    Баруун
-                  </label>
-                </div>
-                <div className="flex gap-4 mb-2 items-center">
-                  <span className="text-xs text-gray-500">Тайлбар байрлал:</span>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="radio"
-                      name={`descriptionAlignment-${section.id}-${item.id}`}
-                      checked={(item.descriptionAlignment || 'left') === 'left'}
-                      onChange={() => {
-                        const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, descriptionAlignment: 'left' } : it);
-                        onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                      }}
-                    />
-                    Зүүн
-                  </label>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="radio"
-                      name={`descriptionAlignment-${section.id}-${item.id}`}
-                      checked={item.descriptionAlignment === 'center'}
-                      onChange={() => {
-                        const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, descriptionAlignment: 'center' } : it);
-                        onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                      }}
-                    />
-                    Төв
-                  </label>
-                  <label className="flex items-center gap-1 text-xs">
-                    <input
-                      type="radio"
-                      name={`descriptionAlignment-${section.id}-${item.id}`}
-                      checked={item.descriptionAlignment === 'right'}
-                      onChange={() => {
-                        const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, descriptionAlignment: 'right' } : it);
-                        onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                      }}
-                    />
-                    Баруун
-                  </label>
-                </div>
-                <input
-                  type="text"
-                  value={item.title}
-                  onChange={e => {
-                    const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, title: e.target.value } : it);
-                    onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                  }}
-                  placeholder="Гарчиг"
-                  className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm font-semibold"
-                />
-                <label className="flex items-center gap-2 text-xs">
-                  <input
-                    type="checkbox"
-                    checked={!!item.showYear}
-                    onChange={e => {
-                      const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, showYear: e.target.checked, year: e.target.checked ? it.year : '' } : it);
-                      onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
-                    }}
-                  />
-                  Он/Жил оруулах
-                </label>
-                {item.showYear && (
+          {/* Text items */}
+          <div className="space-y-4">
+            {section.content.texts?.map((textItem, idx) => (
+              <div key={textItem.id} className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <div className="flex gap-2 mb-2">
                   <input
                     type="text"
-                    value={item.year}
+                    value={textItem.title || ''}
                     onChange={e => {
-                      const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, year: e.target.value } : it);
+                      const newTexts = section.content.texts.map(it => it.id === textItem.id ? { ...it, title: e.target.value } : it);
                       onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                     }}
-                    placeholder="Он / Жил"
-                    className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                    placeholder="Гарчиг"
+                    className="flex-1 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
                   />
-                )}
+                  <input
+                    type="text"
+                    value={textItem.year || ''}
+                    onChange={e => {
+                      const newTexts = section.content.texts.map(it => it.id === textItem.id ? { ...it, year: e.target.value } : it);
+                      onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
+                    }}
+                    placeholder="Он"
+                    className="w-20 px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm"
+                  />
+                </div>
                 <textarea
-                  value={item.description}
+                  value={textItem.description || ''}
                   onChange={e => {
-                    const newTexts = section.content.texts.map(it => it.id === item.id ? { ...it, description: e.target.value } : it);
+                    const newTexts = section.content.texts.map(it => it.id === textItem.id ? { ...it, description: e.target.value } : it);
                     onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
                   }}
                   placeholder="Тайлбар"
                   className="w-full px-3 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm resize-none"
                   rows={3}
                 />
-                <div className="flex gap-2 justify-end mt-2">
+                <div className="flex gap-2 mt-2">
+                  <button
+                    disabled={idx === 0}
+                    onClick={() => {
+                      if (idx === 0) return;
+                      const texts = [...section.content.texts];
+                      [texts[idx - 1], texts[idx]] = [texts[idx], texts[idx - 1]];
+                      onSaveSection(section.id, { content: { ...section.content, texts } });
+                    }}
+                    className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    disabled={idx === section.content.texts.length - 1}
+                    onClick={() => {
+                      if (idx === section.content.texts.length - 1) return;
+                      const texts = [...section.content.texts];
+                      [texts[idx + 1], texts[idx]] = [texts[idx], texts[idx + 1]];
+                      onSaveSection(section.id, { content: { ...section.content, texts } });
+                    }}
+                    className={`px-2 py-1 rounded bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-xs ${idx === section.content.texts.length - 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-300 dark:hover:bg-gray-600'}`}
+                  >
+                    ↓
+                  </button>
                   <button
                     onClick={() => {
-                      const newTexts = section.content.texts.filter(it => it.id !== item.id);
-                      onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
+                      const texts = section.content.texts.filter(it => it.id !== textItem.id);
+                      onSaveSection(section.id, { content: { ...section.content, texts } });
                     }}
-                    className="px-4 py-2 rounded bg-red-500 text-white text-sm hover:bg-red-600 font-semibold shadow"
+                    className="px-2 py-1 rounded bg-red-500 text-white text-xs hover:bg-red-600"
                   >
                     Устгах
                   </button>
                 </div>
               </div>
             ))}
+            
+            <button
+              onClick={() => {
+                const newTexts = [
+                  ...(section.content.texts || []),
+                  {
+                    id: `text${Date.now()}`,
+                    title: '',
+                    description: '',
+                    year: ''
+                  }
+                ];
+                onSaveSection(section.id, { content: { ...section.content, texts: newTexts } });
+              }}
+              className="w-full px-4 py-2 rounded bg-blue-600 text-white text-sm hover:bg-blue-700"
+            >
+              + Текст нэмэх
+            </button>
           </div>
         </div>
       )}

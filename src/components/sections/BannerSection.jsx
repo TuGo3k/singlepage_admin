@@ -1,3 +1,74 @@
+import { useRef } from 'react';
+
+// Preview version of BannerSection
+export const BannerSectionPreview = ({ content, layout, style, isMobile }) => {
+  const isFull = layout === 'full-width';
+  const hasOverlay = layout === 'with-overlay';
+
+  return (
+    <div 
+      className={`relative ${isFull ? 'w-full' : 'container mx-auto'} ${isMobile ? 'h-[200px]' : 'h-[250px]'} bg-cover bg-center`}
+      style={{ 
+        backgroundImage: content.image ? `url(${content.image})` : content.background ? `url(${content.background})` : 'none',
+        backgroundColor: !content.image && !content.background ? '#f3f4f6' : 'transparent'
+      }}
+    >
+      <div className={`absolute inset-0 flex items-center justify-center ${hasOverlay ? 'bg-black bg-opacity-50 text-white' : ''}`}
+      >
+        <div className={`${isMobile ? 'px-4 w-full' : 'px-8 w-full'} flex flex-col gap-1`}>
+          <div style={{ width: '100%' }}>
+            <h3 
+              className={`${isMobile ? 'text-xl' : 'text-2xl'} font-bold mb-2`} 
+              style={{ 
+                fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+                textAlign: content.titleAlignment || 'center',
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                width: '100%'
+              }}
+            >
+              {content.title}
+            </h3>
+          </div>
+          {content.subtitle && (
+            <div style={{ width: '100%' }}>
+              <p 
+                className={`${isMobile ? 'text-sm' : 'text-base'}`} 
+                style={{ 
+                  fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                  textAlign: content.subtitleAlignment || 'center',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  width: '100%'
+                }}
+              >
+                {content.subtitle}
+              </p>
+            </div>
+          )}
+          {content.description && (
+            <div style={{ width: '100%' }}>
+              <p 
+                className={`${isMobile ? 'text-xs' : 'text-sm'} mt-2`} 
+                style={{ 
+                  fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                  textAlign: content.descriptionAlignment || 'center',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                  width: '100%'
+                }}
+              >
+                {content.description}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Default export for admin panel (existing functionality)
 export default function BannerSection({ section, onSaveSection, onImageUpload, fileInputRef }) {
   return (
     <div className="space-y-4">

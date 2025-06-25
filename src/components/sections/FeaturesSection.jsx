@@ -1,3 +1,100 @@
+// Preview version of FeaturesSection
+export const FeaturesSectionPreview = ({ content, settings, style, isMobile, viewMode }) => {
+  const getPriceSizeClass = (size) => {
+    switch (size) {
+      case 'small': return isMobile ? 'text-base' : 'text-lg md:text-xl';
+      case 'large': return isMobile ? 'text-2xl' : 'text-3xl md:text-4xl';
+      default: return isMobile ? 'text-lg' : 'text-2xl md:text-3xl';
+    }
+  };
+
+  const getPricePositionClass = (position) => {
+    switch (position) {
+      case 'top-left': return 'top-4 left-4';
+      case 'top': return 'top-4 left-1/2 -translate-x-1/2';
+      case 'top-right': return 'top-4 right-4';
+      case 'center-left': return 'top-1/2 left-4 -translate-y-1/2';
+      case 'center': return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+      case 'center-right': return 'top-1/2 right-4 -translate-y-1/2';
+      case 'bottom-left': return 'bottom-4 left-4';
+      case 'bottom': return 'bottom-4 left-1/2 -translate-x-1/2';
+      case 'bottom-right': return 'bottom-4 right-4';
+      default: return 'top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2';
+    }
+  };
+
+  const getCardSizeClass = (size) => {
+    switch (size) {
+      case 'small': return isMobile ? 'h-[140px]' : 'h-[220px]';
+      case 'large': return isMobile ? 'h-[220px]' : 'h-[400px]';
+      case 'medium':
+      default: return isMobile ? 'h-[180px]' : 'h-[300px]';
+    }
+  };
+
+  return (
+    <div className={`${isMobile ? 'p-2' : 'p-6'}`}>
+      <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+        {content.title}
+      </h3>
+      {content.description && (
+        <p className={`${isMobile ? 'text-xs' : 'text-center text-gray-500 dark:text-gray-400 mb-4'} text-center text-gray-500 dark:text-gray-400 mb-4`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+          {content.description}
+        </p>
+      )}
+      <div className={`grid ${viewMode === 'mobile' ? 'grid-cols-1 gap-2' : 'md:grid-cols-3 gap-8'}`}>
+        {(content.cards || []).map(card => (
+          <div 
+            key={card.id}
+            className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''}`}
+            style={{ borderColor: style?.primaryColor || '#3B82F6' }}
+          >
+            <div className="relative w-full h-32 md:h-48">
+              <img 
+                src={card.image} 
+                alt={card.title}
+                className="w-full h-full object-cover"
+              />
+              {card.price && (
+                <div 
+                  className={`absolute ${getPricePositionClass(card.pricePosition || settings?.pricePosition)}`}
+                >
+                  <span 
+                    className={`${getPriceSizeClass(card.priceSize || settings?.priceSize)} font-bold rounded-full px-4 md:px-6 py-1 md:py-2 shadow-md`}
+                    style={{
+                      color: style?.priceBadgeTextColor || '#2563EB',
+                      background: style?.priceBadgeBgColor || '#E5E7EB',
+                      backdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                      WebkitBackdropFilter: style?.priceBadgeBlur ? `blur(${style.priceBadgeBlur}px)` : undefined,
+                    }}
+                  >
+                    {card.price}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="p-2 md:p-4 flex-1">
+              <h4 
+                className={`${isMobile ? 'text-sm' : 'text-base'} font-bold mb-2`}
+                style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+              >
+                {card.title}
+              </h4>
+              <p 
+                className={`${isMobile ? 'text-xs' : 'text-gray-600 dark:text-gray-400'}`}
+                style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+              >
+                {card.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+// Default export for admin panel (existing functionality)
 export default function FeaturesSection({ section, onSaveSection }) {
   return (
     <div className="space-y-4">

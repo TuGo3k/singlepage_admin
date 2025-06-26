@@ -385,7 +385,7 @@ export default function TemplatesPage() {
         <Preview previewMarginActive={previewMarginActive} />
         <div className="space-y-6 w-1/4">
           <div className="rounded-lg border bg-card">
-            <div className="p-4 border-b flex justify-between items-center">
+            <div className="p-4 flex justify-between items-center">
               <div className="flex items-center gap-2">
                 <h2 className="font-medium">Хэсгүүд</h2>
                 <PreviewMarginToggleButton onClick={() => setPreviewMarginActive(v => !v)} previewMarginActive={previewMarginActive} />

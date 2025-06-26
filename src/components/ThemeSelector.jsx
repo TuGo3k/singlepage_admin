@@ -32,7 +32,7 @@ export default function ThemeSelector({ currentTheme, onThemeChange, className =
           />
           
           {/* Modal Content */}
-          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-7xl w-full max-h-[90vh]  z-50">
             {/* Header */}
             <div className="sticky top-0 bg-white dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 rounded-t-2xl">
               <div className="flex items-center justify-between">
@@ -54,12 +54,12 @@ export default function ThemeSelector({ currentTheme, onThemeChange, className =
             </div>
 
             {/* Theme Grid */}
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="p-6   h-[80vh] relative">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6  overflow-scroll h-full">
                 {Object.entries(themes).map(([themeId, themeData]) => (
                   <div
                     key={themeId}
-                    className={`relative group cursor-pointer rounded-xl overflow-hidden border-2 transition-all  duration-300 ${
+                    className={`relative group cursor-pointer rounded-xl  border-2 transition-all  duration-300 ${
                       currentTheme === themeId
                         ? 'border-blue-500 shadow-lg scale-105'
                         : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md'

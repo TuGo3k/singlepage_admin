@@ -7,6 +7,7 @@ import { PiMapPinFill } from 'react-icons/pi';
 import { BsInstagram } from 'react-icons/bs';
 import ViewportToggle from './ViewportToggle';
 import ThemeSelector from './ThemeSelector';
+import { getThemeById } from '@/data/themePresets';
 
 // Import section components
 import { HeroSectionPreview as HeroSection } from './sections/HeroSection';
@@ -18,7 +19,7 @@ import { ContactSectionPreview as ContactSection } from './sections/ContactSecti
 import FooterSection from './sections/FooterSection';
 
 // Enhanced navigation header with scroll effects
-const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sections, isMobile, hasMargin, previewMarginActive }) => {
+const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sections, isMobile, hasMargin, previewMarginActive, theme }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const logoInputRef = useRef();
@@ -67,10 +68,10 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
 
   return (
     <div 
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg' : 'bg-white dark:bg-gray-800'
-      }`}
+      className={`sticky top-0 z-40 transition-all duration-300 backdrop-blur-md shadow-lg`}
       style={{ 
+        background: theme?.colors?.contactBg || (isScrolled ? 'rgba(255,255,255,0.95)' : 'white'),
+        color: theme?.colors?.text || 'inherit',
         borderBottomColor: isScrolled ? style?.primaryColor + '20' : 'transparent',
         borderBottomWidth: '1px',
         marginTop: hasMargin ? '40px' : undefined,
@@ -133,13 +134,23 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
                   </button>
                   {/* Дэд ангилал байгаа бол dropdown */}
                   {item.subCategories && item.subCategories.length > 0 && (
-                    <div className="absolute left-0 top-full min-w-[120px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 hidden group-hover:block">
+                    <div
+                      className="absolute left-0 top-full min-w-[120px] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 hidden group-hover:block"
+                      style={{
+                        background: theme?.colors?.cardBg || '#fff',
+                        color: theme?.colors?.text || '#1F2937',
+                      }}
+                    >
                       <ul className="py-2">
                         {item.subCategories.map(sub => (
                           <li key={sub.id}>
                             <button
                               onClick={() => setCurrentSection(`subcat-${sub.id}`)}
-                              className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                              className="block w-full text-left px-4 py-2 text-xs hover:opacity-80"
+                              style={{
+                                background: 'transparent',
+                                color: theme?.colors?.text || '#1F2937',
+                              }}
                             >
                               {sub.name}
                             </button>
@@ -224,6 +235,9 @@ export default function Preview({ previewMarginActive = false }) {
   
   const isMobile = viewMode === 'mobile';
   
+  // Get current theme data
+  const themeData = getThemeById(currentTheme);
+
   // Simulate loading
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 500);
@@ -242,7 +256,12 @@ export default function Preview({ previewMarginActive = false }) {
   // Handle theme change
   const handleThemeChange = (themeId) => {
     setCurrentTheme(themeId);
-    // Here you can also update the store if needed
+    // Update the store's themeId so navbar gets the correct theme
+    if (style) {
+      const updatedStyle = { ...style, themeId };
+      // Update the store with new theme
+      usePreviewStore.getState().updateStyle(updatedStyle);
+    }
   };
 
   const renderSection = (section) => {
@@ -306,7 +325,10 @@ export default function Preview({ previewMarginActive = false }) {
       <div className="flex justify-center">
         {/* Preview Container */}
         <div className={containerClasses}>
-          <div className="bg-white dark:bg-gray-800 h-full flex flex-col">
+          <div 
+            className="h-full flex flex-col"
+            style={{ backgroundColor: themeData.colors.background }}
+          >
             {/* Enhanced Navigation Header */}
             <NavigationHeader 
               style={style} 
@@ -317,19 +339,28 @@ export default function Preview({ previewMarginActive = false }) {
               isMobile={isMobile}
               hasMargin={template.sections.find(s => s.type === 'hero')?.settings?.hasMargin}
               previewMarginActive={previewMarginActive}
+              theme={themeData}
             />
 
             {/* Main Content */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+            <div 
+              className="flex-1 overflow-y-auto scrollbar-thin"
+              style={{ 
+                backgroundColor: themeData.colors.background,
+                backgroundImage: themeData.colors.background2 ? `linear-gradient(to bottom, ${themeData.colors.background}, ${themeData.colors.background2})` : undefined,
+                scrollbarColor: `${themeData.colors.accent} ${themeData.colors.background}`,
+                scrollbarWidth: 'thin'
+              }}
+            >
               {template.sections.map(section => (
                 (section.type === 'contact' || (section.type === 'hero' && section.content?.layout === 'image-background')) ? (
-                  <div key={section.id} className="border-b last:border-b-0 animate-fadeInUp">
+                  <div key={section.id} className=" animate-fadeInUp">
                     {renderSection(section)}
                   </div>
                 ) : (
                   <div
                     key={section.id}
-                    className={`border-b last:border-b-0 animate-fadeInUp ${getHorizontalPaddingClasses(section)}`}
+                    className={` animate-fadeInUp ${getHorizontalPaddingClasses(section)}`}
                     style={previewMarginActive && !isMobile ? { marginLeft: '8%', marginRight: '8%' } : undefined}
                   >
                     {renderSection(section)}

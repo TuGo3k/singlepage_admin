@@ -12,7 +12,12 @@ export const ContactSectionPreview = ({ siteData, content, isMobile, settings, t
   const themeData = getThemeById(theme);
 
   return (
-    <div className={themeData.contact.className}>
+    <div 
+      className={themeData.contact.className}
+      style={{
+        background: themeData.colors?.contactBg || '#1F2937'
+      }}
+    >
       <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-indigo-400 mb-2`}>
         {content?.title || 'Бидэнтэй холбогдох'}
       </h2>

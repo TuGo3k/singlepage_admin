@@ -1,5 +1,11 @@
+import { getThemeById } from '@/data/themePresets';
+
 // Preview version of FeaturesSection
-export const FeaturesSectionPreview = ({ content, settings, style, isMobile, viewMode }) => {
+export const FeaturesSectionPreview = ({ content, settings, style, isMobile, viewMode, theme = 'theme-1' }) => {
+  // Get theme styles
+  const themeData = getThemeById(theme);
+  const cardStyles = themeData.cards;
+
   const getPriceSizeClass = (size) => {
     switch (size) {
       case 'small': return isMobile ? 'text-base' : 'text-lg md:text-xl';
@@ -32,6 +38,15 @@ export const FeaturesSectionPreview = ({ content, settings, style, isMobile, vie
     }
   };
 
+  const getImageHeightClass = (size) => {
+    switch (size) {
+      case 'small': return isMobile ? 'h-16' : 'h-24';
+      case 'large': return isMobile ? 'h-32' : 'h-48';
+      case 'medium':
+      default: return isMobile ? 'h-24' : 'h-32';
+    }
+  };
+
   return (
     <div className={`${isMobile ? 'p-2' : 'p-6'}`}>
       <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
@@ -46,14 +61,13 @@ export const FeaturesSectionPreview = ({ content, settings, style, isMobile, vie
         {(content.cards || []).map(card => (
           <div 
             key={card.id}
-            className={`border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg hover:scale-105 flex flex-col ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''}`}
-            style={{ borderColor: style?.primaryColor || '#3B82F6' }}
+            className={`${cardStyles.className} ${cardStyles.hoverEffect} ${getCardSizeClass(card.cardSize || settings?.cardSize)} ${isMobile ? 'p-2' : ''} flex flex-col`}
           >
-            <div className="relative w-full h-32 md:h-48">
+            <div className={`relative w-full ${getImageHeightClass(card.cardSize || settings?.cardSize)} flex-shrink-0`}>
               <img 
                 src={card.image} 
                 alt={card.title}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover rounded-lg"
               />
               {card.price && (
                 <div 
@@ -73,15 +87,15 @@ export const FeaturesSectionPreview = ({ content, settings, style, isMobile, vie
                 </div>
               )}
             </div>
-            <div className="p-2 md:p-4 flex-1">
+            <div className="p-2 md:p-4 flex-1 flex flex-col justify-center">
               <h4 
-                className={`${isMobile ? 'text-sm' : 'text-base'} font-bold mb-2`}
+                className={cardStyles.titleClass}
                 style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
               >
                 {card.title}
               </h4>
               <p 
-                className={`${isMobile ? 'text-xs' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`${cardStyles.descriptionClass} flex-1`}
                 style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
               >
                 {card.description}

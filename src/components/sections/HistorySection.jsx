@@ -140,19 +140,25 @@ export const HistorySectionPreview = ({ content, style, isMobile, viewMode, them
               className={`text-xl font-bold mb-2 ${
                 item.textAlignment === 'center' ? 'text-center' : item.textAlignment === 'right' ? 'text-right' : 'text-left'
               }`} 
-              style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+              style={{ 
+                fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+                color: themeData.colors?.primary || '#3B82F6'
+              }}
             >
               {item.title}
             </h4>
             <p 
-              className={`text-gray-600 dark:text-gray-400 whitespace-normal break-words ${
+              className={`whitespace-normal break-words ${
                 item.descriptionAlignment === 'center' ? 'text-center' : item.descriptionAlignment === 'right' ? 'text-right' : 'text-left'
               }`} 
-              style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+              style={{ 
+                fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                color: themeData.colors?.text || '#1F2937'
+              }}
             >
               {item.description}
             </p>
-            {item.year && <div className="text-xs text-gray-400 mt-1">{item.year}</div>}
+            {item.year && <div className="text-xs mt-1" style={{ color: themeData.colors?.secondary || '#6B7280' }}>{item.year}</div>}
           </div>
         ))}
       </div>
@@ -181,11 +187,19 @@ export const HistorySectionPreview = ({ content, style, isMobile, viewMode, them
     <div className={`${isMobile ? 'p-4' : 'p-8'}`}>
       {content.title && content.title.trim() !== '' && (
         <div className="text-center mb-6">
-          <h3 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold mb-2`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+          <h3 className={`${isMobile ? 'text-xl' : 'text-3xl'} font-bold mb-2`} 
+              style={{ 
+                fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+                color: themeData.colors?.primary || '#3B82F6'
+              }}>
             {content.title}
           </h3>
           {content.subtitle && (
-            <p className={`${isMobile ? 'text-base' : 'text-lg'} text-gray-600 dark:text-gray-400`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+            <p className={`${isMobile ? 'text-base' : 'text-lg'}`} 
+               style={{ 
+                 fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                 color: themeData.colors?.text || '#1F2937'
+               }}>
               {content.subtitle}
             </p>
           )}

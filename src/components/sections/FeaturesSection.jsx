@@ -49,11 +49,19 @@ export const FeaturesSectionPreview = ({ content, settings, style, isMobile, vie
 
   return (
     <div className={`${isMobile ? 'p-2' : 'p-6'}`}>
-      <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+      <h3 className={`${isMobile ? 'text-base' : 'text-xl'} font-bold mb-2 text-center`} 
+          style={{ 
+            fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+            color: themeData.colors?.primary || '#3B82F6'
+          }}>
         {content.title}
       </h3>
       {content.description && (
-        <p className={`${isMobile ? 'text-xs' : 'text-center text-gray-500 dark:text-gray-400 mb-4'} text-center text-gray-500 dark:text-gray-400 mb-4`} style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+        <p className={`${isMobile ? 'text-xs' : 'text-center mb-4'} text-center mb-4`} 
+           style={{ 
+             fontFamily: style?.bodyFont || 'Arial, sans-serif',
+             color: themeData.colors?.text || '#1F2937'
+           }}>
           {content.description}
         </p>
       )}
@@ -96,7 +104,10 @@ export const FeaturesSectionPreview = ({ content, settings, style, isMobile, vie
               </h4>
               <p 
                 className={`${cardStyles.descriptionClass} flex-1`}
-                style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}
+                style={{ 
+                  fontFamily: style?.bodyFont || 'Arial, sans-serif',
+                  color: themeData.colors?.text || '#1F2937'
+                }}
               >
                 {card.description}
               </p>

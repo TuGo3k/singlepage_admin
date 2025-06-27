@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { usePreviewStore } from '@/store/previewStore';
+import { getThemeById } from '@/data/themePresets';
 import Link from 'next/link';
 
 export default function Home() {
@@ -11,6 +12,9 @@ export default function Home() {
     mediaFiles: siteData.media.sections?.length || 0,
     lastUpdated: new Date().toLocaleDateString('mn-MN')
   });
+
+  // Get theme styles
+  const themeData = getThemeById(siteData.style?.theme || 'theme-1');
 
   const quickActions = [
     {
@@ -169,7 +173,8 @@ export default function Home() {
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
                     {siteData.header?.subtitle || ''}
                   </p>
-                  <div className="inline-flex px-4 py-2 bg-blue-600 text-white rounded-lg text-sm">
+                  <div className="inline-flex px-4 py-2 text-white rounded-lg text-sm"
+                       style={{ backgroundColor: themeData.colors?.primary || '#3B82F6' }}>
                     Дэлгэрэнгүй
                   </div>
                 </div>

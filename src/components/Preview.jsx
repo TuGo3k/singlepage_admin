@@ -78,24 +78,24 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
         marginBottom: hasMargin ? '40px' : undefined
       }}
     >
-      <div className={`${isMobile ? 'px-4' : 'px-10'} py-3`}>
+      <div className={`${isMobile ? 'px-3' : 'px-10'} py-2`}>
         <div className="flex items-center justify-between"
               style={previewMarginActive && !isMobile ? { marginLeft: '8%', marginRight: '8%' } : undefined}
         >
           {/* Logo upload + preview */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center cursor-pointer relative group" onClick={() => logoInputRef.current.click()}>
+          <div className="flex items-center gap-2">
+            <div className={`${isMobile ? 'w-8 h-8' : 'w-12 h-12'} border rounded-lg flex items-center justify-center cursor-pointer relative group`} onClick={() => logoInputRef.current.click()}>
               <img 
                 src={media.logo} 
                 alt="Logo" 
-                className="w-10 h-10 object-contain rounded-lg"
+                className={`${isMobile ? 'w-6 h-6' : 'w-10 h-10'} object-contain rounded-lg`}
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.nextSibling.style.display = 'block';
                 }}
               />
               <svg 
-                className="w-8 h-8 text-white absolute inset-0 m-auto opacity-0 group-hover:opacity-80 transition-opacity pointer-events-none" 
+                className={`${isMobile ? 'w-5 h-5' : 'w-8 h-8'} text-white absolute inset-0 m-auto opacity-0 group-hover:opacity-80 transition-opacity pointer-events-none`} 
                 fill="none" 
                 viewBox="0 0 24 24" 
                 stroke="currentColor"
@@ -114,31 +114,34 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
 
           {/* Desktop Navigation */}
           {!isMobile && (
-            <nav className="flex items-center gap-8">
+            <nav className="flex items-center gap-6">
               {navigationItems.map((item) => (
                 <div key={item.id} className="relative group">
                   <button
                     onClick={() => setCurrentSection(item.id)}
-                    className={`relative px-3 py-2 text-sm font-medium transition-all duration-200 ${
-                      currentSection === item.id
-                        ? 'text-blue-600 dark:text-blue-400'
-                        : 'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400'
-                    }`}
+                    className={`relative px-2 py-1 text-xs font-medium transition-all duration-200 hover:scale-105`}
+                    style={{
+                      color: currentSection === item.id 
+                        ? (theme?.colors?.primary || '#3B82F6')
+                        : (theme?.colors?.text || '#374151')
+                    }}
                   >
                     {item.label}
                     {currentSection === item.id && (
                       <div 
-                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"
+                        className="absolute bottom-0 left-0 right-0 h-0.5 rounded-full"
+                        style={{ background: theme?.colors?.primary || '#3B82F6' }}
                       />
                     )}
                   </button>
-                  {/* Дэд ангилал байгаа бол dropdown */}
+                  {/* Дэд ангилалууд dropdown */}
                   {item.subCategories && item.subCategories.length > 0 && (
                     <div
-                      className="absolute left-0 top-full min-w-[120px] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-20 hidden group-hover:block"
+                      className="absolute left-0 top-full min-w-[150px] border rounded-lg shadow-lg z-20 hidden group-hover:block mt-1"
                       style={{
                         background: theme?.colors?.cardBg || '#fff',
                         color: theme?.colors?.text || '#1F2937',
+                        borderColor: theme?.colors?.accent || '#E5E7EB'
                       }}
                     >
                       <ul className="py-2">
@@ -146,13 +149,17 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
                           <li key={sub.id}>
                             <button
                               onClick={() => setCurrentSection(`subcat-${sub.id}`)}
-                              className="block w-full text-left px-4 py-2 text-xs hover:opacity-80"
+                              className="block w-full text-left px-4 py-2 text-xs hover:scale-105 transition-all duration-200"
                               style={{
-                                background: 'transparent',
-                                color: theme?.colors?.text || '#1F2937',
+                                background: currentSection === `subcat-${sub.id}` 
+                                  ? `${theme?.colors?.primary}20` || 'rgba(59, 130, 246, 0.1)'
+                                  : 'transparent',
+                                color: currentSection === `subcat-${sub.id}`
+                                  ? (theme?.colors?.primary || '#3B82F6')
+                                  : (theme?.colors?.text || '#1F2937')
                               }}
                             >
-                              {sub.name}
+                              • {sub.name}
                             </button>
                           </li>
                         ))}
@@ -168,9 +175,12 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
           {isMobile && (
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-1.5 rounded-lg transition-colors"
+              style={{
+                color: theme?.colors?.text || '#374151'
+              }}
             >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
               </svg>
             </button>
@@ -178,27 +188,93 @@ const NavigationHeader = ({ style, media, currentSection, setCurrentSection, sec
         </div>
 
         {/* Mobile Navigation Menu */}
-        {isMobile && mobileMenuOpen && (
-          <div className="mt-4 pb-4 border-t border-gray-200 dark:border-gray-700">
-            <nav className="flex flex-col space-y-2 pt-4">
-              {navigationItems.map((item) => (
+        {isMobile && (
+          <>
+            {/* Overlay */}
+            {mobileMenuOpen && (
+              <div 
+                className="fixed inset-0 z-40 transition-opacity duration-300"
+                style={{ 
+                  backgroundColor: theme?.colors?.text ? `${theme.colors.text}80` : 'rgba(0, 0, 0, 0.5)'
+                }}
+                onClick={() => setMobileMenuOpen(false)}
+              />
+            )}
+            {/* Sidebar */}
+            <div className={`fixed top-0 right-0 h-full w-64 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
+              mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            style={{ 
+              backgroundColor: theme?.colors?.cardBg || '#FFFFFF',
+              color: theme?.colors?.text || '#1F2937'
+            }}>
+              <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-white">
+                <h3 className="text-lg font-semibold" style={{ color: theme?.colors?.text || '#374151' }}>
+                  Цэс
+                </h3>
                 <button
-                  key={item.id}
-                  onClick={() => {
-                    setCurrentSection(item.id);
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`text-left px-4 py-3 rounded-lg transition-colors ${
-                    currentSection === item.id
-                      ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-1 rounded-lg transition-colors"
+                  style={{ color: theme?.colors?.text || '#374151' }}
                 >
-                  {item.label}
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
                 </button>
-              ))}
-            </nav>
-          </div>
+              </div>
+              <nav className="flex flex-col p-4"
+                   style={{ 
+                     backgroundColor: theme?.colors?.cardBg || '#FFFFFF'
+                   }}>
+                {navigationItems.map((item) => (
+                  <div key={item.id} className="mb-2">
+                    <button
+                      onClick={() => {
+                        setCurrentSection(item.id);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`text-left px-3 py-3 rounded-lg transition-all duration-200 text-sm w-full hover:scale-105`}
+                      style={{
+                        backgroundColor: currentSection === item.id
+                          ? `${theme?.colors?.primary}20` || 'rgba(59, 130, 246, 0.1)'
+                          : 'transparent',
+                        color: currentSection === item.id
+                          ? (theme?.colors?.primary || '#3B82F6')
+                          : (theme?.colors?.text || '#374151')
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                    {/* Дэд ангилалууд */}
+                    {item.subCategories && item.subCategories.length > 0 && (
+                      <div className="ml-4 mt-1 space-y-1">
+                        {item.subCategories.map((subItem) => (
+                          <button
+                            key={subItem.id}
+                            onClick={() => {
+                              setCurrentSection(`subcat-${subItem.id}`);
+                              setMobileMenuOpen(false);
+                            }}
+                            className={`text-left px-3 py-2 rounded-lg transition-all duration-200 text-xs w-full hover:scale-105`}
+                            style={{
+                              backgroundColor: currentSection === `subcat-${subItem.id}`
+                                ? `${theme?.colors?.primary}15` || 'rgba(59, 130, 246, 0.08)'
+                                : 'transparent',
+                              color: currentSection === `subcat-${subItem.id}`
+                                ? (theme?.colors?.primary || '#3B82F6')
+                                : (theme?.colors?.text || '#374151')
+                            }}
+                          >
+                            • {subItem.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </nav>
+            </div>
+          </>
         )}
       </div>
     </div>

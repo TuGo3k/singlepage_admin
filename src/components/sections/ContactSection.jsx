@@ -18,17 +18,17 @@ export const ContactSectionPreview = ({ siteData, content, isMobile, settings, t
         background: themeData.colors?.contactBg || '#1F2937'
       }}
     >
-      <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold text-indigo-400 mb-2`}>
+      <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold mb-2`} style={{ color: themeData.colors?.primary || '#3B82F6' }}>
         {content?.title || 'Бидэнтэй холбогдох'}
       </h2>
-      <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300 mb-8`}>
+      <p className={`${isMobile ? 'text-sm' : 'text-base'} mb-8`} style={{ color: themeData.colors?.text || '#1F2937' }}>
         {content?.description || 'Танай асуулт, санал хүсэлтийг бидэнд илгээнэ үү. Бид танд хурдан хариулах болно.'}
       </p>
 
       <div className={`flex flex-col ${isMobile ? 'gap-4' : 'md:flex-row gap-6'} justify-center items-center mb-10`}>
         {/* Email */}
         <div className={`${themeData.contact.cardClass} ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'}`}>
-          <div className={`${themeData.contact.iconClass} text-blue-400 ${isMobile ? 'justify-center' : ''}`}>
+          <div className={`${themeData.contact.iconClass} ${isMobile ? 'justify-center' : ''}`} style={{ color: themeData.colors?.primary || '#3B82F6' }}>
             <MdEmail />
           </div>
           <h3 className={`${themeData.contact.titleClass}`}>
@@ -41,7 +41,7 @@ export const ContactSectionPreview = ({ siteData, content, isMobile, settings, t
 
         {/* Phone */}
         <div className={`${themeData.contact.cardClass} ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'}`}>
-          <div className={`${themeData.contact.iconClass} text-green-400 ${isMobile ? 'justify-center' : ''}`}>
+          <div className={`${themeData.contact.iconClass} ${isMobile ? 'justify-center' : ''}`} style={{ color: themeData.colors?.primary || '#3B82F6' }}>
             <FaPhone />
           </div>
           <h3 className={`${themeData.contact.titleClass}`}>
@@ -54,7 +54,7 @@ export const ContactSectionPreview = ({ siteData, content, isMobile, settings, t
 
         {/* Address */}
         <div className={`${themeData.contact.cardClass} ${isMobile ? 'w-full' : 'w-72'} ${isMobile ? 'text-center' : 'text-left'}`}>
-          <div className={`${themeData.contact.iconClass} text-purple-400 ${isMobile ? 'justify-center' : ''}`}>
+          <div className={`${themeData.contact.iconClass} ${isMobile ? 'justify-center' : ''}`} style={{ color: themeData.colors?.primary || '#3B82F6' }}>
             <PiMapPinFill />
           </div>
           <h3 className={`${themeData.contact.titleClass}`}>
@@ -67,7 +67,7 @@ export const ContactSectionPreview = ({ siteData, content, isMobile, settings, t
       </div>
 
       {/* Social */}
-      <p className={`${isMobile ? 'text-sm' : 'text-base'} text-gray-300 mb-4`}>
+      <p className={`${isMobile ? 'text-sm' : 'text-base'} mb-4`} style={{ color: themeData.colors?.text || '#1F2937' }}>
         {content?.socialTitle || siteData?.contact?.socialTitle || 'Биднийг дагаарай'}
       </p>
       <div className={`flex justify-center gap-4 ${isMobile ? 'text-xl' : 'text-2xl'}`}>

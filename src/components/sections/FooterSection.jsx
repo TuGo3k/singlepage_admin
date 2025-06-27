@@ -49,7 +49,10 @@ export default function FooterSection({ section, theme = 'theme-1' }) {
       ) : (
         <footer className={themeData.footer.className}>
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-2xl md:text-3xl font-bold text-center text-indigo-400 mb-2">{section.content?.title || 'Холбоо барих'}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-2" 
+                style={{ color: themeData.colors?.text2 || themeData.colors?.text || '#1F2937' }}>
+              {section.content?.title || 'Холбоо барих'}
+            </h2>
             {section.content?.description && <p className="text-center text-gray-300 mb-8">{section.content.description}</p>}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {/* И-мэйл */}

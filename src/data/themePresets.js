@@ -202,7 +202,7 @@ export const themePresets = {
     },
     contact: {
       className: "flex flex-col items-center justify-center py-16 px-6",
-      cardClass: "relative bg-white rounded-2xl shadow-lg p-8  text-center transition transform hover:-translate-y-1 hover:shadow-2xl",
+      cardClass: "relative bg-white rounded-2xl flex flex-col items-center shadow-lg p-8  text-center transition transform hover:-translate-y-1 hover:shadow-2xl",
       iconClass: "text-3xl ",
       titleClass: "text-xl font-semibold text-neutral-800 mb-2",
       detailClass: "text-neutral-600 whitespace-pre-line",
@@ -273,12 +273,13 @@ export const themePresets = {
     name: "Зөөлөн ногоон, шар",
     description: "Ногоон болон шар өнгөтэй загвар",
     colors: {
-      primary: "#7a9489",
+      primary: "#e6dfcf",
       secondary: "#e6dfcf",
       background: "#e6dfcf",
-      // background2: "#1f2937",
+      background2: "#e6dfcf",
       cardBg: "#c5dcca",
-      text: "#7a9489",
+      text: "#e6dfcf",
+      text2: "#7a9489",
       accent: "#DBEAFE",
       contactBg: "#7a9489"
     },
@@ -405,14 +406,14 @@ export const themePresets = {
     }
   },
   "theme-10": {
-    name: "Цэнхэр хослолууд",
-    description: "Олон цэнхэр хослолууд",
+    name: "Алтан өнгөтэй",
+    description: "Алтан өнгөтэй загвар",
     colors: {
-      primary: "#7a9489",
-      secondary: "#e6dfcf",
+      primary: "#c99250",
+      secondary: "#faf49e",
       background: "#ffffff", 
       // background2: "#1f2937",
-      cardBg: "#ece7e2",
+      cardBg: "#d3a745",
       text: "#7a9489",
       accent: "#DBEAFE",
       contactBg: "linear-gradient(to bottom right, #d3a745, #faf49e, #c99250)"

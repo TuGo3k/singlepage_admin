@@ -1,7 +1,11 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { getThemeById } from '@/data/themePresets';
 
 // Preview version of HeroSection
-export const HeroSectionPreview = ({ content, layout, style, isMobile }) => {
+export const HeroSectionPreview = ({ content, layout, style, isMobile, theme = 'theme-1' }) => {
+  // Get theme styles
+  const themeData = getThemeById(theme);
+  
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -44,14 +48,21 @@ export const HeroSectionPreview = ({ content, layout, style, isMobile }) => {
         <div className={`absolute inset-0 flex items-center ${isMobile ? 'px-4' : 'px-8'}`}>
           <div className="max-w-2xl mx-auto bg-black/70 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
             <h1
-              className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-extrabold uppercase tracking-wider mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-400 bg-clip-text text-transparent drop-shadow-lg ${titleAlignClass}`}
-              style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif', letterSpacing: '0.08em' }}
+              className={`${isMobile ? 'text-2xl' : 'text-4xl'} font-extrabold uppercase tracking-wider mb-4 drop-shadow-lg ${titleAlignClass}`}
+              style={{ 
+                fontFamily: style?.headerFont || 'Inter, Arial, sans-serif', 
+                letterSpacing: '0.08em',
+                color: themeData.colors?.primary || '#3B82F6'
+              }}
             >
               {content.title}
             </h1>
             <p
-              className={`${isMobile ? 'text-base' : 'text-lg'} mb-8 text-gray-200 italic pl-4 ${descAlignClass}`}
-              style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}
+              className={`${isMobile ? 'text-base' : 'text-lg'} mb-8 italic pl-4 ${descAlignClass}`}
+              style={{ 
+                fontFamily: style?.bodyFont || 'Arial, sans-serif', 
+                color: themeData.colors?.text || '#1F2937'
+              }}
             >
               {content.description}
             </p>
@@ -63,7 +74,12 @@ export const HeroSectionPreview = ({ content, layout, style, isMobile }) => {
                   {content.buttonText}
                 </button>
                 <button
-                  className="px-8 py-3 rounded-xl font-semibold border-2 border-white/80 text-white/90 bg-white/10 hover:bg-white/20 hover:text-blue-700 transition-all duration-200"
+                  className="px-8 py-3 rounded-xl font-semibold border-2 backdrop-blur-md hover:scale-105 hover:shadow-2xl transition-all duration-200"
+                  style={{
+                    borderColor: themeData.colors?.primary || '#3B82F6',
+                    color: themeData.colors?.primary || '#3B82F6',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+                  }}
                 >
                   Дэлгэрэнгүй
                 </button>
@@ -82,13 +98,19 @@ export const HeroSectionPreview = ({ content, layout, style, isMobile }) => {
       <div className={`${isMobile ? 'w-full' : 'flex-1'} space-y-4`}>
         <h2 
           className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold ${content.titleAlignment === 'left' ? 'text-left' : content.titleAlignment === 'right' ? 'text-right' : 'text-center'}`} 
-          style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}
+          style={{ 
+            fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+            color: themeData.colors?.primary || '#3B82F6'
+          }}
         >
           {content.title}
         </h2>
         <p 
           className={`${content.descriptionAlignment === 'left' ? 'text-left' : content.descriptionAlignment === 'right' ? 'text-right' : 'text-center'}`}
-          style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif', color: style?.secondaryColor || '#6B7280' }}
+          style={{ 
+            fontFamily: style?.bodyFont || 'Arial, sans-serif', 
+            color: themeData.colors?.text || '#1F2937'
+          }}
         >
           {content.description}
         </p>
@@ -96,7 +118,7 @@ export const HeroSectionPreview = ({ content, layout, style, isMobile }) => {
           <div className={`flex ${content.buttonAlignment === 'left' ? 'justify-start' : content.buttonAlignment === 'right' ? 'justify-end' : 'justify-center'}`}>
             <button 
               className={`${isMobile ? 'px-6 py-3' : 'px-6 py-2'} rounded-md text-white btn-enhanced`}
-              style={{ backgroundColor: style?.primaryColor || '#3B82F6' }}
+              style={{ backgroundColor: themeData.colors?.primary || '#3B82F6' }}
             >
               {content.buttonText}
             </button>

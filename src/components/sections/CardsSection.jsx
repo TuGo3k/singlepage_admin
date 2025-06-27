@@ -176,7 +176,11 @@ export const CardsSectionPreview = ({ content, layout, style, settings, isMobile
   if (isCarousel) {
     return (
       <div className={`${isMobile ? 'px-3 py-4' : 'px-4 py-6'}`} ref={containerRef}>
-        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+        <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-4 text-center`} 
+            style={{ 
+              fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+              color: themeData.colors?.primary || '#3B82F6'
+            }}>
           {content.title}
         </h3>
         <div 
@@ -255,11 +259,19 @@ export const CardsSectionPreview = ({ content, layout, style, settings, isMobile
 
   return (
     <div className={`${isMobile ? 'p-3' : 'p-6'}`}>
-      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} style={{ fontFamily: style?.headerFont || 'Inter, Arial, sans-serif' }}>
+      <h3 className={`${isMobile ? 'text-lg' : 'text-xl'} font-bold mb-2 text-center`} 
+          style={{ 
+            fontFamily: style?.headerFont || 'Inter, Arial, sans-serif',
+            color: themeData.colors?.primary || '#3B82F6'
+          }}>
         {content.title}
       </h3>
       {content.description && (
-        <p className="text-center text-gray-500 dark:text-gray-400 mb-4" style={{ fontFamily: style?.bodyFont || 'Arial, sans-serif' }}>
+        <p className="text-center mb-4" 
+           style={{ 
+             fontFamily: style?.bodyFont || 'Arial, sans-serif',
+             color: themeData.colors?.text || '#1F2937'
+           }}>
           {content.description}
         </p>
       )}

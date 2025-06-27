@@ -1,7 +1,11 @@
 import { useRef } from 'react';
+import { getThemeById } from '@/data/themePresets';
 
 // Preview version of BannerSection
-export const BannerSectionPreview = ({ content, layout, style, isMobile }) => {
+export const BannerSectionPreview = ({ content, layout, style, isMobile, theme = 'theme-1' }) => {
+  // Get theme styles
+  const themeData = getThemeById(theme);
+  
   const isFull = layout === 'full-width';
   const hasOverlay = layout === 'with-overlay';
 
@@ -24,7 +28,8 @@ export const BannerSectionPreview = ({ content, layout, style, isMobile }) => {
                 textAlign: content.titleAlignment || 'center',
                 wordBreak: 'break-word',
                 overflowWrap: 'break-word',
-                width: '100%'
+                width: '100%',
+                color: hasOverlay ? '#FFFFFF' : (themeData.colors?.primary || '#3B82F6')
               }}
             >
               {content.title}
@@ -39,7 +44,8 @@ export const BannerSectionPreview = ({ content, layout, style, isMobile }) => {
                   textAlign: content.subtitleAlignment || 'center',
                   wordBreak: 'break-word',
                   overflowWrap: 'break-word',
-                  width: '100%'
+                  width: '100%',
+                  color: hasOverlay ? '#FFFFFF' : (themeData.colors?.text || '#1F2937')
                 }}
               >
                 {content.subtitle}
@@ -55,7 +61,8 @@ export const BannerSectionPreview = ({ content, layout, style, isMobile }) => {
                   textAlign: content.descriptionAlignment || 'center',
                   wordBreak: 'break-word',
                   overflowWrap: 'break-word',
-                  width: '100%'
+                  width: '100%',
+                  color: hasOverlay ? '#FFFFFF' : (themeData.colors?.text || '#1F2937')
                 }}
               >
                 {content.description}
